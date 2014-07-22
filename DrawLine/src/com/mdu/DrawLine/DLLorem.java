@@ -106,7 +106,7 @@ class DLLorem extends DLSegmentedComponent implements DLSegmented {
       loremIndex++;
       if (loremIndex >= DLUtil.lorem.length())
         loremIndex = 0;
-      DLChar dlc = new DLChar((int) Math.floor(p.x), (int) Math.floor(p.y));
+      DLChar dlc = new DLChar((int) Math.rint(p.x), (int) Math.rint(p.y));
       dlc.randomize();
       dlc.text = s;
       p.dlc = dlc;
