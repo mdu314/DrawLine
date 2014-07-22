@@ -13,7 +13,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
 abstract class DLImage extends DLComponent {
-  private Image image = null;
+  private BufferedImage image = null;
   int iwidth = 50;
   int iheight = 50;
 
@@ -27,8 +27,11 @@ abstract class DLImage extends DLComponent {
     iheight = c.iheight;
     if (c.image == null)
       c.image = c.image();
-    image = (Image) new BufferedImage(c.iwidth, c.iheight,
+    
+    image = new BufferedImage(c.iwidth, c.iheight,
         BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g = image.createGraphics();
+    g.drawImage(c.image, 0, 0, null);
   }
 
   DLImage(int x, int y) {
@@ -43,7 +46,7 @@ abstract class DLImage extends DLComponent {
 
   abstract DLImage copy();
 
-  abstract Image image();
+  abstract BufferedImage image();
 
   public void randomize() {
     iwidth = RangeRandom(20, 60);

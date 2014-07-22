@@ -151,7 +151,7 @@ class DrawLine extends JFrame {
     Iterator<DLComponent> i = components.iterator();
     while (i.hasNext())
       size += DLUtil.GetObjectSize(i.next());
-    String f = "<html> " + df.format(s) + " objects<br> <hr>" + df.format(size) + " size   </html>";
+    String f = "<html> " + df.format(s) + " objects<br> <hr>size <nbsp/><nbsp/><nbsp/><nbsp/>" + df.format(size) + "</html>";
     count.setText(f);
   }
 

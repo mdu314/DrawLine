@@ -96,9 +96,7 @@ class DLVonKoch extends DLCurve {
     super.randomize();
     steps = RangeRandom(2, 6);
     size = RangeRandom(10., 50.);
-    sides = RangeRandom(3, 7);
-//    alpha = RangeRandom(0., 1.);
-//    beta = RangeRandom(0., 1.);
+    sides = RangeRandom(3, 17);
   }
 
 }
