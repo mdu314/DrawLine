@@ -1,0 +1,257 @@
+Created with UCDetector 1.10.0	2014-06-19 08:28:51	http://www.ucdetector.org/	
+Location	Description	Java	Marker	Author
+com.mdu.DrawLine.DLLineBrush.<init>(DLLineBrush.java:7)	Change visibility of Class "DLLineBrush" to default - May cause compile errors!	DLLineBrush	org.ucdetector.analyzeMarkerVisibilityDefault	
+com.mdu.DrawLine.DLLineBrush.DLLineBrush(DLLineBrush.java:18)	Change visibility of Constructor "DLLineBrush.DLLineBrush(DLLineBrush)" to private	DLLineBrush.DLLineBrush(DLLineBrush)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLineBrush.brushList(DLLineBrush.java:12)	Change visibility of Field "DLLineBrush.brushList" to private	DLLineBrush.brushList	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLineBrush.a(DLLineBrush.java:81)	Change visibility of Field "Brush.a" to private	Brush.a	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLineBrush.b(DLLineBrush.java:81)	Change visibility of Field "Brush.b" to private	Brush.b	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLineBrush.min(DLLineBrush.java:82)	Change visibility of Field "Brush.min" to private	Brush.min	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolyline3.<init>(DLPolyline3.java:13)	Class "DLPolyline3" has 0 references	DLPolyline3	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPolylineRenderer.<init>(DLPolylineRenderer.java:12)	Class "DLPolylineRenderer" has 0 references	DLPolylineRenderer	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLMemory.<init>(DLMemory.java:11)	Change visibility of Class "DLMemory" to default - May cause compile errors!	DLMemory	org.ucdetector.analyzeMarkerVisibilityDefault	
+com.mdu.DrawLine.DLMemory.DLMemory(DLMemory.java:16)	Change visibility of Constructor "DLMemory.DLMemory(JLabel)" to default	DLMemory.DLMemory(JLabel)	org.ucdetector.analyzeMarkerVisibilityDefault	
+com.mdu.DrawLine.DLMemory.text(DLMemory.java:12)	Change visibility of Field "DLMemory.text" to private	DLMemory.text	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLMemory.timer(DLMemory.java:13)	Change visibility of Field "DLMemory.timer" to private	DLMemory.timer	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLMemory.sb(DLMemory.java:14)	Change visibility of Field "DLMemory.sb" to private	DLMemory.sb	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSplineCircle.DLSplineCircle(DLSplineCircle.java:12)	Change visibility of Constructor "DLSplineCircle.DLSplineCircle(DLSplineCircle)" to private	DLSplineCircle.DLSplineCircle(DLSplineCircle)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSplineCircle.DLSplineCircle(DLSplineCircle.java:19)	Constructor "DLSplineCircle.DLSplineCircle(int,int)" has 0 references	DLSplineCircle.DLSplineCircle(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLSplineCircle.DLSplineCircle(DLSplineCircle.java:23)	Constructor "DLSplineCircle.DLSplineCircle(int,int,float)" has 0 references	DLSplineCircle.DLSplineCircle(int,int,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLSplineCircle.circle(DLSplineCircle.java:32)	Change visibility of Method "DLSplineCircle.circle()" to private	DLSplineCircle.circle()	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSplineCircle.DLSplineCircle(DLSplineCircle.java:42)	Constructor "DLSplineCircle.DLSplineCircle(int,int,float,float,float)" has 0 references	DLSplineCircle.DLSplineCircle(int,int,float,float,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLSplineCircle.circle(DLSplineCircle.java:49)	Change visibility of Method "DLSplineCircle.circle(float,float)" to private	DLSplineCircle.circle(float,float)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSplineCircle.magic(DLSplineCircle.java:6)	Change visibility of Field "DLSplineCircle.magic" to private	DLSplineCircle.magic	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSplineCircle.radius(DLSplineCircle.java:8)	Change visibility of Field "DLSplineCircle.radius" to private	DLSplineCircle.radius	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSplineCircle.min(DLSplineCircle.java:9)	Change visibility of Field "DLSplineCircle.min" to private	DLSplineCircle.min	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSplineCircle.max(DLSplineCircle.java:10)	Change visibility of Field "DLSplineCircle.max" to private	DLSplineCircle.max	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLEgg.DLEgg(DLEgg.java:73)	Change visibility of Constructor "DLEgg.DLEgg(DLEgg)" to private	DLEgg.DLEgg(DLEgg)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLEgg.DLEgg(DLEgg.java:80)	Constructor "DLEgg.DLEgg(int,int)" has 0 references	DLEgg.DLEgg(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLEgg.DLEgg(DLEgg.java:84)	Constructor "DLEgg.DLEgg(int,int,float,float,float)" has 0 references	DLEgg.DLEgg(int,int,float,float,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLEgg.a(DLEgg.java:15)	Change visibility of Field "DLEgg.a" to private	DLEgg.a	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLEgg.b(DLEgg.java:16)	Change visibility of Field "DLEgg.b" to private	DLEgg.b	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLEgg.d(DLEgg.java:17)	Change visibility of Field "DLEgg.d" to private	DLEgg.d	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLBug.DLBug(DLBug.java:16)	Change visibility of Constructor "DLBug.DLBug(DLBug)" to private	DLBug.DLBug(DLBug)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLBug.DLBug(DLBug.java:20)	Constructor "DLBug.DLBug(int,int)" has 0 references	DLBug.DLBug(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLBug.DLBug(DLBug.java:24)	Constructor "DLBug.DLBug(int,int,float,float,float)" has 0 references	DLBug.DLBug(int,int,float,float,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLBug.f(DLBug.java:32)	Method "DLBug.f(boolean)" has 0 references	DLBug.f(boolean)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLBug.scale(DLBug.java:14)	Change visibility of Field "DLBug.scale" to private	DLBug.scale	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLCollectableObject.<init>(DLCollectableObject.java:5)	Change visibility of Interface "DLCollectableObject" to default - May cause compile errors!	DLCollectableObject	org.ucdetector.analyzeMarkerVisibilityDefault	
+com.mdu.DrawLine.DLEpitrochoid.DLEpitrochoid(DLEpitrochoid.java:16)	Change visibility of Constructor "DLEpitrochoid.DLEpitrochoid(DLEpitrochoid)" to private	DLEpitrochoid.DLEpitrochoid(DLEpitrochoid)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLEpitrochoid.DLEpitrochoid(DLEpitrochoid.java:23)	Constructor "DLEpitrochoid.DLEpitrochoid(int,int)" has 0 references	DLEpitrochoid.DLEpitrochoid(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLEpitrochoid.DLEpitrochoid(DLEpitrochoid.java:27)	Constructor "DLEpitrochoid.DLEpitrochoid(int,int,float,float,float)" has 0 references	DLEpitrochoid.DLEpitrochoid(int,int,float,float,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLEpitrochoid.a(DLEpitrochoid.java:12)	Change visibility of Field "DLEpitrochoid.a" to private	DLEpitrochoid.a	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLEpitrochoid.b(DLEpitrochoid.java:13)	Change visibility of Field "DLEpitrochoid.b" to private	DLEpitrochoid.b	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLEpitrochoid.c(DLEpitrochoid.java:14)	Change visibility of Field "DLEpitrochoid.c" to private	DLEpitrochoid.c	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.BooleanRandom(DLUtil.java:51)	Change visibility of Method "DLUtil.BooleanRandom(double)" to private	DLUtil.BooleanRandom(double)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.RandomPoint(DLUtil.java:71)	Method "DLUtil.RandomPoint(int,int,int,int)" has 0 references	DLUtil.RandomPoint(int,int,int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLUtil.RandomSin(DLUtil.java:110)	Method "DLUtil.RandomSin(double,double)" has 0 references	DLUtil.RandomSin(double,double)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLUtil.DarkerColor(DLUtil.java:117)	Method "DLUtil.DarkerColor(Color,double)" has 0 references	DLUtil.DarkerColor(Color,double)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLUtil.orthopoint(DLUtil.java:137)	Method "DLUtil.orthopoint(Point,int,int,double)" has 0 references	DLUtil.orthopoint(Point,int,int,double)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLUtil.orthopoint(DLUtil.java:141)	Change visibility of Method "DLUtil.orthopoint(Point,Point,double)" to private	DLUtil.orthopoint(Point,Point,double)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.orthopoints(DLUtil.java:173)	Change visibility of Method "DLUtil.orthopoints(Point2D.Float,Point2D.Float,double)" to private	DLUtil.orthopoints(Point2D.Float,Point2D.Float,double)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.controlPoint(DLUtil.java:189)	Method "DLUtil.controlPoint(Point2D,Point2D,Point2D,Point2D,*)" has 0 references	DLUtil.controlPoint(Point2D,Point2D,Point2D,Point2D,*)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLUtil.dot(DLUtil.java:235)	Change visibility of Method "DLUtil.dot(Point2D.Float,Point2D.Float,Point2D.Float)" to private	DLUtil.dot(Point2D.Float,Point2D.Float,Point2D.Float)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.cross(DLUtil.java:247)	Change visibility of Method "DLUtil.cross(Point2D.Float,Point2D.Float,Point2D.Float)" to private	DLUtil.cross(Point2D.Float,Point2D.Float,Point2D.Float)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.distance(DLUtil.java:259)	Change visibility of Method "DLUtil.distance(Point2D.Float,Point2D.Float)" to private	DLUtil.distance(Point2D.Float,Point2D.Float)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.linePointDist(DLUtil.java:267)	Method "DLUtil.linePointDist(Point2D.Float,Point2D.Float,Point2D.Float,*)" has 0 references	DLUtil.linePointDist(Point2D.Float,Point2D.Float,Point2D.Float,*)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLUtil.reduceWithTolerance(DLUtil.java:291)	Method "DLUtil.reduceWithTolerance(ArrayList<Point2D.Float>,double)" has 0 references	DLUtil.reduceWithTolerance(ArrayList<Point2D.Float>,double)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLUtil.douglasPeuckerReduction(DLUtil.java:345)	Change visibility of Method "DLUtil.douglasPeuckerReduction(ArrayList<Point2D.Float>,boolean[],*,*,*)" to private	DLUtil.douglasPeuckerReduction(ArrayList<Point2D.Float>,boolean[],*,*,*)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.orthogonalDistance(DLUtil.java:400)	Change visibility of Method "DLUtil.orthogonalDistance(Point2D.Float,Point2D.Float,Point2D.Float)" to private	DLUtil.orthogonalDistance(Point2D.Float,Point2D.Float,Point2D.Float)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.contains(DLUtil.java:456)	Method "DLUtil.contains(ArrayList<DLPoint>,int,int)" has 0 references	DLUtil.contains(ArrayList<DLPoint>,int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLUtil.sqr(DLUtil.java:471)	Change visibility of Method "DLUtil.sqr(float)" to private	DLUtil.sqr(float)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.dist2(DLUtil.java:475)	Change visibility of Method "DLUtil.dist2(DLPoint,DLPoint)" to private	DLUtil.dist2(DLPoint,DLPoint)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.distToSegmentSquared(DLUtil.java:479)	Change visibility of Method "DLUtil.distToSegmentSquared(DLPoint,DLPoint,DLPoint)" to private	DLUtil.distToSegmentSquared(DLPoint,DLPoint,DLPoint)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.distToSegment(DLUtil.java:491)	Method "DLUtil.distToSegment(DLPoint,DLPoint,DLPoint)" has 0 references	DLUtil.distToSegment(DLPoint,DLPoint,DLPoint)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLUtil.MinDistance(DLUtil.java:499)	Change visibility of Method "DLUtil.MinDistance(ArrayList<DLPoint>,DLPoint)" to private	DLUtil.MinDistance(ArrayList<DLPoint>,DLPoint)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.ColorName(DLUtil.java:518)	Method "DLUtil.ColorName(int)" has 0 references	DLUtil.ColorName(int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLUtil.ColorName(DLUtil.java:526)	Change visibility of Method "DLUtil.ColorName(int,int,int)" to private	DLUtil.ColorName(int,int,int)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.computeTransform(DLUtil.java:567)	Change visibility of Method "DLUtil.computeTransform(Rectangle2D,Rectangle2D,boolean)" to default	DLUtil.computeTransform(Rectangle2D,Rectangle2D,boolean)	org.ucdetector.analyzeMarkerVisibilityDefault	
+com.mdu.DrawLine.DLUtil.TWO_PI(DLUtil.java:87)	Change visibility of Field "DLUtil.TWO_PI" to private	DLUtil.TWO_PI	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.hasSpare(DLUtil.java:89)	Change visibility of Field "DLUtil.hasSpare" to private	DLUtil.hasSpare	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.rand1(DLUtil.java:90)	Change visibility of Field "DLUtil.rand1" to private	DLUtil.rand1	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.rand2(DLUtil.java:91)	Change visibility of Field "DLUtil.rand2" to private	DLUtil.rand2	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.p(DLUtil.java:165)	Change visibility of Field "DLUtil.p" to private	DLUtil.p	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.res(DLUtil.java:166)	Change visibility of Field "DLUtil.res" to private	DLUtil.res	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.colors(DLUtil.java:516)	Change visibility of Field "DLUtil.colors" to private	DLUtil.colors	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.r(DLUtil.java:607)	Change visibility of Field "RGB.r" to private	RGB.r	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.g(DLUtil.java:607)	Change visibility of Field "RGB.g" to private	RGB.g	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.b(DLUtil.java:607)	Change visibility of Field "RGB.b" to private	RGB.b	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLUtil.min(DLUtil.java:608)	Change visibility of Field "RGB.min" to private	RGB.min	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSpiral.DLSpiral(DLSpiral.java:18)	Change visibility of Constructor "DLSpiral.DLSpiral(DLSpiral)" to private	DLSpiral.DLSpiral(DLSpiral)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSpiral.DLSpiral(DLSpiral.java:26)	Constructor "DLSpiral.DLSpiral(int,int)" has 0 references	DLSpiral.DLSpiral(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLSpiral.DLSpiral(DLSpiral.java:30)	Constructor "DLSpiral.DLSpiral(int,int,float,int,float)" has 0 references	DLSpiral.DLSpiral(int,int,float,int,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLSpiral.func(DLSpiral.java:41)	Change visibility of Method "DLSpiral.func(double,float)" to private	DLSpiral.func(double,float)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSpiral.a(DLSpiral.java:13)	Change visibility of Field "DLSpiral.a" to private	DLSpiral.a	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSpiral.b(DLSpiral.java:14)	Change visibility of Field "DLSpiral.b" to private	DLSpiral.b	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSpiral.tours(DLSpiral.java:15)	Change visibility of Field "DLSpiral.tours" to private	DLSpiral.tours	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSpiral.p(DLSpiral.java:16)	Change visibility of Field "DLSpiral.p" to private	DLSpiral.p	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPshit.DLPshit(DLPshit.java:13)	Change visibility of Constructor "DLPshit.DLPshit(DLPshit)" to private	DLPshit.DLPshit(DLPshit)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPshit.DLPshit(DLPshit.java:17)	Constructor "DLPshit.DLPshit(int,int)" has 0 references	DLPshit.DLPshit(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPshit.DLPshit(DLPshit.java:21)	Constructor "DLPshit.DLPshit(int,int,int,int)" has 0 references	DLPshit.DLPshit(int,int,int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPshit.points(DLPshit.java:11)	Change visibility of Field "DLPshit.points" to private	DLPshit.points	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRose.DLRose(DLRose.java:17)	Change visibility of Constructor "DLRose.DLRose(DLRose)" to private	DLRose.DLRose(DLRose)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRose.DLRose(DLRose.java:24)	Constructor "DLRose.DLRose(int,int)" has 0 references	DLRose.DLRose(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLRose.DLRose(DLRose.java:28)	Constructor "DLRose.DLRose(int,int,float,float)" has 0 references	DLRose.DLRose(int,int,float,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLRose.a(DLRose.java:13)	Change visibility of Field "DLRose.a" to private	DLRose.a	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRose.b(DLRose.java:14)	Change visibility of Field "DLRose.b" to private	DLRose.b	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRose.k(DLRose.java:15)	Change visibility of Field "DLRose.k" to private	DLRose.k	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DrawLineMenu.margin(DrawLineMenu.java:68)	Change visibility of Field "DLMenu.margin" to private	DLMenu.margin	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DrawLineMenu.getDLComponent(DrawLineMenu.java:115)	Change visibility of Method "DLMenuItem.getDLComponent()" to private	DLMenuItem.getDLComponent()	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DrawLineMenu.margin(DrawLineMenu.java:102)	Change visibility of Field "DLMenuItem.margin" to private	DLMenuItem.margin	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLObjectCollector.<init>(DLObjectCollector.java:7)	Class "DLObjectCollector" has 0 references	DLObjectCollector	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLRuban.DLRuban(DLRuban.java:34)	Change visibility of Constructor "DLRuban.DLRuban(DLRuban)" to private	DLRuban.DLRuban(DLRuban)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRuban.repaint(DLRuban.java:86)	Change visibility of Method "DLRuban.repaint(Rectangle)" to private	DLRuban.repaint(Rectangle)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRuban.drawSegment(DLRuban.java:107)	Change visibility of Method "DLRuban.drawSegment(Graphics2D,int)" to private	DLRuban.drawSegment(Graphics2D,int)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRuban.points(DLRuban.java:21)	Change visibility of Field "DLRuban.points" to private	DLRuban.points	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRuban.color(DLRuban.java:22)	Change visibility of Field "DLRuban.color" to private	DLRuban.color	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRuban.brush(DLRuban.java:23)	Change visibility of Field "DLRuban.brush" to private	DLRuban.brush	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRuban.<init>(DLRuban.java:188)	Class "PolyUtils" has 0 references	PolyUtils	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLFish.DLFish(DLFish.java:14)	Change visibility of Constructor "DLFish.DLFish(DLFish)" to private	DLFish.DLFish(DLFish)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLFish.DLFish(DLFish.java:21)	Constructor "DLFish.DLFish(int,int)" has 0 references	DLFish.DLFish(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLFish.DLFish(DLFish.java:25)	Constructor "DLFish.DLFish(int,int,float,float,float)" has 0 references	DLFish.DLFish(int,int,float,float,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLFish.a(DLFish.java:10)	Change visibility of Field "DLFish.a" to private	DLFish.a	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLFish.b(DLFish.java:11)	Change visibility of Field "DLFish.b" to private	DLFish.b	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLFish.p(DLFish.java:12)	Change visibility of Field "DLFish.p" to private	DLFish.p	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DrawLine.<init>(DrawLine.java:56)	Change visibility of Class "DrawLine" to default - May cause compile errors!	DrawLine	org.ucdetector.analyzeMarkerVisibilityDefault	
+com.mdu.DrawLine.DrawLine.makeARandomCurve(DrawLine.java:62)	Change visibility of Method "DrawLine.makeARandomCurve(int,int)" to private	DrawLine.makeARandomCurve(int,int)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DrawLine.index(DrawLine.java:70)	Change visibility of Method "DrawLine.index(int)" to private	DrawLine.index(int)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DrawLine.makeACurve(DrawLine.java:81)	Change visibility of Method "DrawLine.makeACurve(int,int,int)" to private	DrawLine.makeACurve(int,int,int)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DrawLine.makeACurve(DrawLine.java:87)	Change visibility of Method "DrawLine.makeACurve(Class<?>,int,int)" to private	DrawLine.makeACurve(Class<?>,int,int)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DrawLine.content(DrawLine.java:100)	Method "DrawLine.content()" has 0 references	DrawLine.content()	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DrawLine.addPoint(DrawLine.java:359)	Change visibility of Method "DrawLine.addPoint(MouseEvent)" to private	DrawLine.addPoint(MouseEvent)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DrawLine.moveComponent(DrawLine.java:387)	Method "DrawLine.moveComponent(DLComponent,int,int)" has 0 references	DrawLine.moveComponent(DLComponent,int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DrawLine.removeComponent(DrawLine.java:395)	Change visibility of Method "DrawLine.removeComponent(DLComponent)" to private	DrawLine.removeComponent(DLComponent)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DrawLine.addComponent(DrawLine.java:403)	Change visibility of Method "DrawLine.addComponent(DLComponent)" to private	DrawLine.addComponent(DLComponent)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DrawLine.ruban(DrawLine.java:57)	Change visibility of Field "DrawLine.ruban" to private	DrawLine.ruban	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DrawLine.menu(DrawLine.java:59)	Change visibility of Field "DrawLine.menu" to private	DrawLine.menu	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DrawLine.messages(DrawLine.java:60)	Change visibility of Field "DrawLine.messages" to private	DrawLine.messages	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DrawLine.keys(DrawLine.java:68)	Change visibility of Field "DrawLine.keys" to private	DrawLine.keys	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLTruc.DLTruc(DLTruc.java:16)	Change visibility of Constructor "DLTruc.DLTruc(DLTruc)" to private	DLTruc.DLTruc(DLTruc)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLTruc.DLTruc(DLTruc.java:20)	Constructor "DLTruc.DLTruc(int,int)" has 0 references	DLTruc.DLTruc(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLTruc.DLTruc(DLTruc.java:24)	Constructor "DLTruc.DLTruc(int,int,float,float,float)" has 0 references	DLTruc.DLTruc(int,int,float,float,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLTruc.f(DLTruc.java:32)	Method "DLTruc.f(boolean)" has 0 references	DLTruc.f(boolean)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLTruc.scale(DLTruc.java:14)	Change visibility of Field "DLTruc.scale" to private	DLTruc.scale	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolygon.DLPolygon(DLPolygon.java:11)	Change visibility of Constructor "DLPolygon.DLPolygon(DLPolygon)" to private	DLPolygon.DLPolygon(DLPolygon)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolygon.DLPolygon(DLPolygon.java:17)	Constructor "DLPolygon.DLPolygon(int,int)" has 0 references	DLPolygon.DLPolygon(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPolygon.DLPolygon(DLPolygon.java:21)	Constructor "DLPolygon.DLPolygon(int,int,float,int,float)" has 0 references	DLPolygon.DLPolygon(int,int,float,int,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPolygon.radius(DLPolygon.java:8)	Change visibility of Field "DLPolygon.radius" to private	DLPolygon.radius	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolygon.sides(DLPolygon.java:9)	Change visibility of Field "DLPolygon.sides" to private	DLPolygon.sides	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLShape.<init>(DLShape.java:3)	Change visibility of Class "DLShape" to default - May cause compile errors!	DLShape	org.ucdetector.analyzeMarkerVisibilityDefault	
+com.mdu.DrawLine.DLPoint.DLPoint(DLPoint.java:16)	Constructor "DLPoint.DLPoint(double,double)" has 0 references	DLPoint.DLPoint(double,double)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPoint.DLPoint(DLPoint.java:21)	Constructor "DLPoint.DLPoint(float,float,long,Shape)" has 0 references	DLPoint.DLPoint(float,float,long,Shape)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPoint.DLPoint(DLPoint.java:34)	Constructor "DLPoint.DLPoint(float,float,Shape)" has 0 references	DLPoint.DLPoint(float,float,Shape)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPolyline.DLPolyline(DLPolyline.java:25)	Constructor "DLPolyline.DLPolyline(int,int)" has 0 references	DLPolyline.DLPolyline(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPolyline.drawControls(DLPolyline.java:72)	Method "DLPolyline.drawControls(Graphics2D)" has 0 references	DLPolyline.drawControls(Graphics2D)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPolyline.drawCurve(DLPolyline.java:97)	Change visibility of Method "DLPolyline.drawCurve(Graphics2D)" to private	DLPolyline.drawCurve(Graphics2D)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolyline.addSegment(DLPolyline.java:112)	Method "DLPolyline.addSegment(int,int,long)" has 0 references	DLPolyline.addSegment(int,int,long)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPolyline.drawPoints(DLPolyline.java:117)	Change visibility of Method "DLPolyline.drawPoints(Graphics2D)" to private	DLPolyline.drawPoints(Graphics2D)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolyline.drawPoint(DLPolyline.java:122)	Change visibility of Method "DLPolyline.drawPoint(Graphics2D,int)" to private	DLPolyline.drawPoint(Graphics2D,int)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolyline.drawSegment(DLPolyline.java:129)	Change visibility of Method "DLPolyline.drawSegment(Graphics2D,int)" to private	DLPolyline.drawSegment(Graphics2D,int)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolyline.drawLastSegment(DLPolyline.java:147)	Method "DLPolyline.drawLastSegment(Graphics)" has 0 references	DLPolyline.drawLastSegment(Graphics)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPolyline.curve(DLPolyline.java:159)	Change visibility of Method "DLPolyline.curve()" to private	DLPolyline.curve()	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolyline.color(DLPolyline.java:17)	Change visibility of Field "DLPolyline.color" to private	DLPolyline.color	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolyline.brush(DLPolyline.java:18)	Field "DLPolyline.brush" has 0 references	DLPolyline.brush	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPolyline.curve(DLPolyline.java:19)	Change visibility of Field "DLPolyline.curve" to private	DLPolyline.curve	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolyline.fcp(DLPolyline.java:20)	Change visibility of Field "DLPolyline.fcp" to private	DLPolyline.fcp	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolyline.scp(DLPolyline.java:21)	Change visibility of Field "DLPolyline.scp" to private	DLPolyline.scp	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolyline.handleSize(DLPolyline.java:22)	Change visibility of Field "DLPolyline.handleSize" to private	DLPolyline.handleSize	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolyline.drawPoints(DLPolyline.java:23)	Change visibility of Field "DLPolyline.drawPoints" to private	DLPolyline.drawPoints	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSuperEllipse.DLSuperEllipse(DLSuperEllipse.java:16)	Change visibility of Constructor "DLSuperEllipse.DLSuperEllipse(DLSuperEllipse)" to private	DLSuperEllipse.DLSuperEllipse(DLSuperEllipse)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSuperEllipse.DLSuperEllipse(DLSuperEllipse.java:23)	Constructor "DLSuperEllipse.DLSuperEllipse(int,int)" has 0 references	DLSuperEllipse.DLSuperEllipse(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLSuperEllipse.DLSuperEllipse(DLSuperEllipse.java:27)	Constructor "DLSuperEllipse.DLSuperEllipse(int,int,float,float,float)" has 0 references	DLSuperEllipse.DLSuperEllipse(int,int,float,float,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLSuperEllipse.sign(DLSuperEllipse.java:38)	Change visibility of Method "DLSuperEllipse.sign(double)" to private	DLSuperEllipse.sign(double)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSuperEllipse.a(DLSuperEllipse.java:12)	Change visibility of Field "DLSuperEllipse.a" to private	DLSuperEllipse.a	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSuperEllipse.b(DLSuperEllipse.java:13)	Change visibility of Field "DLSuperEllipse.b" to private	DLSuperEllipse.b	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLSuperEllipse.n(DLSuperEllipse.java:14)	Change visibility of Field "DLSuperEllipse.n" to private	DLSuperEllipse.n	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLStar.DLStar(DLStar.java:11)	Change visibility of Constructor "DLStar.DLStar(DLStar)" to private	DLStar.DLStar(DLStar)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLStar.DLStar(DLStar.java:19)	Constructor "DLStar.DLStar(int,int)" has 0 references	DLStar.DLStar(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLStar.DLStar(DLStar.java:23)	Constructor "DLStar.DLStar(double,double,int,double,int,int)" has 0 references	DLStar.DLStar(double,double,int,double,int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLStar.r1(DLStar.java:6)	Change visibility of Field "DLStar.r1" to private	DLStar.r1	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLStar.r2(DLStar.java:7)	Change visibility of Field "DLStar.r2" to private	DLStar.r2	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLStar.branches(DLStar.java:8)	Change visibility of Field "DLStar.branches" to private	DLStar.branches	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLStar.startAngle(DLStar.java:9)	Change visibility of Field "DLStar.startAngle" to private	DLStar.startAngle	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLCurve.fill(DLCurve.java:21)	Change visibility of Field "DLCurve.fill" to private	DLCurve.fill	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLCurve.stroke(DLCurve.java:22)	Change visibility of Field "DLCurve.stroke" to private	DLCurve.stroke	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLAstroid.DLAstroid(DLAstroid.java:14)	Change visibility of Constructor "DLAstroid.DLAstroid(DLAstroid)" to private	DLAstroid.DLAstroid(DLAstroid)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLAstroid.DLAstroid(DLAstroid.java:19)	Constructor "DLAstroid.DLAstroid(int,int)" has 0 references	DLAstroid.DLAstroid(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLAstroid.DLAstroid(DLAstroid.java:23)	Constructor "DLAstroid.DLAstroid(int,int,float)" has 0 references	DLAstroid.DLAstroid(int,int,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLAstroid.p(DLAstroid.java:12)	Change visibility of Field "DLAstroid.p" to private	DLAstroid.p	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLArrow.DLArrow(DLArrow.java:18)	Constructor "DLArrow.DLArrow(int,int)" has 0 references	DLArrow.DLArrow(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLArrow.DLArrow(DLArrow.java:22)	Change visibility of Constructor "DLArrow.DLArrow(DLArrow)" to private	DLArrow.DLArrow(DLArrow)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLArrow.w1(DLArrow.java:10)	Change visibility of Field "DLArrow.w1" to private	DLArrow.w1	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLArrow.l1(DLArrow.java:11)	Change visibility of Field "DLArrow.l1" to private	DLArrow.l1	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLArrow.l2(DLArrow.java:12)	Change visibility of Field "DLArrow.l2" to private	DLArrow.l2	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLArrow.l3(DLArrow.java:13)	Change visibility of Field "DLArrow.l3" to private	DLArrow.l3	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLArrow.w2(DLArrow.java:14)	Change visibility of Field "DLArrow.w2" to private	DLArrow.w2	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLArrow.l4(DLArrow.java:15)	Change visibility of Field "DLArrow.l4" to private	DLArrow.l4	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLArrow.w3(DLArrow.java:16)	Change visibility of Field "DLArrow.w3" to private	DLArrow.w3	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLemniscate.DLLemniscate(DLLemniscate.java:14)	Change visibility of Constructor "DLLemniscate.DLLemniscate(DLLemniscate)" to private	DLLemniscate.DLLemniscate(DLLemniscate)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLemniscate.DLLemniscate(DLLemniscate.java:21)	Constructor "DLLemniscate.DLLemniscate(int,int)" has 0 references	DLLemniscate.DLLemniscate(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLLemniscate.DLLemniscate(DLLemniscate.java:25)	Constructor "DLLemniscate.DLLemniscate(int,int,float,float,float)" has 0 references	DLLemniscate.DLLemniscate(int,int,float,float,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLLemniscate.a(DLLemniscate.java:10)	Change visibility of Field "DLLemniscate.a" to private	DLLemniscate.a	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLemniscate.b(DLLemniscate.java:11)	Change visibility of Field "DLLemniscate.b" to private	DLLemniscate.b	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLemniscate.p(DLLemniscate.java:12)	Change visibility of Field "DLLemniscate.p" to private	DLLemniscate.p	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLEggBeanInfo.<init>(DLEggBeanInfo.java:6)	Class "DLEggBeanInfo" has 0 references	DLEggBeanInfo	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLLorenz.DLLorenz(DLLorenz.java:25)	Change visibility of Constructor "DLLorenz.DLLorenz(DLLorenz)" to private	DLLorenz.DLLorenz(DLLorenz)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLorenz.DLLorenz(DLLorenz.java:40)	Constructor "DLLorenz.DLLorenz(int,int)" has 0 references	DLLorenz.DLLorenz(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLLorenz.DLLorenz(DLLorenz.java:44)	Constructor "DLLorenz.DLLorenz(int,int,double,double,double,int)" has 0 references	DLLorenz.DLLorenz(int,int,double,double,double,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLLorenz.getC1(DLLorenz.java:56)	Change visibility of Method "DLLorenz.getC1(double,double,double)" to private	DLLorenz.getC1(double,double,double)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLorenz.getC2(DLLorenz.java:69)	Change visibility of Method "DLLorenz.getC2(double,double,double)" to private	DLLorenz.getC2(double,double,double)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLorenz.a(DLLorenz.java:13)	Change visibility of Field "DLLorenz.a" to private	DLLorenz.a	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLorenz.b(DLLorenz.java:14)	Change visibility of Field "DLLorenz.b" to private	DLLorenz.b	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLorenz.c(DLLorenz.java:15)	Change visibility of Field "DLLorenz.c" to private	DLLorenz.c	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLorenz.steps(DLLorenz.java:16)	Change visibility of Field "DLLorenz.steps" to private	DLLorenz.steps	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLorenz.scale(DLLorenz.java:17)	Change visibility of Field "DLLorenz.scale" to private	DLLorenz.scale	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLorenz.dt(DLLorenz.java:18)	Change visibility of Field "DLLorenz.dt" to private	DLLorenz.dt	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLorenz.x0(DLLorenz.java:19)	Change visibility of Field "DLLorenz.x0" to private	DLLorenz.x0	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLorenz.y0(DLLorenz.java:20)	Change visibility of Field "DLLorenz.y0" to private	DLLorenz.y0	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLorenz.z0(DLLorenz.java:21)	Change visibility of Field "DLLorenz.z0" to private	DLLorenz.z0	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLorenz.c1(DLLorenz.java:22)	Change visibility of Field "DLLorenz.c1" to private	DLLorenz.c1	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLorenz.c2(DLLorenz.java:23)	Change visibility of Field "DLLorenz.c2" to private	DLLorenz.c2	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLGear.DLGear(DLGear.java:19)	Change visibility of Constructor "DLGear.DLGear(DLGear)" to private	DLGear.DLGear(DLGear)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLGear.DLGear(DLGear.java:27)	Constructor "DLGear.DLGear(int,int)" has 0 references	DLGear.DLGear(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLGear.DLGear(DLGear.java:31)	Constructor "DLGear.DLGear(int,int,float,float,float,int)" has 0 references	DLGear.DLGear(int,int,float,float,float,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLGear.a(DLGear.java:14)	Change visibility of Field "DLGear.a" to private	DLGear.a	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLGear.b(DLGear.java:15)	Change visibility of Field "DLGear.b" to private	DLGear.b	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLGear.s(DLGear.java:16)	Change visibility of Field "DLGear.s" to private	DLGear.s	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLGear.n(DLGear.java:17)	Change visibility of Field "DLGear.n" to private	DLGear.n	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRosace.DLRosace(DLRosace.java:16)	Constructor "DLRosace.DLRosace(int,int)" has 0 references	DLRosace.DLRosace(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLRosace.DLRosace(DLRosace.java:20)	Change visibility of Constructor "DLRosace.DLRosace(DLRosace)" to private	DLRosace.DLRosace(DLRosace)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRosace.a(DLRosace.java:13)	Change visibility of Field "DLRosace.a" to private	DLRosace.a	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRosace.n(DLRosace.java:14)	Change visibility of Field "DLRosace.n" to private	DLRosace.n	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPropertySheet.<init>(DLPropertySheet.java:17)	Change visibility of Class "DLPropertySheet" to default - May cause compile errors!	DLPropertySheet	org.ucdetector.analyzeMarkerVisibilityDefault	
+com.mdu.DrawLine.DLPropertySheet.DLPropertySheet(DLPropertySheet.java:21)	Change visibility of Constructor "DLPropertySheet.DLPropertySheet(DLComponent)" to default	DLPropertySheet.DLPropertySheet(DLComponent)	org.ucdetector.analyzeMarkerVisibilityDefault	
+com.mdu.DrawLine.DLPropertySheet.page(DLPropertySheet.java:33)	Change visibility of Method "DLPropertySheet.page()" to private	DLPropertySheet.page()	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPropertySheet.comp(DLPropertySheet.java:18)	Change visibility of Field "DLPropertySheet.comp" to private	DLPropertySheet.comp	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPropertySheet.frame(DLPropertySheet.java:19)	Change visibility of Field "DLPropertySheet.frame" to private	DLPropertySheet.frame	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRubanBeanInfo.<init>(DLRubanBeanInfo.java:8)	Class "DLRubanBeanInfo" has 0 references	DLRubanBeanInfo	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLHeart.DLHeart(DLHeart.java:15)	Change visibility of Constructor "DLHeart.DLHeart(DLHeart)" to private	DLHeart.DLHeart(DLHeart)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLHeart.DLHeart(DLHeart.java:20)	Constructor "DLHeart.DLHeart(int,int)" has 0 references	DLHeart.DLHeart(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLHeart.DLHeart(DLHeart.java:24)	Constructor "DLHeart.DLHeart(int,int,float)" has 0 references	DLHeart.DLHeart(int,int,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLHeart.s(DLHeart.java:13)	Change visibility of Field "DLHeart.s" to private	DLHeart.s	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLRenderer.<init>(DLRenderer.java:6)	Change visibility of Class "DLRenderer" to default - May cause compile errors!	DLRenderer	org.ucdetector.analyzeMarkerVisibilityDefault	
+com.mdu.DrawLine.DLVonKoch.DLVonKoch(DLVonKoch.java:22)	Constructor "DLVonKoch.DLVonKoch(int,int)" has 0 references	DLVonKoch.DLVonKoch(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLVonKoch.DLVonKoch(DLVonKoch.java:26)	Change visibility of Constructor "DLVonKoch.DLVonKoch(DLVonKoch)" to private	DLVonKoch.DLVonKoch(DLVonKoch)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLVonKoch.side(DLVonKoch.java:37)	Change visibility of Method "DLVonKoch.side(double,double,double,double,double[],*)" to private	DLVonKoch.side(double,double,double,double,double[],*)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLVonKoch.steps(DLVonKoch.java:16)	Change visibility of Field "DLVonKoch.steps" to private	DLVonKoch.steps	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLVonKoch.sides(DLVonKoch.java:17)	Change visibility of Field "DLVonKoch.sides" to private	DLVonKoch.sides	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLVonKoch.size(DLVonKoch.java:18)	Change visibility of Field "DLVonKoch.size" to private	DLVonKoch.size	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLVonKoch.alpha(DLVonKoch.java:19)	Change visibility of Field "DLVonKoch.alpha" to private	DLVonKoch.alpha	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLVonKoch.beta(DLVonKoch.java:20)	Change visibility of Field "DLVonKoch.beta" to private	DLVonKoch.beta	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLInteractor.<init>(DLInteractor.java:9)	Class "DLInteractor" has 0 references	DLInteractor	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLMouse.DLMouse(DLMouse.java:29)	Constructor "DLMouse.DLMouse(DrawLine,int)" has 0 references	DLMouse.DLMouse(DrawLine,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLMouse.lastX(DLMouse.java:18)	Change visibility of Field "DLMouse.lastX" to private	DLMouse.lastX	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLMouse.lastY(DLMouse.java:19)	Change visibility of Field "DLMouse.lastY" to private	DLMouse.lastY	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLMouse.e2(DLMouse.java:20)	Change visibility of Field "DLMouse.e2" to private	DLMouse.e2	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLMouse.key(DLMouse.java:21)	Change visibility of Field "DLMouse.key" to private	DLMouse.key	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLMouse.drawLine(DLMouse.java:22)	Change visibility of Field "DLMouse.drawLine" to private	DLMouse.drawLine	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPolyline2.<init>(DLPolyline2.java:14)	Class "DLPolyline2" has 0 references	DLPolyline2	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.TwoPlusTwo.<init>(TwoPlusTwo.java:5)	Class "TwoPlusTwo" has 0 references	TwoPlusTwo	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLLeaf.DLLeaf(DLLeaf.java:16)	Change visibility of Constructor "DLLeaf.DLLeaf(DLLeaf)" to private	DLLeaf.DLLeaf(DLLeaf)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLeaf.DLLeaf(DLLeaf.java:21)	Constructor "DLLeaf.DLLeaf(int,int)" has 0 references	DLLeaf.DLLeaf(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLLeaf.DLLeaf(DLLeaf.java:25)	Constructor "DLLeaf.DLLeaf(int,int,float,float)" has 0 references	DLLeaf.DLLeaf(int,int,float,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLLeaf.a(DLLeaf.java:13)	Change visibility of Field "DLLeaf.a" to private	DLLeaf.a	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLLeaf.scale(DLLeaf.java:14)	Change visibility of Field "DLLeaf.scale" to private	DLLeaf.scale	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPapillon.DLPapillon(DLPapillon.java:16)	Change visibility of Constructor "DLPapillon.DLPapillon(DLPapillon)" to private	DLPapillon.DLPapillon(DLPapillon)	org.ucdetector.analyzeMarkerVisibilityPrivate	
+com.mdu.DrawLine.DLPapillon.DLPapillon(DLPapillon.java:21)	Constructor "DLPapillon.DLPapillon(int,int)" has 0 references	DLPapillon.DLPapillon(int,int)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPapillon.DLPapillon(DLPapillon.java:25)	Constructor "DLPapillon.DLPapillon(int,int,float)" has 0 references	DLPapillon.DLPapillon(int,int,float)	org.ucdetector.analyzeMarkerReference	
+com.mdu.DrawLine.DLPapillon.scale(DLPapillon.java:14)	Change visibility of Field "DLPapillon.scale" to private	DLPapillon.scale	org.ucdetector.analyzeMarkerVisibilityPrivate	
