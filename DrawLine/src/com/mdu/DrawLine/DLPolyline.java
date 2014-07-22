@@ -124,6 +124,9 @@ class DLPolyline extends DLSegmentedComponent implements DLSegmented {
 
   void drawSegment(Graphics2D g, int i) {
 
+    if (i > points.size() || i < 1)
+      return;
+    
     DLPoint ls = points.get(i - 1);
     DLPoint s = points.get(i);
     double x = s.x;

@@ -42,7 +42,7 @@ abstract class DLSegmentedComponent extends DLComponent {
   
   public void drawLastSegment(Graphics g) {
     int sz = points.size();
-    if (sz > 1)
+    if (sz >= 1)
       drawSegment((Graphics2D) g, sz - 1);
   }
 

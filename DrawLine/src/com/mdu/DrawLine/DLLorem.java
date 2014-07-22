@@ -6,21 +6,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.event.MouseEvent;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
 
 class DLLorem extends DLSegmentedComponent implements DLSegmented {
 
@@ -92,7 +80,7 @@ class DLLorem extends DLSegmentedComponent implements DLSegmented {
       return false;
     for (int i = 0; i < points.size(); i++) {
       DLPoint pt = points.get(i);
-      if(pt.dlc != null && pt.dlc.hitTest(p))
+      if (pt.dlc != null && pt.dlc.hitTest(p))
         return true;
     }
     float d = DLUtil.MinDistance(points, p.x, p.y);
@@ -102,7 +90,7 @@ class DLLorem extends DLSegmentedComponent implements DLSegmented {
   }
 
   public void randomize() {
-//    setShadow(true);
+    // setShadow(true);
     color = DLUtil.RandomColor(0.0f, 1.0f, 0.6f, 0.9f, 0.8f, 1f);
   }
 
@@ -116,6 +104,8 @@ class DLLorem extends DLSegmentedComponent implements DLSegmented {
     if (p.dlc == null) {
       String s = DLUtil.lorem.substring(loremIndex, loremIndex + 1);
       loremIndex++;
+      if (loremIndex >= DLUtil.lorem.length())
+        loremIndex = 0;
       DLChar dlc = new DLChar((int) Math.floor(p.x), (int) Math.floor(p.y));
       dlc.randomize();
       dlc.text = s;
@@ -140,6 +130,8 @@ class DLLorem extends DLSegmentedComponent implements DLSegmented {
       if (p.dlc == null) {
         String s = DLUtil.lorem.substring(loremIndex, loremIndex + 1);
         loremIndex++;
+        if (loremIndex >= DLUtil.lorem.length())
+          loremIndex = 0;
         DLChar dlc = new DLChar((int) Math.floor(p.x), (int) Math.floor(p.y));
         dlc.randomize();
         dlc.text = s;

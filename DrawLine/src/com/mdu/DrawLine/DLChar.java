@@ -63,6 +63,7 @@ class DLChar extends DLCurve {
     GeneralPath s = null;
     BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = img.createGraphics();
+    DLUtil.SetHints(g);
     s = convert(g, text);
     transform(s);
     return s;

@@ -92,7 +92,7 @@ class DLRuban extends DLSegmentedComponent implements DLSegmented {
   }
 
   public void randomize() {
-    // setShadow(true);
+    setShadow(true);
     color = DLUtil.RandomColor(0.0f, 1.0f, 0.6f, 0.9f, 0.8f, 1f);
     float angle = (float) DLUtil.FloatRandom(0, (float) (Math.PI));
     brush = DLLineBrush.getBrush(DLUtil.FloatRandom(10f, 50f), angle);
@@ -116,7 +116,8 @@ class DLRuban extends DLSegmentedComponent implements DLSegmented {
   }
 
   void drawSegment(Graphics2D g, int i) {
-
+    if (i > points.size() || i < 1)
+      return;
     DLUtil.SetHints(g);
 
     DLPoint lp = points.get(i - 1);
