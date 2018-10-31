@@ -34,13 +34,14 @@ public class DLColorModel {
     validate();
   }
 
-  public void invert() {
+  public DLColorModel invert() {
     int len = _colors.length;
     for (int i = 0; i < len / 2; i++) {
       int temp = _colors[i];
       _colors[i] = _colors[len - 1 - i];
       _colors[len - 1 - i] = temp;
     }
+    return this;
   }
 
   public void shuffle() {

@@ -31,8 +31,8 @@ class DLPolygon extends DLCurve {
   }
 
   @Override
-  Path2D.Float path() {
-    Path2D.Float path = null;
+  DLPath path() {
+    DLPath path = null;
     final double a = 2 * Math.PI / sides;
 
     for (int i = 0; i < sides; i++) {

@@ -131,9 +131,9 @@ class DLLorenz extends DLCurve {
   }
 
   @Override
-  Path2D path() {
+  DLPath path() {
     DLPointList points = p2();
-    Path2D.Float p = null;
+    DLPath p = null;
     if (smooth)
       p = toSpline(points);
     else {

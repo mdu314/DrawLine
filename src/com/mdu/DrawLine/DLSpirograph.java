@@ -34,19 +34,18 @@ class DLSpirograph extends DLCurve {
   }
 
   @Override
-  Path2D path() {
+  DLPath path() {
     DLPointList points = new DLPointList();
     for (float t = 0; t < DLUtil.TWO_PI * tours; t += dt) {
       float x = S * ((1 - k) * Cos(t) + l * k * Cos((1 - k) * t / k));
       float y = S * ((1 - k) * Sin(t) - l * k * Sin((1 - k) * t / k));
       points.add(x, y);
     }
-    Path2D.Float p = null;
+    DLPath p = null;
     if (smooth)
       p = toSpline(points);
-    else {
+    else
       p = toPath(points);
-    }
     transform(p);
     return p;
   }

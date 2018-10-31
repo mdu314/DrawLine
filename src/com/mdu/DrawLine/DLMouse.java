@@ -3,7 +3,6 @@ package com.mdu.DrawLine;
 import static com.mdu.DrawLine.DLParams.DRAWING_STEP;
 import static java.lang.Integer.MAX_VALUE;
 
-import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -21,14 +20,14 @@ import java.util.ListIterator;
 import javax.swing.SwingUtilities;
 
 class DLMouse extends MouseAdapter implements MouseMotionListener {
-  DLComponentList components;
+  DLContainer con;
   int e2 = DRAWING_STEP * DRAWING_STEP;
   int key;
   KeyListener keyListener;
   int lastX = MAX_VALUE;
 
   int lastY = MAX_VALUE;
-  Component listenComponent;
+  DLContainer listenComponent;
   boolean listening = false;
   MouseListener mouseListener;
   MouseMotionListener mouseMotionListener;
@@ -41,12 +40,12 @@ class DLMouse extends MouseAdapter implements MouseMotionListener {
     this(null);
   }
 
-  DLMouse(DLComponentList dl) {
+  DLMouse(DLContainer dl) {
     super();
-    this.components = dl;
+    this.con = dl;
   }
 
-  DLMouse(DLComponentList dl, int e) {
+  DLMouse(DLContainer dl, int e) {
     this(dl);
     e2 = e * e;
   }
@@ -85,10 +84,10 @@ class DLMouse extends MouseAdapter implements MouseMotionListener {
   }
 
   DLComponentList hitTest(Point p, boolean boxOnly) {
-    if (components == null)
+    if (con.components == null)
       return null;
     DLComponentList hit = null;
-    final ListIterator<DLComponent> i = components.listIterator(components.size());
+    final ListIterator<DLComponent> i = con.components.listIterator(con.components.size());
 
     while (i.hasPrevious()) {
       final DLComponent dlc = i.previous();
@@ -126,7 +125,7 @@ class DLMouse extends MouseAdapter implements MouseMotionListener {
     listening = true;
   }
 
-  void listen(Component c) {
+  void listen(DLContainer c) {
     listenComponent = c;
 
     listening = true;
@@ -172,6 +171,7 @@ class DLMouse extends MouseAdapter implements MouseMotionListener {
       @Override
       public void mousePressed(MouseEvent e) {
         if (SwingUtilities.isRightMouseButton(e)) {
+          grabComponent = hit(e);
           if (grabComponent != null)
             grabComponent.mouse(e);
           else
@@ -232,10 +232,7 @@ class DLMouse extends MouseAdapter implements MouseMotionListener {
 
       @Override
       public void mouseMoved(MouseEvent e) {
-        //if (SwingUtilities.isRightMouseButton(e)) {
-          hit(e);
-          //return;
-//        }
+        hit(e);
         DLMouse.this.mouseMoved(e);
 
         final DLComponentList dlc = hitTest(e.getPoint(), true);

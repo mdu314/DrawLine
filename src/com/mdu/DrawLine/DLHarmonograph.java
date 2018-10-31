@@ -13,7 +13,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.Path2D;
 
 class DLHarmonograph extends DLCurve {
   float tours = 3f;
@@ -34,8 +33,12 @@ class DLHarmonograph extends DLCurve {
   float p2 = 1f;
   float p3 = 0.15f;
   float p4 = 0.3f;
-  float s = 20;
+  float scale = 20;
 
+  public DLHarmonograph() {
+    super();
+  }
+  
   public DLHarmonograph(DLHarmonograph l) {
     super(l);
   }
@@ -64,14 +67,14 @@ class DLHarmonograph extends DLCurve {
     for (float t = 0; t < tours * TWO_PI; t += dt) {
       float x = A1 * Sin(t * f1 + p1 * PI) * Exp(-d1 * t) + A2 * Sin(t * f2 + p2 * PI) * Exp(-d2 * t);
       float y = A3 * Sin(t * f3 + p3 * PI) * Exp(-d3 * t) + A4 * Sin(t * f4 + p4 * PI) * Exp(-d4 * t);
-      points.add(s * x, s * y);
+      points.add(scale * x, scale * y);
     }
     return points;
   }
 
-  Path2D path() {
+  DLPath path() {
     DLPointList points = p();
-    Path2D.Float p = null;
+    DLPath p = null;
     if (smooth)
       p = toSpline(points);
     else {
@@ -109,7 +112,7 @@ class DLHarmonograph extends DLCurve {
     d3 = RangeRandom(0, 0.1f);
     d4 = RangeRandom(0, 0.1f);
 
-    s = RangeRandom(7, 12f);
+    scale = RangeRandom(7, 12f);
 
     fill = null;
     if (stroke == null)
@@ -297,12 +300,12 @@ class DLHarmonograph extends DLCurve {
   }
 
   public float getS() {
-    return s;
+    return scale;
   }
 
   public void setS(float s) {
     Rectangle r = redisplayStart();
-    this.s = s;
+    this.scale = s;
     clear();
     redisplay(r);
   }
@@ -401,4 +404,21 @@ class DLHarmonograph extends DLCurve {
     return new float[] { -0.1f, 0.5f };
   }
 
+  Rectangle getBounds(boolean deco) {
+    Rectangle r = super.getBounds(deco);
+    DLUtil.expand(r, 0.5f);
+    return r;
+  }
+
+  public static void main(String[] a) {
+    Object[][] params = {
+        { "iwidth", 800 },
+        { "iheight", 400 },
+        { "x", 800 / 2 }, 
+        { "y", 400 / 2 },
+        { "threadSleep", 5 } 
+        };
+
+    DLMain.Main(DLHarmonograph.class, params);
+  }
 }

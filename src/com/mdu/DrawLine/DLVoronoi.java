@@ -23,7 +23,7 @@ import java.text.NumberFormat;
 import com.jhlabs.image.BoxBlurFilter;
 import com.jhlabs.image.EdgeFilter;
 
-public class DLVoronoi extends DLImage {
+public class DLVoronoi extends DLPointImage {
   Color background;
   int threadSleep = 10;
   DLPointList sites = new DLPointList();
@@ -625,4 +625,25 @@ public class DLVoronoi extends DLImage {
     this.flatVoronoi = v;
   }
 
+  public static void main(String[] a) {
+    int w = 600;
+    int h = 600;
+    Object[][] params = {
+      {
+        "iwidth", w
+      }, {
+        "iheight", h
+      }, {
+        "x", w / 2
+      }, {
+        "y", h / 2
+      }, {
+        "threadSleep", 5
+      }, {
+        "backgroundColor", new Color(53, 53, 20).brighter().brighter().brighter()
+      }
+    };
+    Class<? extends DLComponent> cls = DLVoronoi.class;
+    DLMain.Main(cls, params);
+  }
 }

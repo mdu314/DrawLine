@@ -1,22 +1,25 @@
 package com.mdu.DrawLine;
 
+import static java.awt.event.MouseEvent.BUTTON1;
+
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
-public class DLMandelbrot extends DLImage{
+public class DLMandelbrot extends DLPointImage {
   boolean paintOutside = true;
   boolean paintInside = true;
   Point lastMousePoint = null;
@@ -61,10 +64,11 @@ public class DLMandelbrot extends DLImage{
     super.paint(gr, deco);
     if (translateImage != null) {
       Rectangle r = getBounds(false);
-      Shape c = gr.getClip();
+//      Shape c = gr.getClip();
       gr.setClip(r);
       gr.drawImage(translateImage, (int) x - iwidth / 2 + currentDx, (int) y - iheight / 2 + currentDy, null);
-      gr.setClip(c);
+//      gr.setClip(c);
+      gr.setClip(null);
     }
   }
 
@@ -115,7 +119,7 @@ public class DLMandelbrot extends DLImage{
           float s = (float) stop;
           int color = model.getColor(s);
           Color c = new Color(color);
-          //          g.setColor(c);
+          // g.setColor(c);
           setPointFill(c);
           drawPoint(g, x, y);
         }
@@ -124,7 +128,7 @@ public class DLMandelbrot extends DLImage{
         final float s = (float) stop;
         final int color = model.getColor(s);
         Color c = new Color(color);
-        //        g.setColor(c);
+        // g.setColor(c);
         setPointFill(c);
         drawPoint(g, x, y);
       }
@@ -210,7 +214,7 @@ public class DLMandelbrot extends DLImage{
       return true;
     case MouseEvent.MOUSE_PRESSED:
       lastMousePoint = e.getPoint();
-      translateImage = DLUtil.copyImage(image);
+      translateImage = DLUtil.copy(image, null);
       currentDx = 0;
       currentDy = 0;
       return true;
@@ -306,4 +310,57 @@ public class DLMandelbrot extends DLImage{
     runThreaded();
   }
 
+  public static void main(String[] a) {
+    final JFrame frame = new JFrame();
+    final DLContainer panel = new DLContainer();
+    panel.setFocusable(true);
+    panel.setBackground(new Color(0x0c0c0c));
+    frame.getContentPane().add(panel, BorderLayout.CENTER);
+    frame.setFocusable(true);
+    int width = 400;
+    int height = 300;
+    frame.setSize(width, height);
+    final DLMandelbrot dlg = new DLMandelbrot(width / 2, height / 2);
+    dlg.iwidth = width;
+    dlg.iheight = height;
+    panel.addComponent(dlg);
+
+    DLMouse mouse = new DLMouse(panel) {
+      @Override
+      public void mouseWheelMoved(MouseWheelEvent e) {
+        super.mouseWheelMoved(e);
+        final MouseWheelEvent mwe = (MouseWheelEvent) e;
+        float x = e.getX() - (dlg.x - dlg.iwidth / 2);
+        float y = e.getY() - (dlg.y - dlg.iheight / 2);
+        final int d = mwe.getWheelRotation();
+        dlg.zoom(x, y, d);
+      }
+
+      public void mouseClicked(MouseEvent e) {
+        switch (e.getButton()) {
+        case BUTTON1:
+          if (panel.ps != null)
+            panel.ps.close();
+          panel.ps = new DLPropertySheet(dlg);
+          break;
+        }
+      }
+    };
+    mouse.listen(panel);
+
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        final Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        final int w = frame.getSize().width;
+        final int h = frame.getSize().height;
+        final int x = (dim.width - w) / 2;
+        final int y = (dim.height - h) / 2;
+        // Move the window
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocation(x, y);
+        frame.setVisible(true);
+      }
+    });
+  }
 }

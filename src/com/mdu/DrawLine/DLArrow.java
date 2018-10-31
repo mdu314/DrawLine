@@ -1,7 +1,6 @@
 package com.mdu.DrawLine;
 
 import java.awt.Rectangle;
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 
 class DLArrow extends DLCurve {
@@ -11,6 +10,7 @@ class DLArrow extends DLCurve {
   Point2D.Float p4 = new Point2D.Float(15, 10);
   Point2D.Float p5 = new Point2D.Float(30, 0);
   float off = 10;
+  float scale = 2;
 
   public Point2D.Float getP1() {
     return p1;
@@ -118,20 +118,20 @@ class DLArrow extends DLCurve {
   }
 
   @Override
-  Path2D.Float path() {
-    Path2D.Float p = new Path2D.Float();
+  DLPath path() {
+    DLPath p = new DLPath();
 
-    p = DLUtil.AddPoint(p1, p);
-    p = DLUtil.AddPoint(p2, p);
-    p = DLUtil.AddPoint(p3, p);
-    p = DLUtil.AddPoint(p4, p);
-    p = DLUtil.AddPoint(p5, p);
+    p = DLUtil.AddPoint(p1, scale, p);
+    p = DLUtil.AddPoint(p2, scale, p);
+    p = DLUtil.AddPoint(p3, scale, p);
+    p = DLUtil.AddPoint(p4, scale, p);
+    p = DLUtil.AddPoint(p5, scale, p);
 
-    p = DLUtil.AddPoint(p5.x, -p5.y, p);
-    p = DLUtil.AddPoint(p4.x, -p4.y, p);
-    p = DLUtil.AddPoint(p3.x, -p3.y, p);
-    p = DLUtil.AddPoint(p2.x, -p2.y, p);
-    p = DLUtil.AddPoint(p1.x, -p1.y, p);
+    p = DLUtil.AddPoint(p5.x, -p5.y, scale, p);
+    p = DLUtil.AddPoint(p4.x, -p4.y, scale, p);
+    p = DLUtil.AddPoint(p3.x, -p3.y, scale, p);
+    p = DLUtil.AddPoint(p2.x, -p2.y, scale, p);
+    p = DLUtil.AddPoint(p1.x, -p1.y, scale, p);
 
     p.closePath();
 

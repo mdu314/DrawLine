@@ -21,6 +21,10 @@ abstract class DLSegmentedComponent extends DLComponent implements DLSegmented {
     super(x, y);
   }
 
+  public void reset() {
+    
+  }
+  
   @Override
   public void addSegment(float x, float y, long when) {
     final DLPoint s = new DLPoint(x, y, when);

@@ -47,8 +47,8 @@ public class DLDragon extends DLCurve {
   }
 
   @Override
-  Path2D.Float path() {
-    Path2D.Float p = null;
+  DLPath path() {
+    DLPath p = null;
 
     final List<Integer> turns = getSequence();
     final double startingAngle = -iter * (Math.PI / 4);

@@ -1,16 +1,18 @@
 package com.mdu.DrawLine;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
+import java.awt.Paint;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
@@ -22,6 +24,35 @@ import java.util.HashMap;
 import com.jhlabs.image.BoxBlurFilter;
 
 public class DLParticle extends DLImage {
+  boolean fastTail = false;
+  boolean useD2 = false;
+  float collisionFactor = 2;
+  int threadSleep = 10;
+  int linkFactor = 3000;
+  boolean fps = false;
+  float referenceMass = 500;
+  boolean blurFilter = false;
+  int pixelSize = 2;
+  float G = 9.81f;
+  float forceRange = 1000;
+  boolean field = false;
+  float deltaT = 2f;
+  ArrayList<Boum> boums = new ArrayList<Boum>();
+  ArrayList<Particle> particles = new ArrayList<Particle>();
+  float boumIncrement = 1;
+  boolean paintTrajectories = true;
+  boolean paintLinks = true;
+  boolean paintVelocity = true;
+  boolean paintForce = true;
+  boolean paintParticles = true;
+  int numParticles = 20;
+  float minRadius = 1;
+  float maxRadius = 7;
+  float minDisplaySpeed = -20;
+  float maxDisplaySpeed = 20;
+  float minDisplayForce = -20;
+  float maxDisplayForce = 20;
+  int maxTrajectoryPoints = 10;
 
   public DLParticle() {
     super();
@@ -45,14 +76,12 @@ public class DLParticle extends DLImage {
 
   void initMenuComponent() {
     float s = DLParams.MENU_ITEM_SIZE;
-    int is = (int) (s + 0.5);
+    int is = (int) (s + 0.5f);
     DLTexture dlt = new DLTexture(s / 2, s / 2, is, is);
     dlt.imageResource = "images/30x30.png";
     dlt.image = dlt.image();
     menuComponent = dlt;
-}
-
-  boolean useD2 = false;
+  }
 
   public boolean getUseD2() {
     return useD2;
@@ -61,10 +90,6 @@ public class DLParticle extends DLImage {
   public void setUseD2(boolean useD2) {
     this.useD2 = useD2;
   }
-
-  int collisionFactor = 2;
-
-  int threadSleep = 10;
 
   public int getThreadSleep() {
     return threadSleep;
@@ -75,10 +100,10 @@ public class DLParticle extends DLImage {
   }
 
   public int[] rangeThreadSleep() {
-    return new int[] { 0, 1000 };
+    return new int[] {
+        0, 1000
+    };
   }
-
-  int linkFactor = 200000;
 
   public int getLinkFactor() {
     return linkFactor;
@@ -89,10 +114,10 @@ public class DLParticle extends DLImage {
   }
 
   public int[] rangeLinkFactor() {
-    return new int[] { 1000, 500000 };
+    return new int[] {
+        1000, 500000
+    };
   }
-
-  boolean fps = false;
 
   public boolean getFps() {
     return fps;
@@ -101,18 +126,6 @@ public class DLParticle extends DLImage {
   public void setFps(boolean fps) {
     this.fps = fps;
   }
-
-  boolean displayParticles = true;
-
-  public boolean getDisplayParticles() {
-    return displayParticles;
-  }
-
-  public void setDisplayParticles(boolean displayParticles) {
-    this.displayParticles = displayParticles;
-  }
-
-  float referenceMass = 500;
 
   public float getReferenceMass() {
     return referenceMass;
@@ -123,10 +136,10 @@ public class DLParticle extends DLImage {
   }
 
   public float[] rangeReferenceMass() {
-    return new float[] { 1, 1000 };
+    return new float[] {
+        1, 1000
+    };
   }
-
-  boolean blurFilter = false;
 
   public boolean getBlurFilter() {
     return blurFilter;
@@ -136,25 +149,19 @@ public class DLParticle extends DLImage {
     this.blurFilter = blurFilter;
   }
 
-  int pixelSize = 2;
-  int iIncr = pixelSize;
-  int jIncr = pixelSize;
-
   public int getPixelSize() {
     return pixelSize;
   }
 
   public void setPixelSize(int pixelSize) {
     this.pixelSize = pixelSize;
-    iIncr = pixelSize;
-    jIncr = pixelSize;
   }
 
   public int[] rangePixelSize() {
-    return new int[] { 1, 10 };
+    return new int[] {
+        1, 10
+    };
   }
-
-  float forceRange = 1000;
 
   public float getForceRange() {
     return forceRange;
@@ -165,10 +172,10 @@ public class DLParticle extends DLImage {
   }
 
   public float[] rangeForceRange() {
-    return new float[] { 1, 2000 };
+    return new float[] {
+        1, 2000
+    };
   }
-
-  boolean field = false;
 
   public boolean getField() {
     return field;
@@ -177,8 +184,6 @@ public class DLParticle extends DLImage {
   public void setField(boolean field) {
     this.field = field;
   }
-
-  float G = 9.81f;
 
   public float getG() {
     return G;
@@ -189,23 +194,10 @@ public class DLParticle extends DLImage {
   }
 
   public float[] rangeG() {
-    return new float[] { 0.1f, 100 };
+    return new float[] {
+        0.1f, 100
+    };
   }
-
-  float deltaT = 0.2f;
-  ArrayList<Boum> boums = new ArrayList<Boum>();
-  ArrayList<Particle> particles = new ArrayList<Particle>();
-  float boumIncrement = 3;
-  boolean trajectories = false;
-  int numParticles = 20;
-
-  float minRadius = 10;
-  float maxRadius = 100;
-  float minDisplaySpeed = -40;
-  float maxDisplaySpeed = 40;
-  float minDisplayForce = -30;
-  float maxDisplayForce = 30;
-  int maxTrajectoryPoints = 10;
 
   public int getMaxTrajectoryPoints() {
     return maxTrajectoryPoints;
@@ -216,7 +208,9 @@ public class DLParticle extends DLImage {
   }
 
   public int[] rangeTrajectoryPoints() {
-    return new int[] { 2, 100 };
+    return new int[] {
+        2, 100
+    };
   }
 
   public float getBoumIncrement() {
@@ -228,7 +222,9 @@ public class DLParticle extends DLImage {
   }
 
   public float[] rangeBoumIncrement() {
-    return new float[] { 1, 10 };
+    return new float[] {
+        1, 10
+    };
   }
 
   public int getNumParticles() {
@@ -247,31 +243,25 @@ public class DLParticle extends DLImage {
   }
 
   public int[] rangeNumParticles() {
-    return new int[] { 1, 100 };
+    return new int[] {
+        1, 100
+    };
   }
 
   public boolean getPaintTrajectories() {
-    return trajectories;
+    return paintTrajectories;
   }
 
   public void setPaintTrajectories(boolean paintTrajectories) {
-    this.trajectories = paintTrajectories;
+    this.paintTrajectories = paintTrajectories;
     cleanTrajectories();
   }
 
   void cleanTrajectories() {
-    if (trajectories) {
-      synchronized (particles) {
-        for (Particle p : particles) {
-          p.trajectories = true;
-        }
-      }
-    } else {
-      synchronized (particles) {
-        for (Particle p : particles) {
-          p.trajectory = null;
-          p.trajectories = false;
-        }
+    synchronized (particles) {
+      for (Particle p : particles) {
+        p.trajectory = null;
+        p.paintTrajectories = paintTrajectories;
       }
     }
   }
@@ -285,7 +275,23 @@ public class DLParticle extends DLImage {
   }
 
   public float[] rangeDeltaT() {
-    return new float[] { 0.01f, 50 };
+    return new float[] {
+        0.01f, 50
+    };
+  }
+
+  public void setCollisionFactor(float cf) {
+    collisionFactor = cf;
+  }
+
+  public float getCollisionFactor() {
+    return collisionFactor;
+  }
+
+  public float[] rangeCollisionFactor() {
+    return new float[] {
+        1f, 100f
+    };
   }
 
   public void paint(Graphics gr, boolean deco) {
@@ -294,6 +300,7 @@ public class DLParticle extends DLImage {
     paintParticles();
     paintBoums();
     cleanBoums();
+    paintBorder();
   }
 
   public void f(Graphics2D g) {
@@ -312,10 +319,11 @@ public class DLParticle extends DLImage {
       clearImage();
       if (step(g, t))
         break;
-      clearShadow();
+
+      paintTrajectories(g);
       paintParticles(g);
       paintBoums(g);
-      paintTrajectories(g);
+      paintBorder(g);
       cleanBoums();
 
       if (fps)
@@ -335,14 +343,30 @@ public class DLParticle extends DLImage {
   }
 
   float cmf = 50;
-  DLColorModel colorModel1 = new DLColorModel("model1", new int[] { 0xff0000, 0xffff00, 0xffffff }, new float[] { 2000,
-      1000, 0 });
-  DLColorModel colorModel2 = new DLColorModel("model2", new int[] { (int) (0xfff000 * cmf), (int) (0x0ffff0 * cmf),
-      (int) (0x00ffff * cmf) }, new float[] { 2000, 1000, 0 });
-  DLColorModel colorModel3 = new DLColorModel("model3", new int[] { 0x000fff, 0x0ffff0, 0xfff000 }, new float[] { 2000,
-      1000, 0 });
-  DLColorModel colorModel4 = new DLColorModel("model4", new int[] { 0xfff000, 0x0ffff0, 0x000fff }, new float[] { 2000,
-      1000, 0 });
+  DLColorModel colorModel1 = new DLColorModel("model1", new int[] {
+      0xff0000, 0xffff00, 0xffffff
+  }, new float[] {
+      2000,
+      1000, 0
+  });
+  DLColorModel colorModel2 = new DLColorModel("model2", new int[] {
+      (int) (0xfff000 * cmf), (int) (0x0ffff0 * cmf),
+      (int) (0x00ffff * cmf)
+  }, new float[] {
+      2000, 1000, 0
+  });
+  DLColorModel colorModel3 = new DLColorModel("model3", new int[] {
+      0x000fff, 0x0ffff0, 0xfff000
+  }, new float[] {
+      2000,
+      1000, 0
+  });
+  DLColorModel colorModel4 = new DLColorModel("model4", new int[] {
+      0xfff000, 0x0ffff0, 0x000fff
+  }, new float[] {
+      2000,
+      1000, 0
+  });
 
   DLColorModel colorModel = colorModel3;
 
@@ -355,20 +379,22 @@ public class DLParticle extends DLImage {
   }
 
   public DLColorModel[] enumFieldColorModel() {
-    return new DLColorModel[] { colorModel1, colorModel2, colorModel3, colorModel4 };
+    return new DLColorModel[] {
+        colorModel1, colorModel2, colorModel3, colorModel4
+    };
   }
 
   void field(Graphics2D g, DLThread t) {
     try {
-      for (int i = 0; i < iwidth; i += iIncr) {
-        for (int j = 0; j < iheight; j += jIncr) {
+      for (int i = 0; i < iwidth; i += pixelSize) {
+        for (int j = 0; j < iheight; j += pixelSize) {
           if (t != null && t.isStopped())
             return;
           float fx = 0;
           float fy = 0;
           float x = DLUtil.Normalize(minPosX, maxPosX, 0, iwidth, i);
           float y = DLUtil.Normalize(minPosY, maxPosY, 0, iheight, j);
-          Particle p1 = new Particle(this, x, y, 10 * referenceMass / G, 0, 0, 1, null);
+          Particle p1 = new Particle(this, x, y, 10 * referenceMass / G, 0, 0, 1, 5, null);
           for (Particle p : particles) {
             if (t != null && t.isStopped())
               return;
@@ -378,8 +404,8 @@ public class DLParticle extends DLImage {
             // float d = (float) Math.sqrt(d2);
             float f;
             float d = DLUtil.FastSqrt(d2);
-            if (this.useD2) {
-              f = G * p1.mass * p.mass / d2; 
+            if (useD2) {
+              f = G * p1.mass * p.mass / d2;
             } else {
               f = G * p1.mass * p.mass / d; // Should be d2
             }
@@ -396,15 +422,15 @@ public class DLParticle extends DLImage {
 
           Color c = new Color(iv); // , iv / 10, iv / 20);
           g.setColor(c);
-          g.fillRect(i, j, iIncr, jIncr);
+          g.fillRect(i, j, pixelSize, pixelSize);
           if (t != null && t.isStopped())
             return;
         }
       }
       if (blurFilter) {
         BoxBlurFilter bf = new BoxBlurFilter();
-        bf.setHRadius(iIncr);
-        bf.setVRadius(jIncr);
+        bf.setHRadius(pixelSize);
+        bf.setVRadius(pixelSize);
         bf.setIterations(1);
         image = bf.filter(image, image);
       }
@@ -417,6 +443,8 @@ public class DLParticle extends DLImage {
   BufferedImage image() {
     final BufferedImage img = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
     final Graphics2D g = img.createGraphics();
+    
+    DLUtil.SetDefaults(g);
     DLUtil.SetHints(g);
 
     if (threaded)
@@ -449,10 +477,6 @@ public class DLParticle extends DLImage {
   boolean step(Graphics2D g, DLThread t) {
     synchronized (particles) {
       try {
-        //        for(int i = 0; i < particles.size(); i++) {
-        //          Particle p1 = particles.get(i);
-        //        for(int j = i + 1; j < particles.size(); j++) {
-        //          Particle p2 = particles.get(j);
 
         for (Particle p1 : particles) {
           p1.fx = 0;
@@ -467,23 +491,19 @@ public class DLParticle extends DLImage {
               return true;
             float dx = p2.getX() - p1.getX();
             float dy = p2.getY() - p1.getY();
-            //            float adx = dx > 0 ? dx : -dx;
-            //            float ady = dy > 0 ? dy : -dy;
 
             float d2 = dx * dx + dy * dy;
 
-            float d = DLUtil.FastSqrt(d2);
+            float d = useD2 ? d2 : DLUtil.FastSqrt(d2);
             float r = collisionFactor * (p1.radius + p2.radius);
             if (d < r) {
               Boum b = boum(p1, p2);
-              //System.err.println("Boum");
               synchronized (boums) {
                 boums.add(b);
               }
             }
 
             if (d < (linkFactor)) {
-              // System.err.println(linkFactor * r);              
               link(p1, p2, d);
             }
 
@@ -587,7 +607,9 @@ public class DLParticle extends DLImage {
   }
 
   public String[] enumMode() {
-    return new String[] { BOUNCE, TORIC, NONE };
+    return new String[] {
+        BOUNCE, TORIC, NONE
+    };
   }
 
   public void randomize() {
@@ -607,6 +629,9 @@ public class DLParticle extends DLImage {
   float minPosY = -100000;
   float maxPosY = 100000;
 
+  int minSides = 4;
+  int maxSides = 9;
+
   public float getMinPosX() {
     return minPosX;
   }
@@ -616,7 +641,9 @@ public class DLParticle extends DLImage {
   }
 
   public float[] rangeMinPosX() {
-    return new float[] { -1000000, 0 };
+    return new float[] {
+        -1000000, 0
+    };
   }
 
   public float getMaxPosX() {
@@ -628,7 +655,9 @@ public class DLParticle extends DLImage {
   }
 
   public float[] rangeMaxPosX() {
-    return new float[] { 0, 1000000 };
+    return new float[] {
+        0, 1000000
+    };
   }
 
   public float getMinPosY() {
@@ -640,7 +669,9 @@ public class DLParticle extends DLImage {
   }
 
   public float[] rangeMinPosY() {
-    return new float[] { -1000000, 0 };
+    return new float[] {
+        -1000000, 0
+    };
   }
 
   public float getMaxPosY() {
@@ -652,7 +683,9 @@ public class DLParticle extends DLImage {
   }
 
   public float[] rangeMaxPosY() {
-    return new float[] { 0, 1000000 };
+    return new float[] {
+        0, 1000000
+    };
   }
 
   void initParticles() {
@@ -663,10 +696,33 @@ public class DLParticle extends DLImage {
       float radius = DLUtil.RangeRandom(minRadius, maxRadius);
       float x = DLUtil.RangeRandom(minPosX, maxPosX);
       float y = DLUtil.RangeRandom(minPosY, maxPosY);
-      Color color = DLUtil.RandomColor(0f, 1f, 0.5f, 1f, 0.6f, 1f);
-      Particle p = new Particle(this, x, y, mass, vx, vy, radius, color);
+      int sides = DLUtil.RangeRandom(minSides, maxSides);
+      Color color = DLUtil.RandomColor(0f, 1f, 0.7f, 1f, 0.8f, 1f);
+      Particle p = new Particle(this, x, y, mass, vx, vy, radius, sides, color);
       particles.add(p);
     }
+  }
+
+  void paintBorder() {
+    paintBorder(image.createGraphics());
+  }
+
+  void paintBorder(Graphics2D g) {
+    // Border b = BorderFactory.createBevelBorder(BevelBorder.RAISED);
+    // b.paintBorder(parent, g, 0, 0, iwidth, iheight);
+    Paint paint = new LinearGradientPaint(0, 0, iwidth, iheight, new float[] {
+        0, 0.15f, 0.5f, 0.85f, 1f
+    },
+        new Color[] {
+            Color.black, Color.white, Color.darkGray, Color.lightGray, Color.black
+        });
+    g.setPaint(paint);
+    Shape s = DLUtil.Rectangle(iwidth / 2f, iheight / 2f, iwidth - 1f, iheight - 1f);
+    Stroke str = g.getStroke();
+    g.setStroke(new BasicStroke(3));
+    s = str.createStrokedShape(s);
+    g.draw(s);
+    g.setStroke(str);
   }
 
   void paintFps(Graphics2D g, long frameTime) {
@@ -693,40 +749,69 @@ public class DLParticle extends DLImage {
   }
 
   void paintTrajectories(Graphics2D g) {
-    if (trajectories)
+    if (paintTrajectories)
       for (Particle p : particles)
         paintTrajectory(g, p);
   }
 
   void paintTrajectory(Graphics2D g, Particle part) {
-    Color c = part.color;
-    c = new Color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha() / 3);
-    g.setColor(c);
-    Path2D.Float path = new Path2D.Float();
-    if (part.trajectory != null)
-      synchronized (part.trajectory) {
-        for (DLPoint p : part.trajectory) {
-          float x = DLUtil.Normalize(0, iwidth, minPosX, maxPosX, p.x);
-          float y = DLUtil.Normalize(0, iheight, minPosY, maxPosY, p.y);
-          float dx2 = iwidth;
-          float dy2 = iheight;
-          float d = dx2 * dx2 + dy2 * dy2;
-          path = DLUtil.AddPoint(x, y, path, 25, d / 4);
+    if (fastTail) {
+      Color c = part.color;
+      c = new Color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha() / 3);
+      g.setColor(c);
+      DLPath path = new DLPath();
+      if (part.trajectory != null) {
+        synchronized (part.trajectory) {
+          for (DLPoint p : part.trajectory) {
+            float x = DLUtil.Normalize(0, iwidth, minPosX, maxPosX, p.x);
+            float y = DLUtil.Normalize(0, iheight, minPosY, maxPosY, p.y);
+            path = DLUtil.AddPoint(x, y, path);
+          }
         }
       }
-    g.draw(path);
+      g.draw(path);
+    } else {
+      if (part.trajectory != null) {
+        float ih2 = DLUtil.Min(iwidth * iwidth, iheight * iheight);
+        synchronized (part.trajectory) {
+          DLPoint lp = new DLPoint(part.getX(), part.getY());
+          for (int i = 0; i < part.trajectory.size(); i++) {
+            DLPoint p = part.trajectory.get(i);
+
+            float px = DLUtil.Normalize(0, iwidth, minPosX, maxPosX, p.x);
+            float py = DLUtil.Normalize(0, iheight, minPosY, maxPosY, p.y);
+
+            float lpx = DLUtil.Normalize(0, iwidth, minPosX, maxPosX, lp.x);
+            float lpy = DLUtil.Normalize(0, iheight, minPosY, maxPosY, lp.y);
+
+            float dx = lpx - px;
+            float dy = lpy - py;
+            float d2 = dx * dx + dy * dy;
+
+            if (d2 < ih2 / 2) {
+              Line2D.Float l = new Line2D.Float(lpx, lpy, px, py);
+              Color c = part.color;
+              int tr = DLUtil.Normalize(0, 255, 0, part.trajectory.size(), i);
+              c = new Color(c.getRed(), c.getGreen(), c.getBlue(), tr);
+              g.setColor(c);
+              g.draw(l);
+            }
+            lp = p;
+          }
+        }
+      }
+    }
   }
 
-  void paintP(Graphics2D g, Particle p, float x, float y) {
-    float w = DLUtil.fastLog(p.mass) / DLUtil.Log3;
-    Shape pe = DLUtil.Polygon(x, y, 5, w, DLUtil.RangeRandom(0, DLUtil.TWO_PI));
+  void paintParticles(Graphics2D g, Particle p, float x, float y) {
+    Shape pe = p.getShape(x, y);
     g.setColor(DLUtil.BrighterColor(p.color, 0.8));
     g.fill(pe);
     g.setColor(DLUtil.BrighterColor(p.color, 1.2));
     g.draw(pe);
   }
 
-  void paintV(Graphics2D g, Particle p, float x, float y) {
+  void paintVelocity(Graphics2D g, Particle p, float x, float y) {
     float vx = DLUtil.Normalize(minDisplaySpeed, maxDisplaySpeed, minSpeed, maxSpeed, p.vx);
     float nx = x + vx;
     float vy = DLUtil.Normalize(minDisplaySpeed, maxDisplaySpeed, minSpeed, maxSpeed, p.vy);
@@ -736,7 +821,7 @@ public class DLParticle extends DLImage {
     Point2D.Float p1 = new Point2D.Float(x, y);
     Point2D.Float p2 = new Point2D.Float(nx, ny);
     Point2D.Float[] r = DLUtil.orthopoints(p1, p2, 8, 3);
-    Path2D.Float pe1 = new Path2D.Float();
+    DLPath pe1 = new DLPath();
     pe1.moveTo(r[0].x, r[0].y);
     pe1.lineTo(nx, ny);
     pe1.lineTo(r[1].x, r[1].y);
@@ -747,7 +832,7 @@ public class DLParticle extends DLImage {
     g.fill(pe1);
   }
 
-  void paintF(Graphics2D g, Particle p, float x, float y) {
+  void paintForce(Graphics2D g, Particle p, float x, float y) {
     float fx = DLUtil.Normalize(minDisplayForce, maxDisplayForce, minForce, maxForce, p.fx);
     float nx = x + (10 * fx) / G;
     float fy = DLUtil.Normalize(minDisplayForce, maxDisplayForce, minForce, maxForce, p.fy);
@@ -759,7 +844,7 @@ public class DLParticle extends DLImage {
     float dy = ny - y;
     float d2 = dx * dx + dy * dy;
     float d = DLUtil.FastSqrt(d2);
-    float s = d != 0 ? DLUtil.fastLog(d) / DLUtil.Log2 : 1;
+    float s = d != 0 ? DLUtil.FastLog(d) / DLUtil.Log2 : 1;
 
     Shape fe = DLUtil.Polygon(nx, ny, 3, s, DLUtil.RangeRandom(0, DLUtil.TWO_PI));
 
@@ -795,7 +880,9 @@ public class DLParticle extends DLImage {
   }
 
   public String[] enumLinkType() {
-    return new String[] { LinkDoubleCurve, LinkDoublePolyline, LinkPolyline, LinkLine };
+    return new String[] {
+        LinkDoubleCurve, LinkDoublePolyline, LinkPolyline, LinkLine
+    };
   }
 
   public int getElectricCount() {
@@ -807,7 +894,9 @@ public class DLParticle extends DLImage {
   }
 
   public int[] rangeElectricCount() {
-    return new int[] { 1, 5 };
+    return new int[] {
+        1, 5
+    };
   }
 
   public float getElectricMove() {
@@ -819,7 +908,9 @@ public class DLParticle extends DLImage {
   }
 
   public float[] rangeElectricMove() {
-    return new float[] { 0, 50 };
+    return new float[] {
+        0, 50
+    };
   }
 
   public int getElectricPoints() {
@@ -831,7 +922,9 @@ public class DLParticle extends DLImage {
   }
 
   public int[] rangeElectricPoints() {
-    return new int[] { 2, 50 };
+    return new int[] {
+        2, 50
+    };
   }
 
   public String getElectricStyle() {
@@ -843,7 +936,9 @@ public class DLParticle extends DLImage {
   }
 
   public String[] enumElectricStyle() {
-    return new String[] { ElectricStyleOne, ElectricStyleTwo, ElectricStyleThree, ElectricStyleFour };
+    return new String[] {
+        ElectricStyleOne, ElectricStyleTwo, ElectricStyleThree, ElectricStyleFour
+    };
   }
 
   int electricCount = 1;
@@ -866,20 +961,24 @@ public class DLParticle extends DLImage {
     float py = l.getY();
     float ly = DLUtil.Normalize(0, iheight, minPosY, maxPosY, py);
 
-    float rp = DLUtil.fastLog(p.mass) / DLUtil.Log3;
-    float rl = DLUtil.fastLog(l.mass) / DLUtil.Log3;
+    float rp = DLUtil.FastLog(p.mass) / DLUtil.Log3;
+    float rl = DLUtil.FastLog(l.mass) / DLUtil.Log3;
 
     float dx = lx - x;
     float dy = ly - y;
     float ld = DLUtil.FastSqrt((float) (dx * dx + dy * dy));
 
-    //    path1.moveTo(start[0].x, start[0].y);
+    // path1.moveTo(start[0].x, start[0].y);
     if (LinkDoubleCurve.equals(linkType)) {
-      Path2D.Float path1 = new Path2D.Float();
-      Path2D.Float path2 = new Path2D.Float();
+      DLPath path1 = new DLPath();
+      DLPath path2 = new DLPath();
 
       Point2D.Float start[] = DLUtil.orthopoints(lx, ly, x, y, 0, rp);
-      Point2D.Float mid[] = DLUtil.orthopoints(lx, ly, x, y, ld / 2, 2 /*-5*/); //(r1 + r2) / 4);
+      Point2D.Float mid[] = DLUtil.orthopoints(lx, ly, x, y, ld / 2, 2 /*-5*/); // (r1
+                                                                                // +
+                                                                                // r2)
+                                                                                // /
+                                                                                // 4);
       Point2D.Float end[] = DLUtil.orthopoints(lx, ly, x, y, ld, rl);
 
       path1.moveTo(start[1].x, start[1].y);
@@ -897,11 +996,15 @@ public class DLParticle extends DLImage {
       g.draw(path2);
 
     } else if (LinkDoublePolyline.equals(linkType)) {
-      Path2D.Float path1 = new Path2D.Float();
-      Path2D.Float path2 = new Path2D.Float();
+      DLPath path1 = new DLPath();
+      DLPath path2 = new DLPath();
 
       Point2D.Float start[] = DLUtil.orthopoints(lx, ly, x, y, 0, rp);
-      Point2D.Float mid[] = DLUtil.orthopoints(lx, ly, x, y, ld / 2, 2 /*-5*/); //(r1 + r2) / 4);
+      Point2D.Float mid[] = DLUtil.orthopoints(lx, ly, x, y, ld / 2, 2 /*-5*/); // (r1
+                                                                                // +
+                                                                                // r2)
+                                                                                // /
+                                                                                // 4);
       Point2D.Float end[] = DLUtil.orthopoints(lx, ly, x, y, ld, rl);
 
       path1.moveTo(start[1].x, start[1].y);
@@ -916,7 +1019,7 @@ public class DLParticle extends DLImage {
       g.draw(path1);
       g.draw(path2);
     } else if (LinkLine.equals(linkType)) {
-      Path2D.Float path = new Path2D.Float();
+      DLPath path = new DLPath();
       path.moveTo(lx, ly);
       path.lineTo(x, y);
       Color pc = p.color;
@@ -925,7 +1028,7 @@ public class DLParticle extends DLImage {
       g.draw(path);
     } else if (LinkPolyline.equals(linkType)) {
 
-      Path2D.Float path = new Path2D.Float();
+      DLPath path = new DLPath();
       int count = electricCount;
 
       while (count-- > 0) {
@@ -973,7 +1076,6 @@ public class DLParticle extends DLImage {
           float k = (i - np / 2);
           k = k > 0 ? k : -k;
           float f = 2 * (np - k) / np - 1;
-          //          System.err.println(i + " " + f);
           float ef = electricMove * f;
           float r = DLUtil.RangeRandom(-ef, ef);
           xs[i] = xs[i] + r;
@@ -989,21 +1091,37 @@ public class DLParticle extends DLImage {
 
       }
       Point2D.Float op[] = DLUtil.orthopoints(lx, ly, x, y, ld / 2, electricMove / 2);
-      Color wc = new Color(0xcc, 0xcc, 0xcc); //0xff, 0xf0, 0xf0, 0xff);
+      Color wc = new Color(0xcc, 0xcc, 0xcc); // 0xff, 0xf0, 0xf0, 0xff);
 
       LinearGradientPaint gp = null;
       Color b1 = new Color(0x2C75FF);
       Color b2 = new Color(0x0131B4);
       if (ElectricStyleOne.equals(electricStyle)) {
-        gp = new LinearGradientPaint(op[0], op[1], new float[] { 0, 0.5f, 1 }, new Color[] { wc, b1, wc });
+        gp = new LinearGradientPaint(op[0], op[1], new float[] {
+            0, 0.5f, 1
+        }, new Color[] {
+            wc, b1, wc
+        });
       } else if (ElectricStyleTwo.equals(electricStyle)) {
-        gp = new LinearGradientPaint(op[0], op[1], new float[] { 0, 0.5f, 1 }, new Color[] { b1, wc, b1 });
+        gp = new LinearGradientPaint(op[0], op[1], new float[] {
+            0, 0.5f, 1
+        }, new Color[] {
+            b1, wc, b1
+        });
       } else if (ElectricStyleThree.equals(electricStyle)) {
-        gp = new LinearGradientPaint(new Point2D.Float(x, y), new Point2D.Float(lx, ly), new float[] { 0, 0.5f, 1 },
-            new Color[] { wc, b2, wc }); // 2C75FF
+        gp = new LinearGradientPaint(new Point2D.Float(x, y), new Point2D.Float(lx, ly), new float[] {
+            0, 0.5f, 1
+        },
+            new Color[] {
+                wc, b2, wc
+            }); // 2C75FF
       } else if (ElectricStyleFour.equals(electricStyle)) {
-        gp = new LinearGradientPaint(new Point2D.Float(x, y), new Point2D.Float(lx, ly), new float[] { 0, 0.5f, 1 },
-            new Color[] { b2, wc, b2 }); // 2C75FF
+        gp = new LinearGradientPaint(new Point2D.Float(x, y), new Point2D.Float(lx, ly), new float[] {
+            0, 0.5f, 1
+        },
+            new Color[] {
+                b2, wc, b2
+            }); // 2C75FF
       }
       if (gp != null)
         g.setPaint(gp);
@@ -1014,11 +1132,6 @@ public class DLParticle extends DLImage {
     }
 
   }
-
-  boolean paintLinks = true;
-  boolean paintVelocity = true;
-  boolean paintForce = true;
-  boolean paintParticles = true;
 
   public boolean getPaintLinks() {
     return paintLinks;
@@ -1061,11 +1174,11 @@ public class DLParticle extends DLImage {
     if (paintLinks)
       paintL(g, p, x, y);
     if (paintVelocity)
-      paintV(g, p, x, y);
+      paintVelocity(g, p, x, y);
     if (paintForce)
-      paintF(g, p, x, y);
+      paintForce(g, p, x, y);
     if (paintParticles)
-      paintP(g, p, x, y);
+      paintParticles(g, p, x, y);
   }
 
   void paintParticles() {
@@ -1078,13 +1191,12 @@ public class DLParticle extends DLImage {
 
   void paintParticles(Graphics2D g) {
     synchronized (particles) {
-      if (displayParticles)
-        try {
-          for (Particle p : particles)
-            paintParticle(g, p);
-        } catch (ConcurrentModificationException e) {
-          System.err.println(e);
-        }
+      try {
+        for (Particle p : particles)
+          paintParticle(g, p);
+      } catch (ConcurrentModificationException e) {
+        System.err.println(e);
+      }
     }
   }
 
@@ -1212,6 +1324,27 @@ public class DLParticle extends DLImage {
     return boum;
   }
 
+  public static void main(String[] a) {
+    int w = 600;
+    int h = 400;
+    Object[][] params = {
+        {
+            "iwidth", w
+        }, {
+            "iheight", h
+        }, {
+            "x", w / 2
+        }, {
+            "y", h / 2
+        }, {
+            "threadSleep", 5
+        }, {
+          "backgroundColor", new Color(53, 53, 20)
+        }
+    };
+
+    DLMain.Main(DLParticle.class, params);
+  }
 }
 
 class BoumKey {
@@ -1245,13 +1378,14 @@ class Particle {
   float nvx;
   float nvy;
   Color color;
-  boolean trajectories = false;
+  int sides;
+  boolean paintTrajectories = false;
   ArrayList<DLPoint> trajectory = null;
   DLParticle particleSystem;
   Particle linked;
   float linkedDistance;
 
-  Particle(DLParticle particleSystem, float x, float y, float mass, float vx, float vy, float r, Color c) {
+  Particle(DLParticle particleSystem, float x, float y, float mass, float vx, float vy, float r, int sides, Color c) {
     this.particleSystem = particleSystem;
     this.x = x;
     this.y = y;
@@ -1259,6 +1393,7 @@ class Particle {
     this.vx = vx;
     this.vy = vy;
     this.radius = r;
+    this.sides = sides;
     this.color = c;
   }
 
@@ -1273,36 +1408,41 @@ class Particle {
   void moveTo(float x, float y) {
     this.x = x;
     this.y = y;
-    if (trajectories)
-      addTrajectoryPoint(x, y);
+    addTrajectoryPoint(x, y);
+  }
+
+  Shape getShape(float x, float y) {
+    // Shape s = DLUtil.Polygon(x, y, sides, radius, DLUtil.RangeRandom(0,
+    // DLUtil.TWO_PI));
+    Shape s = DLUtil.Star(x, y, radius, 3f * radius / 4f, sides);
+    return s;
   }
 
   void avance(float dt) {
     x = x + vx * dt;
     y = y + vy * dt;
-    if (trajectories)
-      addTrajectoryPoint(x, y);
+    addTrajectoryPoint(x, y);
   }
 
   void addTrajectoryPoint(float x, float y) {
-    if (!trajectories)
-      return;
     if (trajectory == null)
       trajectory = new ArrayList<DLPoint>();
     DLPoint dlp = new DLPoint(x, y, System.currentTimeMillis());
+    synchronized (trajectory) {
 
-    int s = trajectory.size();
-    if (s > 1) {
-      DLPoint lp = trajectory.get(s - 1);
-      double dx = x - lp.x;
-      double dy = y - lp.y;
-      double d = dx * dx + dy * dy;
-      if (d < 1000 * 1000 * 10)
-        return;
+      int s = trajectory.size();
+      if (s > 1) {
+        DLPoint lp = trajectory.get(s - 1);
+        double dx = x - lp.x;
+        double dy = y - lp.y;
+        double d = dx * dx + dy * dy;
+        if (d < 1000 * 1000 * 10)
+          return;
+      }
+      trajectory.add(dlp);
+      while (trajectory.size() >= particleSystem.maxTrajectoryPoints)
+        trajectory.remove(0);
     }
-    trajectory.add(dlp);
-    while (trajectory.size() >= particleSystem.maxTrajectoryPoints)
-      trajectory.remove(0);
   }
 
   public boolean equals(Object o) {

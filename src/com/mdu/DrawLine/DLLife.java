@@ -1,27 +1,26 @@
 package com.mdu.DrawLine;
 
+import static java.awt.Font.PLAIN;
+import static java.awt.Font.SERIF;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
+import java.lang.reflect.Array;
 
 import com.jhlabs.image.EdgeFilter;
 
 public class DLLife extends DLImage {
 
-  int threadSleep = 50;
-  int lwidth = 30;
-  int lheight = 30;
-  boolean life[][];
-  boolean newLife[][];
-  float initLifeRatio = 0.8f;
-
-  static final String RULE_ZERO = "ruleZero";
-  static final String RULE_ONE = "ruleOne";
-  static final String RULE_TWO = "ruleThwo";
-  static final String RULE_THREE = "ruleThree";
-  String rules = RULE_THREE;
+  int threadSleep = 100;
+  int lwidth = 50;
+  int lheight = 50;
+  boolean lifeBoard[][] = new boolean[lwidth][lheight];
+  boolean newLife[][] = new boolean[lwidth][lheight];
+  float initLifeRatio = 0.5f;
+  boolean run = true;
 
   static final String RANDOM = "random";
   static final String STARS = "stars";
@@ -29,16 +28,19 @@ public class DLLife extends DLImage {
   static final String CIRCLE = "circle";
   static final String POLYGON = "poly";
   static final String HEART = "heart";
-  String cellRenderer = RECTANGLE;
+  static final String CHAR = "char";
+  String liveCellRenderer = RECTANGLE;
+  String deadCellRenderer = RECTANGLE;
 
   static final String TORIC = "toric";
   static final String NORMAL = "normal";
-  String mode = NORMAL;
+  String mode = TORIC;
 
-  Color cellColor = DLUtil.DarkerColor(Color.orange, 0.5f);
-  Color cellStroke = Color.darkGray;
+  Color liveColor = DLUtil.DarkerColor(Color.orange, 0.5f);
+  Color liveStroke = Color.darkGray;
+  Color deadColor = Color.darkGray;
+  Color deadStroke = DLUtil.DarkerColor(Color.red, 0.5f);
 
-  Color backgroundColor = null;
   boolean edges = false;
 
   static final String INIT_RANDOM = "initRandom";
@@ -46,28 +48,36 @@ public class DLLife extends DLImage {
 
   String initPattern = INIT_RANDOM;
 
-  public Color getBackgroundColor() {
-    return backgroundColor;
+  public Color getLiveColor() {
+    return liveColor;
   }
 
-  public void setBackgroundColor(Color backgroundColor) {
-    this.backgroundColor = backgroundColor;
+  public void setLiveColor(Color c) {
+    this.liveColor = c;
   }
 
-  public Color getCellColor() {
-    return cellColor;
+  public Color getLiveStroke() {
+    return liveStroke;
   }
 
-  public void setCellColor(Color cellColor) {
-    this.cellColor = cellColor;
+  public void setLiveStroke(Color s) {
+    liveStroke = s;
   }
 
-  public Color getCellStroke() {
-    return cellStroke;
+  public Color getDeadColor() {
+    return deadColor;
   }
 
-  public void setCellStroke(Color s) {
-    cellStroke = s;
+  public void setDeadColor(Color c) {
+    this.deadColor = c;
+  }
+
+  public Color getDeadStroke() {
+    return deadStroke;
+  }
+
+  public void setDeadStroke(Color s) {
+    deadStroke = s;
   }
 
   public String getMode() {
@@ -79,19 +89,37 @@ public class DLLife extends DLImage {
   }
 
   public String[] enumMode() {
-    return new String[] { TORIC, NORMAL };
+    return new String[] {
+        TORIC, NORMAL
+    };
   }
 
-  public String getCellRenderer() {
-    return cellRenderer;
+  public String getLiveCellRenderer() {
+    return liveCellRenderer;
   }
 
-  public void setCellRenderer(String mode) {
-    this.cellRenderer = mode;
+  public void setLiveCellRenderer(String mode) {
+    this.liveCellRenderer = mode;
   }
 
-  public String[] enumCellRenderer() {
-    return new String[] { RANDOM, STARS, RECTANGLE, CIRCLE, POLYGON, HEART };
+  public String[] enumLiveCellRenderer() {
+    return new String[] {
+        RANDOM, STARS, RECTANGLE, CIRCLE, POLYGON, HEART, CHAR
+    };
+  }
+
+  public String getDeadCellRenderer() {
+    return deadCellRenderer;
+  }
+
+  public void setDeadCellRenderer(String mode) {
+    this.deadCellRenderer = mode;
+  }
+
+  public String[] enumDeadCellRenderer() {
+    return new String[] {
+        RANDOM, STARS, RECTANGLE, CIRCLE, POLYGON, HEART, CHAR
+    };
   }
 
   public DLLife() {
@@ -124,7 +152,9 @@ public class DLLife extends DLImage {
   }
 
   public float[] rangeInitLifeRatio() {
-    return new float[] { 0, 1 };
+    return new float[] {
+        0, 1
+    };
   }
 
   public int getLwidth() {
@@ -139,7 +169,9 @@ public class DLLife extends DLImage {
   }
 
   public int[] rangeLwidth() {
-    return new int[] { 1, 200 };
+    return new int[] {
+        1, 200
+    };
   }
 
   public int getLheight() {
@@ -154,17 +186,9 @@ public class DLLife extends DLImage {
   }
 
   public int[] rangeLheight() {
-    return new int[] { 1, 200 };
-  }
-
-  void clearImage() {
-    if (backgroundColor == null)
-      super.clearImage();
-    else {
-      Graphics2D g = image.createGraphics();
-      g.setColor(backgroundColor);
-      g.fillRect(0, 0, iwidth, iheight);
-    }
+    return new int[] {
+        1, 200
+    };
   }
 
   void edges() {
@@ -172,26 +196,38 @@ public class DLLife extends DLImage {
     image = ef.filter(image, image);
   }
 
+  void step() {
+    step(image.createGraphics(), 0);
+  }
+
+  void step(Graphics2D g, long dt) {
+
+    synchronized (lifeBoard) {
+      s();
+
+      clearImage();
+
+      paint(g, dt);
+      if (edges)
+        edges();
+      if (parent != null)
+        parent.paint(this);
+    }
+  }
+
   public void f(Graphics2D g, DLThread t) {
     long start = System.currentTimeMillis();
     long dt = 0;
-    while (1 > 0) {
-      start = System.currentTimeMillis();
+    while (true) {
       if (t != null && t.isStopped())
         break;
-
-      synchronized (life) {
-        step();
-
-        clearImage();
-
-        paint(g, dt);
-        if (edges)
-          edges();
+      if (run) {
+        start = System.currentTimeMillis();
+        step(g, dt);
+        dt = System.currentTimeMillis() - start;
       }
-      if (parent != null)
-        parent.paint(this);
-      dt = System.currentTimeMillis() - start;
+      if (t != null && t.isStopped())
+        break;
       if (threadSleep > 0) {
         try {
           Thread.sleep(threadSleep);
@@ -199,6 +235,8 @@ public class DLLife extends DLImage {
           System.err.println(e);
         }
       }
+      if (t != null && t.isStopped())
+        break;
     }
   }
 
@@ -215,10 +253,20 @@ public class DLLife extends DLImage {
   }
 
   void step(Graphics2D g) {
-    step();
+    s();
   }
 
-  int neighbours1(int i, int j) {
+  int neighbours(int i, int j) {
+    switch (mode) {
+    case TORIC:
+      return neighboursToric(i, j);
+    case NORMAL:
+      return neighboursNormal(i, j);
+    }
+    throw new IllegalArgumentException();
+  }
+
+  int neighboursToric(int i, int j) {
     // toric mode
 
     int mi = i - 1;
@@ -238,7 +286,7 @@ public class DLLife extends DLImage {
       pj = 0;
 
     int n = 0;
-    boolean[][] t = life;
+    boolean[][] t = lifeBoard;
 
     if (t[mi][j])
       n++;
@@ -262,51 +310,7 @@ public class DLLife extends DLImage {
     return n;
   }
 
-  int neighbours3(int i, int j) {
-    // toric mode
-
-    int mi = i - 1;
-    if (mi < 0)
-      mi = lwidth - 1;
-
-    int pi = i + 1;
-    if (pi >= lwidth)
-      pi = 0;
-
-    int mj = j - 1;
-    if (mj < 0)
-      mj = lheight - 1;
-
-    int pj = j + 1;
-    if (pj >= lheight)
-      pj = 0;
-
-    int n = 0;
-    boolean[][] t = life;
-
-    if (t[mi][j])
-      n++;
-    if (t[mi][mj])
-      n++;
-    if (t[mi][pj])
-      n++;
-
-    if (t[i][mj])
-      n++;
-    if (t[i][pj])
-      n++;
-
-    if (t[pi][j])
-      n++;
-    if (t[pi][mj])
-      n++;
-    if (t[pi][pj])
-      n++;
-
-    return n;
-  }
-
-  int neighbours0(int i, int j) {
+  int neighboursNormal(int i, int j) {
 
     int mi = i - 1;
     int pi = i + 1;
@@ -314,25 +318,25 @@ public class DLLife extends DLImage {
     int pj = j + 1;
 
     int n = 0;
-    boolean[][] t = life;
+    boolean[][] t = lifeBoard;
 
-    if (t[mi][j])
+    if ((mi >= 0) && t[mi][j])
       n++;
-    if (t[mi][mj])
+    if ((mi >= 0) && (mj >= 0) && t[mi][mj])
       n++;
-    if (t[mi][pj])
-      n++;
-
-    if (t[i][mj])
-      n++;
-    if (t[i][pj])
+    if ((mi >= 0) && (pj < lheight) && t[mi][pj])
       n++;
 
-    if (t[pi][j])
+    if ((mj >= 0) && t[i][mj])
       n++;
-    if (t[pi][mj])
+    if ((pj < lheight) && t[i][pj])
       n++;
-    if (t[pi][pj])
+
+    if ((pi < lwidth) && t[pi][j])
+      n++;
+    if ((pi < lwidth) && (mj >= 0) && t[pi][mj])
+      n++;
+    if ((pi < lwidth) && (pj < lheight) && t[pi][pj])
       n++;
 
     return n;
@@ -341,11 +345,11 @@ public class DLLife extends DLImage {
   void fillRandom() {
     for (int i = 0; i < lwidth; i++) {
       for (int j = 0; j < lheight; j++) {
-        life[i][j] = DLUtil.BooleanRandom(initLifeRatio);
+        lifeBoard[i][j] = DLUtil.BooleanRandom(initLifeRatio);
       }
     }
   }
-  
+
   public void setInitPattern(String ip) {
     initPattern = ip;
     init();
@@ -354,11 +358,13 @@ public class DLLife extends DLImage {
   public String getInitPattern() {
     return initPattern;
   }
-  
+
   public String[] enumInitPattern() {
-    return new String[]{INIT_RANDOM, INIT_BLINKER};
+    return new String[] {
+        INIT_RANDOM, INIT_BLINKER
+    };
   }
-  
+
   void init() {
     switch (initPattern) {
     case INIT_RANDOM:
@@ -371,139 +377,51 @@ public class DLLife extends DLImage {
   }
 
   void initBlinker() {
-    life = new boolean[lwidth][lheight];
-    newLife = new boolean[lwidth][lheight];
-    int i =lwidth / 2;
+    clear();
+
+    int i = lwidth / 2;
     int j = lheight / 2;
-    
-    life[i][j] = true;
-    life[i - 1][j] = true;
-    life[i + 1][j] = true;
+
+    lifeBoard[i][j] = true;
+    lifeBoard[i - 1][j] = true;
+    lifeBoard[i + 1][j] = true;
   }
 
   void initRandom() {
-    life = new boolean[lwidth][lheight];
-    newLife = new boolean[lwidth][lheight];
     fillRandom();
   }
 
-  void r(int i, int j) {
-    switch (rules) {
-    case RULE_ZERO:
-      r0(i, j);
-      break;
-    case RULE_ONE:
-      r1(i, j);
-      break;
-    case RULE_TWO:
-      r2(i, j);
-      break;
-    case RULE_THREE:
-      r3(i, j);
-      break;
-    default:
-      break;
-    }
-  }
-
-  void r2(int i, int j) {
-    int n = neighbours1(i, j);
-
-    newLife[i][j] = life[i][j];
-
-    if (life[i][j] == false && n == 3) {
+  void rule(int i, int j) {
+    int n = neighbours(i, j);
+    boolean v = lifeBoard[i][j];
+    newLife[i][j] = false;
+    if (!v && n == 3)
       newLife[i][j] = true;
-    }
-
-    if (life[i][j] == true && (n == 1 || n > 3)) {
-      newLife[i][j] = false;
-    }
-  }
-
-  void r3(int i, int j) {
-    int n = neighbours3(i, j);
-
-    newLife[i][j] = life[i][j];
-
-    if (n == 3)
+    if (v && (n == 2 || n == 3))
       newLife[i][j] = true;
+  }
 
-    if (n == 2)
-      newLife[i][j] = life[i][j];
-
-    if (n < 2 || n > 3) {
-      newLife[i][j] = false;
+  void clear() {
+    for (int i = 0; i < lifeBoard.length; i++) {
+      boolean[] b = lifeBoard[i];
+      for (int j = 0; j < b.length; j++)
+        b[j] = false;
     }
   }
 
-  void r0(int i, int j) {
-    int n = neighbours0(i, j);
-
-    newLife[i][j] = life[i][j];
-
-    if (life[i][j]) {
-      if (n == 0 || n == 1 || n >= 4)
-        newLife[i][j] = false;
-      if (n == 2 || n == 3)
-        newLife[i][j] = true;
-    } else {
-      newLife[i][j] = (n == 3);
-    }
-  }
-
-  void r1(int i, int j) {
-    int n = neighbours1(i, j);
-
-    newLife[i][j] = life[i][j];
-
-    if (life[i][j]) {
-      if (n == 0 || n == 1 || n >= 4)
-        newLife[i][j] = false;
-      if (n == 2 || n == 3)
-        newLife[i][j] = true;
-    } else {
-      newLife[i][j] = (n == 3);
-    }
-  }
-
-  void sToric() {
+  boolean s() {
     try {
-      synchronized (life) {
+      synchronized (lifeBoard) {
         for (int i = 0; i < lwidth; i++) {
           for (int j = 0; j < lheight; j++) {
-            r(i, j);
+            rule(i, j);
           }
         }
-        System.arraycopy(newLife, 0, life, 0, life.length);
+        for (int i = 0; i < lwidth; i++)
+          System.arraycopy(newLife[i], 0, lifeBoard[i], 0, newLife[i].length);
       }
     } catch (Exception e) {
       System.err.println(e);
-    }
-  }
-
-  void sNormal() {
-    try {
-      synchronized (life) {
-        for (int i = 1; i < lwidth - 1; i++) {
-          for (int j = 1; j < lheight - 1; j++) {
-            r(i, j);
-          }
-        }
-        System.arraycopy(newLife, 0, life, 0, life.length);
-      }
-    } catch (Exception e) {
-      System.err.println(e);
-    }
-  }
-
-  boolean step() {
-    switch (mode) {
-    case TORIC:
-      sToric();
-      break;
-    case NORMAL:
-      sNormal();
-      break;
     }
     return false;
   }
@@ -518,21 +436,34 @@ public class DLLife extends DLImage {
   void paint(Graphics2D g, long dt) {
     DLUtil.SetHints(g);
     try {
-      synchronized (life) {
+      synchronized (lifeBoard) {
         float w = (float) iwidth / lwidth;
         float h = (float) iheight / lheight;
         for (int i = 0; i < lwidth; i++) {
           for (int j = 0; j < lheight; j++) {
-            if (life[i][j]) {
-              float x = i * w;
-              float y = j * h;
-              Shape r = createCellRenderer(x, y, w, h);
-              if (cellColor != null) {
-                g.setColor(cellColor);
+            float x = i * w;
+            float y = j * h;
+            Shape r = null;
+            if (lifeBoard[i][j]) {
+              if (liveColor != null || liveStroke != null)
+                r = createCellRenderer(liveCellRenderer, i, j, x, y, w, h);
+              if (liveColor != null) {
+                g.setColor(liveColor);
                 g.fill(r);
               }
-              if (cellStroke != null) {
-                g.setColor(cellStroke);
+              if (liveStroke != null) {
+                g.setColor(liveStroke);
+                g.draw(r);
+              }
+            } else {
+              if (deadColor != null || deadStroke != null)
+                r = createCellRenderer(deadCellRenderer, i, j, x, y, w, h);
+              if (deadColor != null) {
+                g.setColor(deadColor);
+                g.fill(r);
+              }
+              if (deadStroke != null) {
+                g.setColor(deadStroke);
                 g.draw(r);
               }
             }
@@ -542,15 +473,17 @@ public class DLLife extends DLImage {
     } catch (Exception e) {
       System.err.println(e);
     }
+    g.drawRect(0, 0, iwidth - 1, iheight - 1);
   }
 
-  Shape createCellRenderer(float x, float y, float w, float h) {
-    float rd = (w + h) / 2;
+  Shape createCellRenderer(String r, int i, int j, float x, float y, float w, float h) {
     Shape s = null;
-    switch (cellRenderer) {
+    float rd = (w + h) / 2;
+
+    switch (r) {
     case RANDOM:
-      int r = DLUtil.RangeRandom(0, 6);
-      switch (r) {
+      int rnd = DLUtil.RangeRandom(0, 6);
+      switch (rnd) {
       case 0:
         s = DLUtil.Square(x + w / 2f, y + w / 2f, rd);
         break;
@@ -569,6 +502,11 @@ public class DLLife extends DLImage {
       case 5:
         s = DLUtil.Heart(x, y, w, h, false);
         break;
+      case 6:
+        String c;
+        int n = neighbours(i, j);
+        c = new Integer(n).toString();
+        s = DLUtil.stringToShape(c, SERIF, 20, PLAIN);
       default:
         s = null;
         break;
@@ -588,7 +526,25 @@ public class DLLife extends DLImage {
       break;
     case HEART:
       s = DLUtil.Heart(x, y, w, h, false);
+      break;
+    case CHAR:
+      String c;
+      int n = neighbours(i, j);
+      c = new Integer(n).toString();
+      s = DLUtil.stringToShape(c, SERIF, 20, PLAIN);
+      float m = 0.5f;
+      s = DLUtil.fitShapeIn(s, x + m, y + m, w - 2 * m, h - 2 * m, true);
+      break;
     }
+    return s;
+  }
+
+  Shape createCellRenderer(int i, int j, float x, float y, float w, float h) {
+    Shape s;
+    if (lifeBoard[i][j])
+      s = createCellRenderer(liveCellRenderer, i, j, x, y, w, h);
+    else
+      s = createCellRenderer(deadCellRenderer, i, j, x, y, w, h);
     return s;
   }
 
@@ -601,19 +557,9 @@ public class DLLife extends DLImage {
   }
 
   public int[] rangeThreadSleep() {
-    return new int[] { 0, 100 };
-  }
-
-  public void setRules(String r) {
-    rules = r;
-  }
-
-  public String getRules() {
-    return rules;
-  }
-
-  public String[] enumRules() {
-    return new String[] { RULE_ZERO, RULE_ONE, RULE_TWO, RULE_THREE };
+    return new int[] {
+        0, 1000
+    };
   }
 
   public void setEdges(boolean b) {
@@ -622,5 +568,71 @@ public class DLLife extends DLImage {
 
   public boolean getEdges() {
     return edges;
+  }
+
+  public void setRun(boolean r) {
+    run = r;
+  }
+
+  public boolean getRun() {
+    return run;
+  }
+
+  Push push = new Push("Push for one step");
+
+  public Push getStep() {
+    return push;
+  }
+
+  public void setStep(Push p) {
+    if (getRun())
+      return;
+    step((Graphics2D) image.getGraphics(), 0);
+  }
+
+  boolean mouse(MouseEvent e) {
+
+    float x = e.getX() - (this.x - iwidth / 2f);
+    float y = e.getY() - (this.y - iheight / 2f);
+
+    float w = (float) iwidth / lwidth;
+    float h = (float) iheight / lheight;
+
+    int i = DLUtil.Floor(x / w);
+    int j = DLUtil.Floor(y / h);
+
+    switch (e.getID()) {
+    case MouseEvent.MOUSE_DRAGGED:
+      lifeBoard[i][j] = true;
+      return true;
+    case MouseEvent.MOUSE_PRESSED:
+      lifeBoard[i][j] = true;
+      return true;
+    case MouseEvent.MOUSE_RELEASED:
+      lifeBoard[i][j] = true;
+      return true;
+    }
+    return false;
+  }
+
+  public static void main(String[] a) {
+    int w = 600;
+    int h = 600;
+    Object[][] params = {
+      {
+        "iwidth", w
+      }, {
+        "iheight", h
+      }, {
+        "x", w / 2
+      }, {
+        "y", h / 2
+      }, {
+        "threadSleep", 5
+      }, {
+        "backgroundColor", new Color(53, 53, 20).brighter().brighter().brighter()
+      }
+    };
+    DLMain.Main(DLLife.class, params);
   }
 }

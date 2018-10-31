@@ -145,7 +145,7 @@ public class MyWordle {
       Collections.sort(this.words, new Comparator<Word>() {
         @Override
         public int compare(Word w1, Word w2) {
-          return (int) w2.getWeight() - (int) w1.getWeight();
+          return w2.getWeight() - w1.getWeight();
         }
       });
       break;
@@ -604,77 +604,4 @@ public class MyWordle {
     this.useArea = useArea;
   }
 
-  private void read(BufferedReader in) throws IOException {
-  }
-
-  public static void main(String[] args) {
-    try {
-      MyWordle app = new MyWordle(1000, 1000);
-      app.random();
-      String format = null;
-      File fileOut = null;
-      int optind = 0;
-      while (optind < args.length) {
-        if (args[optind].equals("-h") || args[optind].equals("-help") || args[optind].equals("--help")) {
-          System.err.println("Options:");
-          System.err.println(" -h help; This screen.");
-          return;
-        } else if (args[optind].equals("-font-family")) {
-          app.fontFamily = args[++optind];
-        } else if (args[optind].equals("-o")) {
-          fileOut = new File(args[++optind]);
-        } else if (args[optind].equals("-f")) {
-          format = args[++optind];
-        } else if (args[optind].equals("-w")) {
-          app.outputWidth = Integer.parseInt(args[++optind]);
-        } else if (args[optind].equals("-r")) {
-          app.allowRotate = true;
-        } else if (args[optind].equals("--")) {
-          optind++;
-          break;
-        } else if (args[optind].startsWith("-")) {
-          System.err.println("Unknown option " + args[optind]);
-          return;
-        } else {
-          break;
-        }
-        ++optind;
-      }
-      if (fileOut == null) {
-        System.err.println("file missing");
-        fileOut = new File("/tmp/foo.png");
-        //        return;
-      }
-      if (format == null) {
-        System.err.println("format missing");
-        format = "png";
-        //        return;
-      }
-      if (app.outputWidth == null)
-        app.outputWidth = 1000;
-
-      if (optind == args.length) {
-        app.read(new BufferedReader(new InputStreamReader(System.in)));
-      } else {
-        while (optind < args.length) {
-          String filename = args[optind++];
-          java.io.BufferedReader r = new BufferedReader(new FileReader(filename));
-          app.read(r);
-          r.close();
-        }
-      }
-      app.doLayout();
-      if (fileOut.getName().toLowerCase().endsWith(".svg") || (format != null && format.equalsIgnoreCase("svg"))) {
-        app.saveAsSVG(fileOut);
-      } else if (fileOut.getName().toLowerCase().endsWith(".png") || (format != null && format.equalsIgnoreCase("png"))) {
-        app.saveAsPNG(fileOut);
-      } else if (fileOut.getName().toLowerCase().endsWith("ps") || (format != null && format.equalsIgnoreCase("ps"))) {
-        app.saveAsPostscript(fileOut);
-      } else {
-        System.err.println("undefined format");
-      }
-    } catch (Throwable err) {
-      err.printStackTrace();
-    }
-  }
 }

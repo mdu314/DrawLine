@@ -64,11 +64,10 @@ class DLRuban extends DLSegmentedComponent {
     return new DLRuban(this);
   }
 
-  void drawSegment(Graphics2D g, int i) {
+  void generateShape(int i) {
+
     if (i > points.size() || i < 1)
       return;
-    DLUtil.SetHints(g);
-
     final DLPoint lp = points.get(i - 1);
     final DLPoint p = points.get(i);
 
@@ -81,10 +80,9 @@ class DLRuban extends DLSegmentedComponent {
       final GeneralPath gp = new GeneralPath();
 
       float r = 1;
-
       if (useSpeed) {
         final float t = (p.when - lp.when) / 1000.0f;
-        final float speed = (float) Math.sqrt(dx * dx + dy * dy) / t;
+        final float speed = DLUtil.FastSqrt(dx * dx + dy * dy) / t;
         r = Normalize(1f, maxSpeed, 0f, 1500f, speed);
       }
 
@@ -118,21 +116,37 @@ class DLRuban extends DLSegmentedComponent {
       p.shape = gp;
     }
 
+  }
+
+  void drawSegment(Graphics2D g, int i) {
+    if (i > points.size() || i < 1)
+      return;
+    generateShape(i);
+
+    final DLPoint lp = points.get(i - 1);
+    final DLPoint p = points.get(i);
+
+    final float x = p.x;
+    final float y = p.y;
+    final float dx = x - lp.x;
+    final float dy = y - lp.y;
+
     Color c = color;
-    if (light) {
-      final float factor = (float) Math.abs(dx / Math.sqrt(dx * dx + dy * dy));
+    if (light && c != null) {
+      final float factor = (float) DLUtil.Abs(dx / DLUtil.FastSqrt(dx * dx + dy * dy));
       c = BrighterColor(color, factor);
     }
 
     g.setColor(c);
     g.fill(p.shape);
+    g.draw(p.shape);
   }
 
   @Override
   Rectangle getBounds() {
     Rectangle r = null;
 
-    for (int i = 1; i < points.size(); i++) {
+    for (int i = 0; i < points.size(); i++) {
       final DLPoint pt = points.get(i);
       final Shape s = pt.shape;
       if (s != null) {
@@ -201,34 +215,47 @@ class DLRuban extends DLSegmentedComponent {
   }
 
   private void repaint(Rectangle dirt) {
+    if (parent == null)
+      return;
+
+    Rectangle r = getBounds();
+    if (shadow)
+      r = addShadowBounds(r);
     for (int i = 1; i < points.size(); i++) {
       final DLPoint p = points.get(i);
       p.shape = null;
     }
-    if (parent != null) {
-      Rectangle r = getBounds();
-      if (dirt != null)
-        Rectangle.union(dirt, r, r);
-      parent.repaint(r.x, r.y, r.width, r.height);
-    }
+
+    for (int i = 1; i < points.size(); i++)
+      generateShape(i);
+
+    Rectangle.union(getBounds(), r, r);
+    if (shadow)
+      r = addShadowBounds(r);
+    if (dirt != null)
+      Rectangle.union(dirt, r, r);
+
+    parent.repaint(r.x, r.y, r.width, r.height);
   }
 
   public void setBrushAngle(float brushAngle) {
     Rectangle dirt = getBounds();
     brush = DLLineBrush.getBrush(brush.size, brushAngle);
     dirt = addShadowBounds(dirt);
-    setShadow(shadow, true);
-    //    clearShadow();
-    repaint(dirt);
+    // setShadow(shadow, true);
+    // clearShadow();
+    // repaint(dirt);
+    repaint(null);
   }
 
   public void setBrushSize(float brushSize) {
     Rectangle dirt = getBounds();
     brush = DLLineBrush.getBrush(brushSize, brush.angle);
     dirt = addShadowBounds(dirt);
-    setShadow(shadow, true);
-    //    clearShadow();
-    repaint(dirt);
+    // setShadow(shadow, true);
+    // clearShadow();
+    // repaint(dirt);
+    repaint(null);
   }
 
   public float[] rangeBrushSize() {

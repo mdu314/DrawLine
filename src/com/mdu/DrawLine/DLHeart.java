@@ -21,14 +21,14 @@ class DLHeart extends DLCurve {
     return new DLHeart(this);
   }
 
-  Path2D.Float p1() {
-    Path2D.Float p = DLUtil.Heart(smooth, scale);
+  DLPath p1() {
+    DLPath p = DLUtil.Heart(smooth, scale);
     transform(p);
     return p;
   }
 
   @Override
-  Path2D path() {
+  DLPath path() {
     return p1();
   }
 

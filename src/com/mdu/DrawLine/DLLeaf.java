@@ -1,16 +1,15 @@
 package com.mdu.DrawLine;
 
-import static com.mdu.DrawLine.DLParams.SAMPLE_PRECISION;
 import static com.mdu.DrawLine.DLUtil.RangeRandom;
 import static java.lang.Math.PI;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-
-import java.awt.geom.Path2D;
 
 class DLLeaf extends DLCurve {
-  double a = 0.01;
-  double scale = 10;
+  float a = 0.01f;
+  float b = 0.01f;
+  float c = 0.9f;
+  float d = 0.9f;
+  float scale = 10;
+  float sp = 0.05f;
 
   DLLeaf(DLLeaf l) {
     super(l);
@@ -21,22 +20,18 @@ class DLLeaf extends DLCurve {
     super(x, y);
   }
 
-  @Override
   DLLeaf copy() {
     return new DLLeaf(this);
   }
 
-  @Override
-  Path2D.Float path() {
-    Path2D.Float p = null;
-    for (float t = 0; t < 2 * PI; t += SAMPLE_PRECISION / 10) {
-      final double sint = sin(t);
-      final double cost = cos(t);
-
-      final double r = (1 + 0.9 * cos(8 * t)) * (1 + 0.01 * cos(24 * t)) * (0.9 + a * cos(200 * t)) * (1 + sint);
-      final double x = scale * r * cost;
-      final double y = scale * r * sint;
-
+  DLPath path() {
+    DLPath p = null;
+    for (float t = 0; t < 2 * PI; t += sp) {
+      float sint = DLUtil.Sin(t);
+      float cost = DLUtil.Cos(t);
+      float r = (1f + c * DLUtil.Cos(8 * t)) * (1f + b * DLUtil.Cos(24 * t)) * (d + a * DLUtil.Cos(200 * t)) * (1f + sint);
+      float x = scale * r * cost;
+      float y = scale * r * sint;
       p = DLUtil.AddPoint(x, y, p);
     }
     p.closePath();
@@ -48,7 +43,7 @@ class DLLeaf extends DLCurve {
   public void randomize() {
     super.randomize();
     scale = RangeRandom(15, 30);
-    a = RangeRandom(0.01, 0.6);
+    a = RangeRandom(0.01f, 0.6f);
   }
 
 }

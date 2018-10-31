@@ -31,9 +31,9 @@ public class DLLineBrush {
 
   static DLLineBrush getBrush(float s, DLPoint p1, DLPoint p2) {
     final Point2D.Float[] p = DLUtil.orthopoints(p1, p2, s / 2);
-    final double dx = p[1].x - p[0].x;
-    final double dy = p[1].y - p[0].y;
-    final double D = Math.sqrt(dx * dx + dy * dy);
+    final float dx = p[1].x - p[0].x;
+    final float dy = p[1].y - p[0].y;
+    final float D = DLUtil.FastSqrt(dx * dx + dy * dy);
     final float a = (float) Math.asin(dy / D);
 
     return getBrush(s, a);

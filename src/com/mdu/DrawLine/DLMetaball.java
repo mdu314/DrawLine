@@ -3,7 +3,6 @@ package com.mdu.DrawLine;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import com.jhlabs.image.EdgeFilter;
 

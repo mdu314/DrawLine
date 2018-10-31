@@ -29,8 +29,8 @@ class DLEpitrochoid extends DLCurve {
   }
 
   @Override
-  Path2D path() {
-    final Path2D p = new Path2D.Float();
+  DLPath path() {
+    final DLPath p = new DLPath();
 
     for (float t = 0; t < 2 * Math.PI; t += SAMPLE_PRECISION / 10) {
       final double cost = cos(t);

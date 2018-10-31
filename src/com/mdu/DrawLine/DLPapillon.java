@@ -6,12 +6,9 @@ import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
-import java.awt.geom.Path2D;
-
 class DLPapillon extends DLCurve {
 
-  private float scale = 2f;
-  int tours = 1;
+  float scale = 2f;
 
   DLPapillon(DLPapillon e) {
     super(e);
@@ -27,10 +24,10 @@ class DLPapillon extends DLCurve {
   }
 
   @Override
-  Path2D.Float path() {
-    Path2D.Float p = null;
+  DLPath path() {
+    DLPath p = null;
 
-    for (double t = 0; t < tours * 2 * PI; t += DLParams.SAMPLE_PRECISION / 10) {
+    for (double t = 0; t < 2 * PI; t += DLParams.SAMPLE_PRECISION / 10) {
       // double r = pow(E, cos(t)) - 2 * cos(4 * t) + pow(sin(t / 12), 5);
       final double r = -3 * cos(2 * t) + sin(7 * t) - 1;
       final double x = scale * r * cos(t);
@@ -46,7 +43,6 @@ class DLPapillon extends DLCurve {
   public void randomize() {
     super.randomize();
     scale = RangeRandom(7f, 15f);
-    // tours = RangeRandom(1, 5);
   }
 
 }

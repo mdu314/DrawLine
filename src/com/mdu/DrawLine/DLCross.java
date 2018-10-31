@@ -26,8 +26,8 @@ class DLCross extends DLCurve {
   }
 
   @Override
-  Path2D path() {
-    Path2D.Float path = new Path2D.Float(Path2D.WIND_EVEN_ODD);
+  DLPath path() {
+    DLPath path = new DLPath(Path2D.WIND_EVEN_ODD);
 
     for (float t = TWO_PI; t > 0; t -= PI / 2) {
       DLPoint rp1 = DLUtil.Rotate(p1.x, p1.y, t);

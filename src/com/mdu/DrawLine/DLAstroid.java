@@ -5,12 +5,16 @@ import static com.mdu.DrawLine.DLUtil.RangeRandom;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
 
 class DLAstroid extends DLCurve {
-  float p = 10;
+  float p = 100;
 
+  public DLAstroid() {
+    super();
+  }
+  
   public DLAstroid(DLAstroid a) {
     super(a);
     p = a.p;
@@ -20,14 +24,12 @@ class DLAstroid extends DLCurve {
     super(x, y);
   }
 
-  @Override
-  DLAstroid copy() {
+  public DLAstroid copy() {
     return new DLAstroid(this);
   }
 
-  @Override
-  Path2D path() {
-    final Path2D c = new Path2D.Float();
+  DLPath path() {
+    final DLPath c = new DLPath();
     for (float t = 0; t < 2 * Math.PI; t += SAMPLE_PRECISION) {
       final double cost = cos(t);
       final double sint = sin(t);
@@ -45,10 +47,48 @@ class DLAstroid extends DLCurve {
     return c;
   }
 
-  @Override
   public void randomize() {
     super.randomize();
     p = RangeRandom(10f, 30f);
+  }
+
+  public void setP(float p) {
+    Rectangle r = redisplayStart();    
+    this.p = p;
+    clear();
+    redisplay(r);
+  }
+  
+  public float getP() {
+    return p;
+  }
+  
+  public float[] rangeP() {
+    return new float[] {1, 200};
+  }
+  
+  public static void main(String[] a) {
+    int w = 800;
+    int h = 600;
+
+    Object[][] params = {
+        {
+            "iwidth", w
+        }, {
+            "iheight", h
+        }, {
+            "x", w / 2
+        }, {
+            "y", h / 2
+        }, {
+            "threadSleep", 5
+        }
+    };
+
+    DLAstroid dl = (DLAstroid)DLMain.Main(DLAstroid.class, params);
+//    Rectangle r = dl.redisplayStart();
+//    dl.clear();
+//    dl.redisplay(r);
   }
 
 }

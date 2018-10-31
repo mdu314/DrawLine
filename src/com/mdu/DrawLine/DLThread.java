@@ -25,6 +25,7 @@ class DLThread extends Thread {
 
   DLThread(DLRunnable b) {
     super(b);
+    b.setThread(this);
   }
 
   boolean isStopped() {

@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-class DLPshit extends DLImage {
+class DLPshit extends DLPointImage {
   int points = 1000;
   boolean keepPoints = true;
   int[] xs = null;

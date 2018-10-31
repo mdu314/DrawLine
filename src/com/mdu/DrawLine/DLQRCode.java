@@ -43,7 +43,7 @@ import com.google.zxing.oned.UPCEANWriter;
 import com.google.zxing.pdf417.PDF417Writer;
 import com.google.zxing.qrcode.QRCodeWriter;
 
-public class DLQRCode extends DLImage {
+public class DLQRCode extends DLPointImage {
   Color backgroundColor = null;
   int threadSleep = 50;
   String data = DLUtil.RandomWord();

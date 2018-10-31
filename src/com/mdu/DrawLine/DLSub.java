@@ -277,7 +277,7 @@ public class DLSub extends DLImage {
   }
 
   void triangle(float x1, float y1, float x2, float y2, float x3, float y3) {
-    Path2D p = new Path2D.Float();
+    Path2D p = new DLPath();
     p.moveTo(x1, y1);
     p.lineTo(x2, y2);
     p.lineTo(x3, y3);

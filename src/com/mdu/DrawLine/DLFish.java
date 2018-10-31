@@ -7,7 +7,6 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
 import java.awt.Rectangle;
-import java.awt.geom.Path2D;
 
 class DLFish extends DLCurve {
   float a = 2;
@@ -76,8 +75,8 @@ class DLFish extends DLCurve {
   }
 
   @Override
-  Path2D.Float path() {
-    Path2D.Float c = null;
+  DLPath path() {
+    DLPath c = null;
     for (float t = 0; t < 2 * Math.PI; t += SAMPLE_PRECISION) {
       final double cost = cos(t);
       final double sint = sin(t);

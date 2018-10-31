@@ -17,8 +17,10 @@ import com.jhlabs.image.EdgeFilter;
 
 public class DLTunnel extends DLImage {
   int threadSleep = 20;
-  String imageResource = null;
-  String textures = "images/textures/";
+  static String textures = "images/textures/";
+  static String defaultTexture = "doesnotexist.png";
+  String imageResource = textures + defaultTexture;
+  int res = 2;
 
   long frameCount = 1;
   BufferedImage texture;
@@ -32,7 +34,9 @@ public class DLTunnel extends DLImage {
   float animation = 0;
   float animIncr = 3;
   float movIncr = 1;
+  float mergeIncr = 0;
   float filterIncr = 0;
+  float mergeStrength = 0;
 
   float trente = 30;
   float ratioIncr = 0.01f;
@@ -42,18 +46,15 @@ public class DLTunnel extends DLImage {
   BufferedImage currentTexture = null;
   String currentTextureName = null;
   boolean changeImage;
-  float filterStrength = 0f;
   boolean move = false;
   boolean imageCycle;
   boolean paintFPS;
 
-  boolean decorateTexture = false;
   int rabouteMarginWidth = 0;
   int rabouteMarginHeight = 0;
   static final String RABOUTE_VERTICAL = "raboute vertical";
   static final String RABOUTE_HORIZONTAL = "raboute horizontal";
   String rabouteDirection = RABOUTE_HORIZONTAL + " " + RABOUTE_VERTICAL;
-  BufferedImage filterImage;
 
   public DLTunnel() {
     super();
@@ -71,39 +72,13 @@ public class DLTunnel extends DLImage {
     return new DLTunnel(this);
   }
 
-  void decorateTexture(BufferedImage tex) {
-
-    Graphics2D g = tex.createGraphics();
-    if (DLUtil.BooleanRandom()) {
-      for (int i = 0; i < 1000; i++) {
-        float x = DLUtil.RangeRandom(0, tex.getWidth());
-        float y = DLUtil.RangeRandom(0, tex.getHeight());
-        int r = DLUtil.RangeRandom(0, pointShapes.length);
-        String s = pointShapes[r];
-        float sz = DLUtil.RangeRandom(0, 10);
-        if (DLUtil.BooleanRandom())
-          pointStroke = DLUtil.RandomColor(0, 1, 0.7f, 1, 0.8f, 1);
-        if (DLUtil.BooleanRandom())
-          pointFill = DLUtil.RandomColor(0, 1, 0.7f, 1, 0.8f, 1);
-        drawPoint(g, s, sz, x, y);
-      }
-    } else {
-      for (int i = 0; i < 10; i++) {
-        float x = DLUtil.RangeRandom(0, tex.getWidth());
-        float y = DLUtil.RangeRandom(0, tex.getHeight());
-        DLLorenz d = new DLLorenz(x, y);
-        d.randomize();
-        d.stroke = DLUtil.RandomColor(0, 1, 0.7f, 1, 0.8f, 1);
-        d.fill = null;
-        d.paint(g, true);
-      }
-    }
-  }
-
   BufferedImage loadImage(String resource, Dimension d) {
     BufferedImage i = DLUtil.LoadImage(resource, d);
-    if (decorateTexture)
-      decorateTexture(i);
+    if (i == null) {
+      int iw = DLUtil.Int(iwidth / res);
+      int ih = DLUtil.Int(iheight / res);
+      i = new BufferedImage(iw, ih, BufferedImage.TYPE_INT_ARGB);
+    }
     if (rabouteMarginWidth > 0 || rabouteMarginHeight > 0)
       raboute(i);
     return i;
@@ -119,7 +94,9 @@ public class DLTunnel extends DLImage {
           currentTextureName = is;
           changeImage = false;
           imageResource = is;
-          currentTexture = loadImage(textures + is, new Dimension(iwidth, iheight));
+          int iw = DLUtil.Int(iwidth / res);
+          int ih = DLUtil.Int(iheight / res);
+          currentTexture = loadImage(textures + is, new Dimension(iw, ih));
           if (sheet != null) {
             sheet.update("ImageResource", imageResource);
             sheet.update("ChangeImage", false);
@@ -136,29 +113,31 @@ public class DLTunnel extends DLImage {
         currentTextureName = null;
         mergedTexture = null;
       } else {
-        //        System.err.println("texture " + texture.hashCode() + " currentTexture " + currentTexture.hashCode() + " " + currentRatio);
-        mergedTexture = DLUtil.Merge(texture, currentTexture, currentRatio);
+        mergedTexture = DLUtil.Merge(texture, currentTexture, currentRatio, null);
       }
     }
   }
 
   void setup(boolean t, boolean a, boolean d) {
+    int iw = DLUtil.Int(iwidth / res);
+    int ih = DLUtil.Int(iheight / res);
+
     if (t)
-      texture = loadImage(imageResource, new Dimension(iwidth, iheight));
+      texture = loadImage(imageResource, new Dimension(iw, ih));
     if (a || d) {
       if (d)
-        distances = new int[iwidth][iheight];
+        distances = new int[iw][ih];
       if (a)
-        angles = new int[iwidth][iheight];
+        angles = new int[iw][ih];
 
       int textureWidth = texture.getWidth();
       int textureHeight = texture.getHeight();
-      pixels = new int[iwidth * iheight];
-      float cx = iwidth / 2f;
-      float cy = iheight / 2f;
-      for (int x = 0; x < iwidth; x++) {
+      pixels = new int[iw * ih];
+      float cx = iw / 2f;
+      float cy = ih / 2f;
+      for (int x = 0; x < iw; x++) {
         float dx = x - cx;
-        for (int y = 0; y < iheight; y++) {
+        for (int y = 0; y < ih; y++) {
           float dy = y - cy;
           if (d)
             distances[x][y] = (int) ((trente * textureWidth / Math.sqrt(dx * dx + dy * dy)) % textureHeight);
@@ -170,7 +149,7 @@ public class DLTunnel extends DLImage {
   }
 
   static int average(int p1, int p2, float r) {
-    
+
     int red1 = (p1 >> 16) & 0xff;
     int green1 = (p1 >> 8) & 0xff;
     int blue1 = (p1 >> 0) & 0xff;
@@ -187,7 +166,7 @@ public class DLTunnel extends DLImage {
     return p;
   }
 
-  void raboute(BufferedImage img) {
+  private void raboute(BufferedImage img) {
     int iw = img.getWidth();
     int ih = img.getHeight();
     int mw = rabouteMarginWidth;
@@ -202,7 +181,6 @@ public class DLTunnel extends DLImage {
         img.setRGB(i, j, p);
         p = average(p1, p2, 1 - r);
         img.setRGB(i, ih - j - 1, p);
-
       }
     }
 
@@ -217,24 +195,32 @@ public class DLTunnel extends DLImage {
         img.setRGB(i, j, p);
         p = average(p1, p2, 1 - r);
         img.setRGB(iw - i - 1, j, p);
-
       }
     }
 
   }
 
-  void filter() {
-    filterStrength += filterIncr;
-    if (filterStrength < 0)
-      filterStrength = 0;
-    if (filterStrength > 1)
-      filterStrength = 1;
+  void merge() {
+    mergeStrength += mergeIncr;
+    if (mergeStrength < 0)
+      mergeStrength = 0;
+    if (mergeStrength > 1)
+      mergeStrength = 1;
     if (sheet != null)
-      sheet.update("Filter", filterStrength);
-    if (filterStrength > 0) {
+      sheet.update("MergeStrength", mergeStrength);
+    if (mergeStrength > 0) {
       EdgeFilter ef = new EdgeFilter();
       /* BufferedImage filterImage = */ef.filter(image, filterImage);
-      image = DLUtil.Merge(image, filterImage, filterStrength);
+      image = DLUtil.Merge(image, filterImage, mergeStrength, null);
+    }
+  }
+
+  private void tzoom() {
+    if (res > 1) {
+      zoom(unzoomedImage, zoomedImage);
+      image = zoomedImage;
+    } else {
+      image = unzoomedImage;
     }
   }
 
@@ -249,19 +235,22 @@ public class DLTunnel extends DLImage {
 
     int shiftX = (int) (tw + animation);
     int shiftY = (int) (th + movement);
-
-    for (int y = 0, cursor = 0; y < iheight; y++) {
-      for (int x = 0; x < iwidth; x++, cursor++) {
-        int c_x = (distances[x][y] + shiftX) % tw;
-        int c_y = (angles[x][y] + shiftY) % th;
-        try {
-          pixels[cursor] = t.getRGB(c_x, c_y);
-        } catch (Throwable e) {
-          reportException(e);
+    int iw = DLUtil.Int(iwidth / res);
+    int ih = DLUtil.Int(iheight / res);
+    synchronized (pixels) {
+      for (int y = 0, cursor = 0; y < ih; y++) {
+        for (int x = 0; x < iw; x++, cursor++) {
+          int c_x = (distances[x][y] + shiftX) % tw;
+          int c_y = (angles[x][y] + shiftY) % th;
+          try {
+            pixels[cursor] = t.getRGB(c_x, c_y);
+          } catch (Throwable e) {
+            reportException(e);
+          }
         }
       }
+      unzoomedImage.setRGB(0, 0, iw, ih, pixels, 0, iw);
     }
-    image.setRGB(0, 0, iwidth, iheight, pixels, 0, iwidth);
   }
 
   void move() {
@@ -301,9 +290,11 @@ public class DLTunnel extends DLImage {
           nextImage();
           move();
           tunnel();
-          filter();
+          merge();
+          tzoom();
           paintFps(g, dt);
         }
+
       } catch (Exception e) {
         reportException(e);
       }
@@ -321,10 +312,12 @@ public class DLTunnel extends DLImage {
   }
 
   void paintFps(Graphics2D g, long frameTime) {
+
     if (!paintFPS)
       return;
     if (frameTime == 0)
       return;
+
     DLUtil.SetHints(g);
 
     String s = null;
@@ -340,14 +333,14 @@ public class DLTunnel extends DLImage {
       NumberFormat tf = new DecimalFormat("00.00");
       NumberFormat ff = new DecimalFormat("00000");
 
-      s = " F#: " + ff.format(frameCount) + " Fps: " + nf.format(1000. / frameTime) + " Ft: " + tf.format(frameTime)
+      s = "F#: " + ff.format(frameCount) + " Fps: " + nf.format(1000. / frameTime) + " Ft: " + tf.format(frameTime)
           + " ms " + "Mi: " + tf.format(movIncr) + " Ai: " + tf.format(animIncr);
     }
     FontMetrics m = g.getFontMetrics();
     float w = m.stringWidth(s);
     float h = m.getMaxAscent() + m.getMaxDescent();
     float x = 5;
-    float y = iheight - h;
+    float y = iheight - h - 5;
     Rectangle2D.Float r2d = new Rectangle2D.Float(x, y, w, h);
     Color c = new Color(0x66, 0, 0x33);
     g.setColor(DLUtil.TransparenterColor(DLUtil.Invert(c), 0.65f));
@@ -355,28 +348,39 @@ public class DLTunnel extends DLImage {
     g.setColor(c);
     g.draw(r2d);
     g.setFont(f);
-    g.drawString(s, 5, iheight - descent);
+    g.drawString(s, 5, iheight - descent - 5);
   }
 
+  BufferedImage filterImage;
+  BufferedImage unzoomedImage;
+  BufferedImage zoomedImage;
+
   BufferedImage image() {
-    filterImage = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
-    BufferedImage img = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g = img.createGraphics();
+    int iw = DLUtil.Int(iwidth / res);
+    int ih = DLUtil.Int(iheight / res);
+    if (filterImage == null)
+      filterImage = new BufferedImage(iw, ih, BufferedImage.TYPE_INT_ARGB);
+    if (unzoomedImage == null)
+      unzoomedImage = new BufferedImage(iw, ih, BufferedImage.TYPE_INT_ARGB);
+    if (zoomedImage == null)
+      zoomedImage = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
+
+    Graphics2D g = unzoomedImage.createGraphics();
     DLUtil.SetHints(g);
 
     if (threaded)
       runThreaded(g);
-
-    return img;
+    image = zoomedImage;
+    return zoomedImage;
   }
 
   void step(Graphics2D g) {
   }
 
   public void randomize() {
-    iwidth = DLUtil.RangeRandom(100, 500);
+    iwidth = DLUtil.RangeRandom(500, 500);
     iheight = iwidth; // DLUtil.RangeRandom(300, 500);
-    setImageResource(randomImage());
+    // setImageResource(randomImage());
   }
 
   public int getThreadSleep() {
@@ -388,7 +392,10 @@ public class DLTunnel extends DLImage {
   }
 
   public int[] rangeThreadSleep() {
-    return new int[] { 0, 100 };
+    return new int[] {
+        0,
+        100
+    };
   }
 
   public String getImageResource() {
@@ -397,12 +404,16 @@ public class DLTunnel extends DLImage {
 
   public void setImageResource(String ir) {
     imageResource = textures + ir;
-    currentTexture = loadImage(imageResource, new Dimension(iwidth, iheight));
+    int iw = DLUtil.Int(iwidth / res);
+    int ih = DLUtil.Int(iheight / res);
+    currentTexture = loadImage(imageResource, new Dimension(iw, ih));
     currentTextureName = ir;
   }
 
   public String[] enumImageResource() {
-    URL url = getClass().getResource(textures);
+    URL url = DrawLine.class.getResource(textures);
+    if (url == null)
+      return new String[] {};
     File f;
     try {
       f = new File(url.toURI());
@@ -439,7 +450,10 @@ public class DLTunnel extends DLImage {
   }
 
   public float[] rangeAnimIncr() {
-    return new float[] { -10f, 10f };
+    return new float[] {
+        -10f,
+        10f
+    };
   }
 
   public float getMovIncr() {
@@ -451,7 +465,10 @@ public class DLTunnel extends DLImage {
   }
 
   public float[] rangeMovIncr() {
-    return new float[] { -10f, 10f };
+    return new float[] {
+        -10f,
+        10f
+    };
   }
 
   public boolean getClearImage() {
@@ -481,19 +498,10 @@ public class DLTunnel extends DLImage {
   }
 
   public float[] rangeTrente() {
-    return new float[] { 1, 100 };
-  }
-
-  public void setFilter(float br) {
-    filterStrength = br;
-  }
-
-  public float getFilter() {
-    return filterStrength;
-  }
-
-  public float[] rangeFilter() {
-    return new float[] { 0f, 1 };
+    return new float[] {
+        1,
+        100
+    };
   }
 
   public boolean getMove() {
@@ -525,15 +533,6 @@ public class DLTunnel extends DLImage {
     paintFPS = m;
   }
 
-  public boolean getDecorateTexture() {
-    return decorateTexture;
-  }
-
-  public void setDecorateTexture(boolean decorateTexture) {
-    this.decorateTexture = decorateTexture;
-    setup(true, false, false);
-  }
-
   public int getRabouteMarginWidth() {
     return rabouteMarginWidth;
   }
@@ -544,7 +543,10 @@ public class DLTunnel extends DLImage {
   }
 
   public int[] rangeRabouteMarginWidth() {
-    return new int[] { 0, 100 };
+    return new int[] {
+        0,
+        100
+    };
   }
 
   public int getRabouteMarginHeight() {
@@ -557,6 +559,75 @@ public class DLTunnel extends DLImage {
   }
 
   public int[] rangeRabouteMarginHeight() {
-    return new int[] { 0, 100 };
+    return new int[] {
+        0,
+        100
+    };
   }
+
+  public void setRes(int res) {
+    this.res = res;
+    reset();
+  }
+
+  public int getRes() {
+    return res;
+  }
+
+  public int[] rangeRes() {
+    return new int[] {
+        1,
+        16
+    };
+  }
+
+  public void reset() {
+    setup(true, true, true);
+    filterImage = null;
+    unzoomedImage = null;
+    zoomedImage = null;
+    currentTexture = null;
+    image();
+  }
+
+  public static void main(String[] a) {
+    int w = 600;
+    int h = 600;
+    int w2 = w / 2;
+    int h2 = h / 2;
+
+    Object[][] params = {
+        {
+            "width",
+            w
+        },
+        {
+            "height",
+            h
+        },
+        {
+            "iwidth",
+            w
+        },
+        {
+            "iheight",
+            h
+        },
+        {
+            "x",
+            w2
+        },
+        {
+            "y",
+            h2
+        },
+        {
+            "threadSleep",
+            5
+        }
+    };
+
+    DLMain.Main(DLTunnel.class, params);
+  }
+
 }

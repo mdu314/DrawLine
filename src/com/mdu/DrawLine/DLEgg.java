@@ -105,7 +105,7 @@ class DLEgg extends DLCurve {
   }
 
   @Override
-  Path2D.Float path() {
+  DLPath path() {
     DLPointList points = null;
     switch (mode) {
     case ZERO:
@@ -123,7 +123,7 @@ class DLEgg extends DLCurve {
     default:
       break;
     }
-    Path2D.Float p = new Path2D.Float();
+    DLPath p = new DLPath();
     if (smooth) {
       final int sz = points.size();
       if (sz > 0) {

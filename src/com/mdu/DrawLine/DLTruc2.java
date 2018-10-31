@@ -43,8 +43,8 @@ class DLTruc2 extends DLCurve {
     return tours;
   }
 
-  Path2D.Float p1() {
-    Path2D.Float p = null;
+  DLPath p1() {
+    DLPath p = null;
 
     double r = 0;
     for (double t = 0; t < tours * DLUtil.TWO_PI; t += SAMPLE_PRECISION / 5) {
@@ -73,8 +73,8 @@ class DLTruc2 extends DLCurve {
   }
 
   @Override
-  Path2D path() {
-    final Path2D p = p1();
+  DLPath path() {
+    final DLPath p = p1();
     transform(p);
     return p;
   }

@@ -40,7 +40,7 @@ class DLGear extends DLCurve {
   }
 
   // http://www.mathcurve.com/courbes2d/dentelee/dentelee.shtml
-  Path2D p() {
+  DLPath p() {
     DLPointList points = new DLPointList();
     for (float t = 0; t < TWO_PI; t += SAMPLE_PRECISION / 5) {
 
@@ -50,7 +50,7 @@ class DLGear extends DLCurve {
 
       points.add(x, y);
     }
-    Path2D.Float p = null;
+    DLPath p = null;
 
     if (smooth)
       p = toSpline(points);
@@ -63,7 +63,7 @@ class DLGear extends DLCurve {
   }
 
   @Override
-  Path2D path() {
+  DLPath path() {
     return p();
   }
 

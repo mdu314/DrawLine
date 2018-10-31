@@ -21,7 +21,7 @@ class DLSplineCircle extends DLCurve {
   }
 
   Path2D circle() {
-    final Path2D path = new Path2D.Float();
+    final Path2D path = new DLPath();
     path.moveTo(x, y + radius);
     path.curveTo(x + magic * radius, y + radius, x + radius, y + magic * radius, x + radius, y);
     path.curveTo(x + radius, y - magic * radius, x + magic * radius, y - radius, x, y - radius);
@@ -33,7 +33,7 @@ class DLSplineCircle extends DLCurve {
   Path2D circle(float min, float max) {
     double x1, y1, x2, y2, x3, y3;
     double dx, dy;
-    final Path2D p = new Path2D.Float();
+    final Path2D p = new DLPath();
 
     dx = DLUtil.RangeRandom(min, max);
     dy = DLUtil.RangeRandom(min, max);
@@ -85,8 +85,8 @@ class DLSplineCircle extends DLCurve {
     return p;
   }
 
-  Path2D circle0() {
-    final Path2D path = new Path2D.Float();
+  DLPath circle0() {
+    final DLPath path = new DLPath();
     path.moveTo(0, radius);
     path.curveTo(magic * radius, radius, radius, magic * radius, radius, 0);
     path.curveTo(radius, -magic * radius, magic * radius, -radius, 0, -radius);
@@ -95,9 +95,9 @@ class DLSplineCircle extends DLCurve {
     return path;
   }
 
-  Path2D circle0(float min, float max) {
+  DLPath circle0(float min, float max) {
     double x1, y1, x2, y2, x3, y3;
-    final Path2D p = new Path2D.Float();
+    final DLPath p = new DLPath();
 
     final double startx = 0;
     final double starty = radius;
@@ -144,8 +144,8 @@ class DLSplineCircle extends DLCurve {
   }
 
   @Override
-  Path2D path() {
-    Path2D p;
+  DLPath path() {
+    DLPath p;
     if (min != 0 || max != 0)
       p = circle0(min, max);
     else

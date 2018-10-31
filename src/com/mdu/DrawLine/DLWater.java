@@ -1,5 +1,6 @@
 package com.mdu.DrawLine;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -21,8 +22,7 @@ import javax.imageio.ImageIO;
 import com.jhlabs.image.CausticsFilter;
 
 public class DLWater extends DLImage {
-  String imageResource = null; //"images/Terre.jpg";
-  int width, height, hwidth, hheight;
+  String imageResource = null; // "images/Terre.jpg";
   MemoryImageSource source;
   Image iimage;
   BufferedImage offImage;
@@ -47,10 +47,12 @@ public class DLWater extends DLImage {
     this.dataAttenuation = dataAttenuation;
   }
 
-  public  int[]rangeDataAttenuation() {
-    return new int[]{1, 2048};
+  public int[] rangeDataAttenuation() {
+    return new int[] {
+        1, 2048
+    };
   }
-  
+
   public int getDataShift() {
     return dataShift;
   }
@@ -60,7 +62,9 @@ public class DLWater extends DLImage {
   }
 
   public int[] rangeDataShift() {
-    return new int[] { 1, 10 };
+    return new int[] {
+        1, 10
+    };
   }
 
   public boolean getRain() {
@@ -109,7 +113,9 @@ public class DLWater extends DLImage {
   }
 
   public int[] rangeRainDelay() {
-    return new int[] { 1, 1000 };
+    return new int[] {
+        1, 1000
+    };
   }
 
   public String getImageResource() {
@@ -146,7 +152,9 @@ public class DLWater extends DLImage {
   }
 
   public int[] rangeThreadSleep() {
-    return new int[] { 0, 100 };
+    return new int[] {
+        0, 100
+    };
   }
 
   public int getRiprad() {
@@ -158,7 +166,9 @@ public class DLWater extends DLImage {
   }
 
   public int[] rangeRiprad() {
-    return new int[] { 1, 10 };
+    return new int[] {
+        1, 10
+    };
   }
 
   public int getRippleIncrement() {
@@ -170,53 +180,54 @@ public class DLWater extends DLImage {
   }
 
   public int[] rangeRippleIncrement() {
-    return new int[] { 1, 2048 };
+    return new int[] {
+        1, 2048
+    };
   }
 
   public void init() {
     BufferedImage im;
     im = loadBackgroundImage();
 
-    width = im.getWidth();
-    height = im.getHeight();
-    hwidth = width / 2;
-    hheight = height / 2;
-
-    int size = width * (height + 2) * 2;
+    int size = iwidth * (iheight + 2) * 2;
     ripplemap = new short[size];
-    ripple = new int[width * height];
-    texture = new int[width * height];
-    oldind = width;
-    newind = width * (height + 3);
+    ripple = new int[iwidth * iheight];
+    texture = new int[iwidth * iheight];
+    oldind = iwidth;
+    newind = iwidth * (iheight + 3);
 
-    PixelGrabber pg = new PixelGrabber(im, 0, 0, width, height, texture, 0, width);
+    PixelGrabber pg = new PixelGrabber(im, 0, 0, iwidth, iheight, texture, 0, iwidth);
     try {
       pg.grabPixels();
     } catch (InterruptedException e) {
     }
 
-    source = new MemoryImageSource(width, height, ripple, 0, width);
+    source = new MemoryImageSource(iwidth, iheight, ripple, 0, iwidth);
     source.setAnimated(true);
     source.setFullBufferUpdates(true);
 
     iimage = Toolkit.getDefaultToolkit().createImage(source);
-    offImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    offImage = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
     offGraphics = offImage.createGraphics();
   }
 
   public void disturb(int x, int y) {
     for (int j = y - riprad; j < y + riprad; j++) {
       for (int k = x - riprad; k < x + riprad; k++) {
-        if (j >= 0 && j < height && k >= 0 && k < width) {
-          ripplemap[oldind + (j * width) + k] += rippleIncrement;
+        if (j >= 0 && j < iheight && k >= 0 && k < iwidth) {
+          ripplemap[oldind + (j * iwidth) + k] += rippleIncrement;
         }
       }
     }
   }
 
   boolean mouse(MouseEvent e) {
-    int mx = (int) (e.getX() - (x - width / 2));
-    int my = (int) (e.getY() - (y - height / 2));
+
+    float x = e.getX() - (this.x - iwidth / 2f);
+    float y = e.getY() - (this.y - iheight / 2f);
+
+    int mx = (int) x;
+    int my = (int) y;
     if (e instanceof MouseWheelEvent) {
       disturb(mx, my);
       return true;
@@ -243,31 +254,32 @@ public class DLWater extends DLImage {
 
     i = 0;
     mapind = oldind;
-    for (int y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++) {
-        short data = (short) ((ripplemap[mapind - width] + ripplemap[mapind + width] + ripplemap[mapind - 1] + ripplemap[mapind + 1]) / 2);
+    for (int y = 0; y < iheight; y++) {
+      for (int x = 0; x < iwidth; x++) {
+        short data = (short) ((ripplemap[mapind - iwidth] + ripplemap[mapind + iwidth] + ripplemap[mapind - 1]
+            + ripplemap[mapind + 1]) / 2);
         data -= ripplemap[newind + i];
         data -= data >> dataShift;
         ripplemap[newind + i] = data;
 
-        //where data=0 then still, where data>0 then wave
+        // where data=0 then still, where data>0 then wave
         data = (short) (dataAttenuation - data);
 
-        //offsets
-        int a = ((x - hwidth) * data / dataAttenuation) + hwidth;
-        int b = ((y - hheight) * data / dataAttenuation) + hheight;
+        // offsets
+        int a = ((x - iwidth / 2) * data / dataAttenuation) + iwidth / 2;
+        int b = ((y - iheight / 2) * data / dataAttenuation) + iheight / 2;
 
-        //bounds check
-        if (a >= width)
-          a = width - 1;
+        // bounds check
+        if (a >= iwidth)
+          a = iwidth - 1;
         if (a < 0)
           a = 0;
-        if (b >= height)
-          b = height - 1;
+        if (b >= iheight)
+          b = iheight - 1;
         if (b < 0)
           b = 0;
 
-        ripple[i] = texture[a + (b * width)];
+        ripple[i] = texture[a + (b * iwidth)];
         mapind++;
         i++;
       }
@@ -292,26 +304,35 @@ public class DLWater extends DLImage {
     return new DLWater(this);
   }
 
+  public void reset() {
+    super.reset();
+    init();
+  }
+  
   long frameCount = 0;
 
   public void f(Graphics2D g, DLThread t) {
     while (frameCount++ >= 0) {
       if (t != null && t.isStopped())
         break;
+      try {
       newframe();
+      } catch (Exception e) {
+        // ignore
+      }
       if (t != null && t.isStopped())
         break;
       source.newPixels();
       if (t != null && t.isStopped())
         break;
-      offGraphics.drawImage(iimage, 0, 0, width, height, null);
+      offGraphics.drawImage(iimage, 0, 0, iwidth, iheight, null);
       if (t != null && t.isStopped())
         break;
       if (parent != null) {
         parent.paint(this);
       }
       if (threadSleep > 0) {
-        //System.err.println("threadSleep " + threadSleep);
+        // System.err.println("threadSleep " + threadSleep);
         try {
           Thread.sleep(threadSleep);
         } catch (InterruptedException e) {
@@ -322,7 +343,7 @@ public class DLWater extends DLImage {
   }
 
   public void paint(Graphics g) {
-    g.drawImage(offImage, (int) (x - iwidth / 2), (int) (y - iheight / 2), iwidth, iheight, null); //new JComponent(){});    
+    g.drawImage(offImage, (int) (x - iwidth / 2), (int) (y - iheight / 2), iwidth, iheight, null); 
   }
 
   BufferedImage loadBackgroundImage() {
@@ -341,8 +362,11 @@ public class DLWater extends DLImage {
         e.printStackTrace();
       }
     } else {
+      if (iwidth == 0 || iheight == 0)
+        randomize();
       img = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
       CausticsFilter cf = new CausticsFilter();
+      cf.setBrightness(20);
       img = cf.filter(img, img);
     }
     return img;
@@ -367,5 +391,27 @@ public class DLWater extends DLImage {
     init();
     setShadow(true);
   }
+  
 
+  public static void main(String[] a) {
+    int w = 600;
+    int h = 600;
+    Object[][] params = {
+      {
+        "iwidth", w
+      }, {
+        "iheight", h
+      }, {
+        "x", w / 2
+      }, {
+        "y", h / 2
+      }, {
+        "threadSleep", 5
+      }, {
+        "backgroundColor", new Color(53, 53, 20).brighter().brighter().brighter()
+      }
+    };
+    Class<? extends DLComponent> cls = DLWater.class;
+    DLMain.Main(cls, params);
+  }
 }

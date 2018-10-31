@@ -1,7 +1,13 @@
 package com.mdu.DrawLine;
 
+import static java.awt.event.MouseEvent.BUTTON1;
+import static java.awt.event.MouseEvent.BUTTON2;
+import static java.awt.event.MouseEvent.BUTTON3;
+
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -10,9 +16,12 @@ import java.awt.Paint;
 import java.awt.Point;
 import java.awt.RadialGradientPaint;
 import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -23,9 +32,12 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
 import com.jhlabs.image.BoxBlurFilter;
 
-public class DLParticles extends DLImage {
+public class DLParticles extends DLPointImage {
   List<P> particles = Collections.synchronizedList(new ArrayList<P>());
   List<G> gravitons = Collections.synchronizedList(new ArrayList<G>());
   List<E> emiters = Collections.synchronizedList(new ArrayList<E>());
@@ -373,13 +385,15 @@ public class DLParticles extends DLImage {
     return null;
   }
 
-  G getGraviton(float x, float y) {
+  float selectMargin = 4;
 
+  G getGraviton(float x, float y) {
     synchronized (gravitons) {
       for (G g : gravitons) {
         Shape s = g.shape;
         if (s != null) {
-          if (s.contains(x, y)) {
+          Rectangle2D r = DLUtil.getBounds(s, selectMargin);
+          if (r.contains(x, y)) {
             return g;
           }
         }
@@ -393,7 +407,8 @@ public class DLParticles extends DLImage {
       for (E e : emiters) {
         Shape s = e.shape;
         if (s != null) {
-          if (s.contains(x, y))
+          Rectangle2D r = DLUtil.getBounds(s, selectMargin);
+          if (r.contains(x, y))
             return e;
         }
       }
@@ -458,7 +473,7 @@ public class DLParticles extends DLImage {
             emiter.setEmit(true);
           }
         } else if (e.isShiftDown()) {
-          float i = DLUtil.RangeRandom(maxIntensity, 5 * maxIntensity);
+          float i = DLUtil.RangeRandom(1, 5 * maxIntensity);
           G gr = new G(x, y, i);
           posObject = gr;
 
@@ -467,7 +482,7 @@ public class DLParticles extends DLImage {
           }
 
         } else if (e.isAltDown() || e.isMetaDown()) {
-          float i = DLUtil.RangeRandom(5 * minIntensity, minIntensity);
+          float i = DLUtil.RangeRandom(5 * minIntensity, 1);
           G gr = new G(x, y, i);
           posObject = gr;
 
@@ -571,7 +586,7 @@ public class DLParticles extends DLImage {
             }
           } else if (NONE.equals(mode)) {
             if (nx < minPosX || nx > maxPosX || ny < minPosY || ny > maxPosY) {
-              p.age = 0; // will be deleted 
+              p.age = 0; // will be deleted
             }
           } else {
             System.err.println("Unkown mode");
@@ -726,7 +741,7 @@ public class DLParticles extends DLImage {
   }
 
   void paintMargin(Graphics2D g) {
-    Path2D p = new Path2D.Float();
+    Path2D p = new DLPath();
 
     int w = iwidth - 1;
     int h = iheight - 1;
@@ -747,7 +762,7 @@ public class DLParticles extends DLImage {
     Color r = new Color(0xBB0B0B);
     LinearGradientPaint lgp = new LinearGradientPaint(0, 0, w, h, new float[] { 0, 0.5f, 1 }, new Color[] { r,
         Color.darkGray, r });
-    //g.setColor(new Color(0xBB0B0B));
+    // g.setColor(new Color(0xBB0B0B));
     g.setPaint(lgp);
     g.draw(p);
   }
@@ -777,12 +792,12 @@ public class DLParticles extends DLImage {
     float x = DLUtil.Normalize(0, iwidth, minPosX, maxPosX, px);
     float py = e.y;
     float y = DLUtil.Normalize(0, iheight, minPosY, maxPosY, py);
-    if (e.shape == null) {
+//    if (e.shape == null) {
       e.shape = DLUtil.Star(x, y, 3, 9, 8, DLUtil.RangeRandom(0, DLUtil.TWO_PI));
-    }
-    if (e.paint == null) {
+//    }
+//    if (e.paint == null) {
       e.paint = DLUtil.RandomColor(0.5f, 0.7f, 0.6f, 1f, 0.7f, 1f);
-    }
+//    }
     g.setPaint(e.paint);
     try {
       g.fill(e.shape);
@@ -800,13 +815,12 @@ public class DLParticles extends DLImage {
 
   void paintGraviton(Graphics2D g, G f) {
     float i = f.intensity;
-    float ni = DLUtil.Normalize(1, 20, minIntensity, maxIntensity, i);
-    if (ni <= 0)
-      ni = -ni + 0.1f;
-
+    float ni = i < 0 ? -i : i;
+    ni = DLUtil.Normalize(1, 30, 0, maxIntensity, ni);
+    
     float x = DLUtil.Normalize(0, iwidth, minPosX, maxPosX, f.x);
     float y = DLUtil.Normalize(0, iheight, minPosY, maxPosY, f.y);
-    float fl = 2 * DLUtil.fastLog(ni);
+    float fl = 2 * DLUtil.FastLog(ni);
 
     if (f.shape == null) {
       f.shape = DLUtil.Star(x, y, fl, 3 * fl, 12, DLUtil.RandomAngle());
@@ -821,11 +835,11 @@ public class DLParticles extends DLImage {
       if (i < 0) {
         RadialGradientPaint rgp = new RadialGradientPaint(x, y, 3 * fl, new float[] { 0, 1 }, new Color[] { Color.red,
             Color.blue });
-        f.paint = rgp; //DLUtil.TransparenterColor(Color.yellow, ni2); //0.3f);
+        f.paint = rgp; // DLUtil.TransparenterColor(Color.yellow, ni2); //0.3f);
       } else {
         RadialGradientPaint rgp = new RadialGradientPaint(x, y, 3 * fl, new float[] { 0, 1 }, new Color[] { Color.blue,
             Color.red });
-        f.paint = rgp; //DLUtil.TransparenterColor(Color.cyan, ni2); //0.3f);
+        f.paint = rgp; // DLUtil.TransparenterColor(Color.cyan, ni2); //0.3f);
       }
     }
 
@@ -851,7 +865,7 @@ public class DLParticles extends DLImage {
     float x = DLUtil.Normalize(0, iwidth, minPosX, maxPosX, px);
     float py = p.y;
     float y = DLUtil.Normalize(0, iheight, minPosY, maxPosY, py);
-//    g.setPaint(p.paint);
+    // g.setPaint(p.paint);
     setPointFill(p.paint);
     drawPoint(g, x, y);
   }
@@ -991,6 +1005,55 @@ public class DLParticles extends DLImage {
   public float[] rangePartColVariance() {
     return new float[] { 0, 1f };
   }
+  
+
+  public static void main(String[] a) {
+
+    final JFrame frame = new JFrame();
+    final DLContainer panel = new DLContainer();
+    panel.setFocusable(true);
+    panel.setBackground(new Color(0x0c0c0c));
+    frame.getContentPane().add(panel, BorderLayout.CENTER);
+    frame.setFocusable(true);
+    frame.setSize(800, 600);
+    panel.setBackground(new Color(0xc0c0c0));
+    final DLParticles dlg = new DLParticles(400, 300);
+    dlg.iwidth = 800;
+    dlg.iheight = 600;
+    dlg.threadSleep = 5;
+    
+    panel.addComponent(dlg);
+
+    DLMouse mouse = new DLMouse(panel) {
+      public void mouseClicked(MouseEvent e) {
+        switch (e.getButton()) {
+        case BUTTON2:
+        case BUTTON3:
+        case BUTTON1:
+          if (panel.ps != null)
+            panel.ps.close();
+          panel.ps = new DLPropertySheet(dlg);
+          break;
+        }
+      }
+    };
+
+    mouse.listen(panel);
+
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        final Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        final int w = frame.getSize().width;
+        final int h = frame.getSize().height;
+        final int x = (dim.width - w) / 2;
+        final int y = (dim.height - h) / 2;
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocation(x, y);
+        frame.setVisible(true);
+      }
+    });
+  }
 }
 
 class P {
@@ -1089,13 +1152,24 @@ class P {
         float x = DLUtil.Normalize(0, s.iwidth, system.minPosX, system.maxPosX, pt.x);
         float y = DLUtil.Normalize(0, s.iheight, system.minPosY, system.maxPosY, pt.y);
         if (i < trajectory.size() - 1) {
-          int x1 = (int) lastX;
-          int y1 = (int) lastY;
-          int x2 = (int) x;
-          int y2 = (int) y;
-          g.setColor(c);
-          g.drawLine(x1, y1, x2, y2);
-          c = DLUtil.TransparenterColor(c, 0.85f);
+          float dx = lastX - x;
+          float dy = lastY - y;
+          if (dx < 0)
+            dx = -dx;
+          if (dy < 0)
+            dy = -dy;
+          if (dx < 100 && dy < 100) {
+            Line2D.Float l = new Line2D.Float(lastX, lastY, x, y);
+            int tr = (int) DLUtil.Normalize(0, 255, 0, trajectory.size(), i);
+            Color col = new Color(c.getRed(), c.getGreen(), c.getBlue(), tr);
+            g.setColor(col);
+            g.draw(l);
+          }
+          /*
+           * int x1 = (int) lastX; int y1 = (int) lastY; int x2 = (int) x; int
+           * y2 = (int) y; g.setColor(c); g.drawLine(x1, y1, x2, y2); c =
+           * DLUtil.TransparenterColor(c, 0.85f);
+           */
         }
         lastX = x;
         lastY = y;

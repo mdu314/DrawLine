@@ -21,11 +21,11 @@ class DLPolyline extends DLSegmentedComponent {
 
   Color color = Color.black;
 
-  double handleSize = DLParams.HANDLE_SIZE;
+  float handleSize = DLParams.HANDLE_SIZE;
   String mode = CIRCLE_SHAPE;
   Path2D path;
-  Point2D.Double[] fcp;
-  Point2D.Double[] scp;
+  Point2D.Float[] fcp;
+  Point2D.Float[] scp;
 
   DLPolyline(DLPolyline src) {
     super();
@@ -49,10 +49,10 @@ class DLPolyline extends DLSegmentedComponent {
 
   Path2D curve(boolean deco) {
     final int sz = points.size();
-    final Path2D.Float p = new Path2D.Float();
+    final DLPath p = new DLPath();
     if (sz > 0) {
-      fcp = new Point2D.Double[sz - 1];
-      scp = new Point2D.Double[sz - 1];
+      fcp = new Point2D.Float[sz - 1];
+      scp = new Point2D.Float[sz - 1];
       PolyUtils.GetCurveControlPoints(points, fcp, scp);
 
       p.moveTo(points.get(0).x, points.get(0).y);
@@ -73,16 +73,18 @@ class DLPolyline extends DLSegmentedComponent {
   void deco(DLPoint s) {
     if (mode == null)
       return;
-    final double h = handleSize + DLUtil.RangeRandom(1., 10.);
+    final float h = handleSize + DLUtil.RangeRandom(1f, 10f);
 
     if (mode.equals(CIRCLE_SHAPE)) {
       if (DLUtil.BooleanRandom()) {
-        final Ellipse2D e = new Ellipse2D.Double(s.x - h / 2, s.y - h / 2, h, h);
+        final Ellipse2D e = new Ellipse2D.Float(s.x - h / 2, s.y - h / 2, h, h);
         s.shape = e;
+      } else {
+        s.shape = null;
       }
     } else if (mode.equals(SQUARE_SHAPE)) {
       if (DLUtil.BooleanRandom()) {
-        final Path2D r = new Path2D.Double();
+        final Path2D r = new Path2D.Float();
         r.moveTo(s.x - h / 2, s.y - h / 2);
         r.lineTo(s.x - h / 2, s.y - h / 2 + h);
         r.lineTo(s.x - h / 2 + h, s.y - h / 2 + h);
@@ -93,14 +95,16 @@ class DLPolyline extends DLSegmentedComponent {
         r.transform(tr);
 
         s.shape = r;
+      } else {
+        s.shape = null;
       }
     } else if (mode.equals(MIXED_SHAPE)) {
       if (DLUtil.BooleanRandom())
         if (DLUtil.BooleanRandom()) {
-          final Ellipse2D e = new Ellipse2D.Double(s.x - h / 2, s.y - h / 2, h, h);
+          final Ellipse2D e = new Ellipse2D.Float(s.x - h / 2, s.y - h / 2, h, h);
           s.shape = e;
         } else {
-          final Path2D r = new Path2D.Double();
+          final Path2D r = new Path2D.Float();
           r.moveTo(s.x - h / 2, s.y - h / 2);
           r.lineTo(s.x - h / 2, s.y - h / 2 + h);
           r.lineTo(s.x - h / 2 + h, s.y - h / 2 + h);
@@ -113,9 +117,9 @@ class DLPolyline extends DLSegmentedComponent {
           s.shape = r;
         }
     } else if (mode.equals(NO_SHAPE)) {
-
+      s.shape = null;
     } else {
-
+      s.shape = null;
     }
 
   }
@@ -146,17 +150,20 @@ class DLPolyline extends DLSegmentedComponent {
 
     final DLPoint ls = points.get(i - 1);
     final DLPoint s = points.get(i);
-    final double x = s.x;
-    final double y = s.y;
-    final double dx = x - ls.x;
-    final double dy = y - ls.y;
-
-    final Rectangle2D rect = new Rectangle2D.Double(x - handleSize / 2, y - handleSize / 2, handleSize, handleSize);
-    final float factor = Math.abs(dy) < 0.1 ? 0f : (float) Math.abs(dx / dy);
-    g.setColor(DLUtil.BrighterColor(color, factor));
-    final Line2D line = new Line2D.Double(ls.x, ls.y, x, y);
+    final float x = s.x;
+    final float y = s.y;
+    final float dx = x - ls.x;
+    final float dy = y - ls.y;
+    final float factor = DLUtil.Abs(dy) < 0.1f ? 0f : DLUtil.Abs(dx / dy);
+    if (color != null)
+      g.setColor(DLUtil.BrighterColor(color, factor));
+    else
+      g.setColor(null);
+    final Line2D line = new Line2D.Float(ls.x, ls.y, x, y);
     g.draw(line);
-    g.fill(rect);
+
+//    final Rectangle2D rect = new Rectangle2D.Float(x - handleSize / 2, y - handleSize / 2, handleSize, handleSize);
+//    g.fill(rect);
   }
 
   Rectangle getBounds(boolean deco) {
@@ -203,8 +210,8 @@ class DLPolyline extends DLSegmentedComponent {
         g.drawRect(r.x, r.y, r.width - 1, r.height - 1);
       }
     }
-    for (int i = 1; i < points.size(); i++)
-      drawSegment(g, i);
+//    for (int i = 1; i < points.size(); i++)
+//      drawSegment(g, i);
     drawCurve(g);
   }
 
@@ -228,6 +235,16 @@ class DLPolyline extends DLSegmentedComponent {
 
   public String[] enumMode() {
     return new String[] { NO_SHAPE, CIRCLE_SHAPE, SQUARE_SHAPE, MIXED_SHAPE };
+  }
+
+  public Color getColor() {
+    return color;
+  }
+
+  public void setColor(Color c) {
+    color = c;
+    if (parent != null)
+      parent.paint(getBounds());
   }
 
   @Override

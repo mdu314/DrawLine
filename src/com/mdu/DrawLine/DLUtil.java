@@ -14,6 +14,7 @@ import static java.awt.geom.PathIterator.SEG_LINETO;
 import static java.awt.geom.PathIterator.SEG_MOVETO;
 import static java.awt.geom.PathIterator.SEG_QUADTO;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -25,13 +26,15 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -40,9 +43,11 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -54,69 +59,24 @@ import com.jhlabs.image.PlasmaFilter;
 public class DLUtil {
 
   static ArrayList<Class<? extends DLComponent>> curveList = new ArrayList<Class<? extends DLComponent>>(Arrays.asList(
-      DLPolygon.class,
-      DLEgg.class,
-      DLSpiral.class,
-      DLHeart.class,
-      // DLSplineCircle.class, 
-      DLStar.class,
-      DLArrow.class,
-      // DLFish.class, 
-      // DLLemniscate.class, 
-      DLLeaf.class,
-      DLRose.class,
-      DLGear.class,
-      // DLAstroid.class, 
-      // DLEpitrochoid.class,
-      // DLSuperEllipse.class,
-      // DLRosace.class, 
-      DLVonKoch.class,
-      DLPapillon.class,
-      // DLTruc.class, 
-      // DLTruc2.class,
-      // DLBug.class,
-      DLSpirograph.class,
-      DLTrefle.class,
-      DLMoebius.class,
-      DLChar.class,
-      DLLorenz.class,
-      //DLKnot.class, 
-      DLCross.class,
-      DLDragon.class,
-      // DLPlante.class, 
-      DLHarmonograph.class,
-      DLCross.class
-      ));
+      DLPolygon.class, DLRuban.class, DLPolyline.class, DLEgg.class, DLSpiral.class, DLHeart.class,
+      DLSplineCircle.class, DLStar.class, DLArrow.class, DLFish.class, DLLemniscate.class, DLLeaf.class, DLRose.class,
+      DLGear.class, DLAstroid.class, DLEpitrochoid.class, DLSuperEllipse.class, DLRosace.class, DLVonKoch.class,
+      DLPapillon.class, DLTruc.class, DLTruc2.class, DLBug.class, DLSpirograph.class, DLTrefle.class, DLMoebius.class,
+      DLChar.class, DLLorenz.class, DLKnot.class, DLCross.class, DLDragon.class, DLPlante.class, DLHarmonograph.class,
+      DLCross.class, DLLorem.class, DLDragon.class/* , DLMap.class */));
 
   static ArrayList<Class<? extends DLComponent>> imageList = new ArrayList<Class<? extends DLComponent>>(Arrays.asList(
-      DLPshit.class,
-      DLRuban.class,
-      DLPolyline.class, DLLorem.class,
-      //DLKnot.class, 
-      DLNoise.class,
-      DLTexture.class,
-      DLDragon.class,
-      DLFougere.class,
-      DLMandelbrot.class,
-      // DLPlante.class, 
-      DLParticle.class,
-      DLWater.class,
-      DLParticles.class,
-      DLLife.class,
-      DLVoronoi.class,
-      DLHarmonograph.class,
-      DLQRCode.class,
-      DLDelaunay.class,
-      DLWave.class,
-      DLTunnel.class,
-      DLPlasma.class,
-      DLSub.class,
-      DLWords.class,
-      DLMetaball.class,
-      DLKaleidoscope.class,
-      DLSub.class,
-      DLFougere.class,
-      DLKaleidoscope.class));
+      DLPshit.class, DLNoise.class, DLTexture.class, DLFougere.class, DLMandelbrot.class, DLPlante.class,
+      DLParticle.class, DLWater.class, DLParticles.class, DLLife.class, DLVoronoi.class, DLQRCode.class,
+      DLDelaunay.class, DLWave.class, DLTunnel.class, DLPlasma.class, DLSub.class, DLWords.class, DLMetaball.class,
+      DLKaleidoscope.class, DLFougere.class, DLKaleidoscope.class, DLQuasiCristal.class,
+      DLMultiscaleTuringPatterns.class, DLGravity.class, DLRgbDaze.class, DLCircusFluid.class, DLNeuralNet.class, DL3D.class,
+      DLApollonian.class, DLRotators.class));
+
+  static ArrayList<Class<? extends DLComponent>> otherList = new ArrayList<Class<? extends DLComponent>>(Arrays.asList(
+      DLMap.class, DLKandinsky.class, DLApollon.class, DLRings.class, DLPattern.class, DLFlowers.class,
+      DLStarField.class, DLMagicalTree.class, DLSinCosLines.class, DLChess.class));
 
   static String lorem = ReadFile("Lorem.txt");
   static final float PI = 3.1415926535897932384626433f;
@@ -126,27 +86,50 @@ public class DLUtil {
   static final float SQRT2 = (float) Math.sqrt(2);
   static final float E = (float) Math.E;
 
-  static DLColorModel ColorModel1 = new DLColorModel("model1",
-      new int[] { 0xff0000, 0x00ff00, 0x0000ff },
-      new float[] { 1, 0.5f, 0f });
+  static DLColorModel ColorModel1 = new DLColorModel("model1", new int[] {
+    0xff0000, 0x00ff00, 0x0000ff
+  }, new float[] {
+    1, 0.5f, 0f
+  });
 
-  static DLColorModel ColorModel2 = new DLColorModel("model2",
-      new int[] { 66 << 16 | 30 << 8 | 15, 25 << 16 | 7 << 8 | 26, 9 << 16 | 1 << 8 | 47, 4 << 16 | 4 << 8 | 73,
-          0 << 16 | 7 << 8 | 100, 12 << 16 | 44 << 8 | 138, 24 << 16 | 82 << 8 | 177, 57 << 16 | 125 << 8 | 209,
-          134 << 16 | 181 << 8 | 229, 211 << 16 | 236 << 8 | 248, 241 << 16 | 233 << 8 | 191,
-          248 << 16 | 201 << 8 | 95, 255 << 16 | 170 << 8 | 0, 204 << 16 | 128 << 8 | 0, 153 << 16 | 87 << 8 | 0,
-          106 << 16 | 52 << 8 | 3 },
-      new float[] { 16f / 16f, 15f / 16f, 14f / 16f, 13f / 16f, 12f / 16f, 11f / 16f, 10f / 16f, 9f / 16f, 8f / 16f,
-          7f / 16f, 6f / 16f, 5f / 16f, 4f / 16f, 3f / 16f, 2f / 16f, 1f / 16f });
+  static DLColorModel ColorModel2 = new DLColorModel("model2", new int[] {
+    66 << 16 | 30 << 8 | 15, 25 << 16 | 7 << 8 | 26, 9 << 16 | 1 << 8 | 47, 4 << 16 | 4 << 8 | 73, 0 << 16 | 7 << 8 | 100, 12 << 16 | 44 << 8 | 138, 24 << 16 | 82 << 8 | 177, 57 << 16 | 125 << 8 | 209, 134 << 16
+        | 181 << 8 | 229, 211 << 16 | 236 << 8 | 248, 241 << 16 | 233 << 8 | 191, 248 << 16 | 201 << 8 | 95, 255 << 16 | 170 << 8 | 0, 204 << 16 | 128 << 8 | 0, 153 << 16 | 87 << 8 | 0, 106 << 16 | 52 << 8 | 3
+  }, new float[] {
+    16f / 16f, 15f / 16f, 14f / 16f, 13f / 16f, 12f / 16f, 11f / 16f, 10f / 16f, 9f / 16f, 8f / 16f, 7f / 16f, 6f / 16f, 5f / 16f, 4f / 16f, 3f / 16f, 2f / 16f, 1f / 16f
+  });
 
-  static DLColorModel ColorModel3 = new DLColorModel("model3",
-      new int[] { 0x6B0000, 0xE80000, 0xCD9859, 0xFF0400, 0xFFDD90 },
-      new float[] { 1f, 3f / 4f, 2f / 4f, 1f / 4f, 0f });
+  static DLColorModel ColorModel3 = new DLColorModel("model3", new int[] {
+    0x6B0000, 0xE80000, 0xCD9859, 0xFF0400, 0xFFDD90
+  }, new float[] {
+    1f, 3f / 4f, 2f / 4f, 1f / 4f, 0f
+  });
+
+  static long millis() {
+    return System.currentTimeMillis();
+  }
+
+  static long nanos() {
+    return System.nanoTime();
+  }
 
   static int Floor(float f) {
     if (f < 0)
       return (int) (f - 0.5f);
-    return (int) (f + 0.5f);
+    return (int) f;
+  }
+
+  static synchronized float Abs(float a) {
+    return a < 0 ? -a : a;
+  }
+
+  static synchronized int IntAbs(float a) {
+    a = a < 0 ? -a : a;
+    return Floor(a);
+  }
+
+  static synchronized float Sqrt(float s) {
+    return FastSqrt(s);
   }
 
   static synchronized float FastSqrt(float x) {
@@ -162,7 +145,7 @@ public class DLUtil {
     return Float.intBitsToFloat(532483686 + (Float.floatToRawIntBits(fx) >> 1));
   }
 
-  static float fastLog(float x) {
+  static float FastLog(float x) {
     return 6 * (x - 1) / (x + 1 + 4 * FastSqrt(x));
   }
 
@@ -174,14 +157,26 @@ public class DLUtil {
     return (float) Math.pow(a, b);
   }
 
-  public static float fastPow(float a, float b) {
-    return (float) fastPow((double) a, (double) b);
+  public static float FastPow(float a, float b) {
+    return (float) FastPow((double) a, (double) b);
   }
 
-  public static double fastPow(final double a, final double b) {
+  public static double FastPow(final double a, final double b) {
     final long tmp = Double.doubleToLongBits(a);
     final long tmp2 = (long) (b * (tmp - 4606921280493453312L)) + 4606921280493453312L;
     return Double.longBitsToDouble(tmp2);
+  }
+
+  public static int Min(int a, int b) {
+    return a < b ? a : b;
+  }
+
+  public static float Min(float a, float b) {
+    return a < b ? a : b;
+  }
+
+  public static float Max(float a, float b) {
+    return a > b ? a : b;
   }
 
   private static final int ATAN2_BITS = 7;
@@ -203,6 +198,14 @@ public class DLUtil {
         atan2[j * ATAN2_DIM + i] = (float) Math.atan2(y0, x0);
       }
     }
+  }
+
+  static float Radian(float deg) {
+    return deg / 180.0f * PI;
+  }
+
+  static float Atan(float x) {
+    return (float) Math.atan(x);
   }
 
   static float fastAtan2(double y, double x) {
@@ -262,9 +265,19 @@ public class DLUtil {
     }
   }
 
-  /** Find a linear interpolation from the table
+  public static float sin(float a) {
+    return (float) Math.sin(a);
+  }
+
+  public static float cos(float a) {
+    return (float) Math.cos(a);
+  }
+
+  /**
+   * Find a linear interpolation from the table
    * 
-   * @param ang angle in radians
+   * @param ang
+   *          angle in radians
    * @return sin of angle a
    */
   final public static float Sin(float ang) {
@@ -289,9 +302,11 @@ public class DLUtil {
     return (float) Math.atan2(y, x);
   }
 
-  /** Find a linear interpolation from the table
+  /**
+   * Find a linear interpolation from the table
    * 
-   * @param ang angle in radians
+   * @param ang
+   *          angle in radians
    * @return cos of angle a
    */
   final public static float Cos(float ang) {
@@ -307,7 +322,6 @@ public class DLUtil {
       indexB += size;
     indexB %= size;
 
-    //    System.err.println(indexA + " " + costable.length);
     float a = costable[indexA];
 
     return a + (costable[indexB] - a) * (t - (indexA * step)) * invStep;
@@ -335,6 +349,10 @@ public class DLUtil {
     }
   }
 
+  static synchronized void Log(String message) {
+    System.err.println(message);
+  }
+
   static synchronized void debug(String message) {
     int deux = 3;
     String fullClassName = Thread.currentThread().getStackTrace()[deux].getClassName();
@@ -344,38 +362,101 @@ public class DLUtil {
     System.err.println(message + " " + className + "." + methodName + "():" + lineNumber);
   }
 
-  static synchronized BufferedImage copyImage(BufferedImage src) {
-    final BufferedImage bi = new BufferedImage(src.getWidth(null), src.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-    final Graphics2D g = bi.createGraphics();
+  static HashMap<Object, BufferedImage> imageMap = new HashMap<>();
+
+  static BufferedImage getImage(Object value, int size) {
+
+    BufferedImage image = imageMap.get(value);
+
+    String s = value.toString();
+    File f;
+    URL url;
+
+    if (image == null) {
+      if (new File(s).exists()) {
+        System.err.println("loading " + s);
+        image = DLUtil.LoadImage(s, size);
+      }
+      if (image == null) {
+        url = DrawLine.class.getResource(s);
+        if (url != null) {
+          try {
+            f = new File(url.toURI());
+          } catch (URISyntaxException e) {
+            f = new File(url.getPath());
+          }
+          if (f.exists()) {
+            System.err.println("loading " + f);
+            image = DLUtil.LoadImage(url, size);
+          }
+        }
+      }
+      if (image == null) {
+        url = DrawLine.class.getResource("images/" + s);
+        if (url != null) {
+          try {
+            f = new File(url.toURI());
+          } catch (URISyntaxException e) {
+            f = new File(url.getPath());
+          }
+          if (f.exists()) {
+            System.err.println("loading " + f);
+            image = DLUtil.LoadImage(url, size);
+          }
+        }
+      }
+      if (image == null) {
+        url = DrawLine.class.getResource("images/textures/" + s);
+        if (url != null) {
+          try {
+            f = new File(url.toURI());
+          } catch (URISyntaxException e) {
+            f = new File(url.getPath());
+          }
+          if (f.exists()) {
+            System.err.println("loading " + f);
+            image = DLUtil.LoadImage(url, size);
+          }
+        }
+      }
+      imageMap.put(value, image);
+    }
+    return image;
+  }
+
+  static synchronized BufferedImage copy(BufferedImage src, BufferedImage dst) {
+    if (dst == null)
+      dst = new BufferedImage(src.getWidth(null), src.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+    final Graphics2D g = dst.createGraphics();
     DLUtil.SetHints(g);
     g.drawImage(src, 0, 0, null);
     g.dispose();
-    return bi;
+    return dst;
   }
 
-  static synchronized Path2D.Float AddPoint(Point2D pt, Path2D.Float p) {
+  static synchronized DLPath AddPoint(Point2D pt, DLPath p) {
     return AddPoint(pt.getX(), pt.getY(), p);
   }
 
-  static synchronized Path2D.Float AddPoint(Point2D.Float pt, Path2D.Float p) {
-    return AddPoint(pt.x, pt.y, p);
+  static synchronized DLPath AddPoint(Point2D.Float pt, float scale, DLPath p) {
+    return AddPoint(pt.x, pt.y, scale, p);
   }
 
-  static synchronized Path2D.Float AddPoint(float x, float y, Path2D.Float p) {
-    return AddPoint(x, y, p, DLParams.DRAW_PRECISION);
+  static synchronized DLPath AddPoint(float x, float y, float scale, DLPath p) {
+    return AddPoint(x * scale, y * scale, p, DLParams.DRAW_PRECISION);
   }
 
-  static synchronized Path2D.Float AddPoint(float x, float y, Path2D.Float p, float tol) {
+  static synchronized DLPath AddPoint(float x, float y, DLPath p, float tol) {
     return AddPoint(x, y, p, tol, Float.MAX_VALUE);
   }
 
-  static synchronized Path2D.Float AddPoint(DLPoint pt, Path2D.Float p, float tol, float cutDistance) {
+  static synchronized DLPath AddPoint(DLPoint pt, DLPath p, float tol, float cutDistance) {
     return AddPoint(pt.x, pt.y, p, tol, cutDistance);
   }
 
-  static synchronized Path2D.Float AddPoint(float x, float y, Path2D.Float p, float skipDistance, float cutDistance) {
+  static synchronized DLPath AddPoint(float x, float y, DLPath p, float skipDistance, float cutDistance) {
     if (p == null)
-      p = new Path2D.Float();
+      p = new DLPath();
     Point2D.Float cur = (Point2D.Float) p.getCurrentPoint();
     if (cur == null) {
       p.moveTo(x, y);
@@ -393,9 +474,9 @@ public class DLUtil {
     return p;
   }
 
-  static synchronized Path2D.Float AddPoint(double x, double y, Path2D.Float p) {
+  static synchronized DLPath AddPoint(double x, double y, DLPath p) {
     if (p == null)
-      p = new Path2D.Float();
+      p = new DLPath();
     if (p.getCurrentPoint() == null)
       p.moveTo(x, y);
     else {
@@ -406,6 +487,20 @@ public class DLUtil {
         p.lineTo(x, y);
     }
     return p;
+  }
+
+  static GeneralPath stringToShape(String s, String family, int size, int style) {
+
+    final BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    final Graphics2D g = img.createGraphics();
+    DLUtil.SetHints(g);
+    final Font f = new Font(family, style, size);
+    final FontRenderContext frc = g.getFontMetrics(f).getFontRenderContext();
+    final GlyphVector v = f.createGlyphVector(frc, s);
+    final Shape shape = v.getOutline();
+    if (!(shape instanceof GeneralPath))
+      throw new Error("Character outline is not a GeneralPath but a " + shape);
+    return (GeneralPath) shape;
   }
 
   static String digits = "0123456789";
@@ -440,6 +535,11 @@ public class DLUtil {
     return new Color(255 - i, 255 - i, 255 - i);
   }
 
+  static int GetIntGrey(int i) {
+    int value = ((0xFF) << 24) | ((i & 0xFF) << 16) | ((i & 0xFF) << 8) | ((i & 0xFF) << 0);
+    return value;
+  }
+
   static synchronized Color BrighterColor(Paint p, double factor) {
     if (!(p instanceof Color))
       return null;
@@ -460,6 +560,26 @@ public class DLUtil {
     return Color.getHSBColor(h, s, b);
   }
 
+  static public AffineTransform computeTransform2(Rectangle2D r, Rectangle2D tr, boolean keepAspect) {
+    double rxc = r.getX() + r.getWidth() / 2.;
+    double ryc = r.getY() + r.getHeight() / 2.;
+
+    double trxc = tr.getX() + tr.getWidth() / 2.;
+    double tryc = tr.getY() + tr.getHeight() / 2.;
+
+    double tx = trxc - rxc;
+    double ty = tryc - ryc;
+
+    double sx = tr.getWidth() / r.getWidth();
+    double sy = tr.getHeight() / r.getHeight();
+
+    AffineTransform at = new AffineTransform();
+    at.translate(tx, ty);
+    at.scale(sx, sy);
+
+    return at;
+  }
+
   static synchronized public AffineTransform computeTransform(Rectangle2D r, Rectangle2D tr, boolean keepAspect) {
     return _computeTransform((float) tr.getX(), (float) r.getX(), (float) tr.getY(), (float) r.getY(),
         (float) tr.getWidth(), (float) r.getWidth(), (float) tr.getHeight(), (float) r.getHeight(), keepAspect);
@@ -474,12 +594,8 @@ public class DLUtil {
       float th, float h, boolean keepAspect) {
     float sx = 1;
     float sy = 1;
-    //    float tw = trect.width;
-    //    float w = rect.width;
     if (tw != w)
       sx = tw / w;
-    //    float th = trect.height;
-    //    float h = rect.height;
     if (th != h)
       sy = th / h;
     if (keepAspect) {
@@ -487,7 +603,6 @@ public class DLUtil {
       sx = s;
       sy = s;
     }
-    //    return new AffineTransform(sx, 0, 0, sy, trect.x - sx * rect.x, trect.y - sy * rect.y);
     return new AffineTransform(sx, 0, 0, sy, tx - sx * x, ty - sy * y);
   }
 
@@ -552,10 +667,11 @@ public class DLUtil {
     return DarkerColor(c, factor);
   }
 
-  //  static synchronized Color DarkerColor(Color c, double factor) {
-  //    return new Color(Math.max((int) (c.getRed() * factor), 0), Math.max((int) (c.getGreen() * factor), 0), Math.max(
-  //        (int) (c.getBlue() * factor), 0));
-  //  }
+  // static synchronized Color DarkerColor(Color c, double factor) {
+  // return new Color(Math.max((int) (c.getRed() * factor), 0), Math.max((int)
+  // (c.getGreen() * factor), 0), Math.max(
+  // (int) (c.getBlue() * factor), 0));
+  // }
 
   static synchronized Color DarkerColor(Color c, float factor) {
     final float res[] = new float[3];
@@ -772,9 +888,9 @@ public class DLUtil {
     return MinDistance(pts, new DLPoint(x, y));
   }
 
-  static double rand1;
-  static double rand2;
-  static boolean hasSpare = false;
+  private static double rand1;
+  private static double rand2;
+  private static boolean hasSpare = false;
 
   static synchronized double NextRandomGauss(double variance) {
     if (hasSpare) {
@@ -791,6 +907,20 @@ public class DLUtil {
     rand2 = Math.random() * TWO_PI;
 
     return Math.sqrt(variance * rand1) * Math.cos(rand2);
+  }
+
+  static synchronized float map(float val, float minVal, float maxVal, float min, float max) {
+    final float v = (val - minVal) / (maxVal - minVal);
+    return (float) ((max - min) * v + min);
+  }
+
+  static synchronized float Normalize(float v, float start, float stop) {
+    return (v - start) / (stop - start);
+  }
+
+  static synchronized int Normalize(int min, int max, int minVal, int maxVal, int val) {
+    final float v = ((float) val - (float) minVal) / ((float) maxVal - (float) minVal);
+    return (int) (((float) max - (float) min) * v + (float) min);
   }
 
   static synchronized double Normalize(double min, double max, double minVal, double maxVal, double val) {
@@ -841,7 +971,7 @@ public class DLUtil {
     AffineTransform tr = AffineTransform.getRotateInstance(-a, x1, y1);
     src.setLocation(x2, y2);
     tr.transform(src, dst);
-    if (Math.abs(dx) > Math.abs(dy)) {
+    if (Abs(dx) > Math.abs(dy)) {
       if (dx < 0)
         d = -d;
     } else if (dy > 0) {
@@ -875,7 +1005,7 @@ public class DLUtil {
     if (Float.isNaN(D))
       D = 0;
 
-    //float a = (float)Math.atan(dy / dx);
+    // float a = (float)Math.atan(dy / dx);
     float a = fastAtan2(dy, dx);
     tr = AffineTransform.getRotateInstance(a, x1, y1);
     // int s = dx < 0 ? -1 : 1;
@@ -900,6 +1030,23 @@ public class DLUtil {
 
   static synchronized Point2D.Float[] orthopoints(Point2D.Float p1, Point2D.Float p2, float D, float d) {
     return orthopoints(p1.x, p1.y, p2.x, p2.y, D, d);
+  }
+
+  static Rectangle2D getBounds(Shape s, float margin) {
+    Rectangle2D r = s.getBounds2D();
+    r.setFrame(r.getX() - margin, r.getY() - margin, r.getWidth() + 2 * margin, r.getHeight() + 2 * margin);
+    return r;
+  }
+
+  static synchronized void expand(Rectangle r, float a) {
+    float aa = 2f * a;
+    r.setRect(r.getX() - a, r.getY() - a, r.getWidth() + aa, r.getHeight() + aa);
+  }
+
+  static synchronized void expand(Rectangle2D.Float r, float howmuch) {
+    float a = howmuch;
+    float aa = 2f * a;
+    r.setRect(r.getX() - a, r.getY() - a, r.getWidth() + aa, r.getHeight() + aa);
   }
 
   static synchronized Rectangle PolylineBounds(ArrayList<DLPoint> pts, float margin) {
@@ -954,6 +1101,10 @@ public class DLUtil {
     return ret;
   }
 
+  static synchronized Color RandomColor() {
+    return RandomColor(1f, 0f, 1f, 0f, 1f, 0f);
+  }
+
   static synchronized Color RandomColor(float mh, float Mh, float ms, float Ms, float mb, float Mb) {
     final float h = (float) ((Mh - mh) * Math.random() + mh);
     final float s = (float) ((Ms - ms) * Math.random() + ms);
@@ -977,7 +1128,7 @@ public class DLUtil {
   static synchronized float RandomGauss(float m, float s) {
     final float u = (float) Math.random();
     final float v = (float) Math.random();
-    final float n = m + s * FastSqrt(-2 * fastLog(u)) * Cos(TWO_PI * v);
+    final float n = m + s * FastSqrt(-2 * FastLog(u)) * Cos(TWO_PI * v);
     return (float) n;
   }
 
@@ -1027,6 +1178,10 @@ public class DLUtil {
 
   static synchronized float RangeRandom(float min, float max) {
     return (float) ((max - min) * Math.random() + min);
+  }
+
+  static synchronized int RangeRandom(int m) {
+    return RangeRandom(-m, m);
   }
 
   static synchronized float RangeRandom(float m) {
@@ -1113,13 +1268,23 @@ public class DLUtil {
     final double ca = Math.cos(a);
     final double x = px * ca - py * sa;
     final double y = px * sa + py * ca;
-    if (p == null)
+    if (p == null) {
       p = new DLPoint(x, y);
-    else {
+    } else {
       p.x = (float) x;
       p.y = (float) y;
     }
     return p;
+  }
+
+  static synchronized void SetDefaults(Graphics g) {
+    SetDefaults((Graphics2D) g);
+  }
+
+  static Stroke defaultStroke = new BasicStroke(0);
+
+  static synchronized void SetDefaults(Graphics2D g) {
+    g.setStroke(defaultStroke);
   }
 
   static synchronized void SetHints(Graphics g) {
@@ -1128,7 +1293,15 @@ public class DLUtil {
 
   static boolean DraftMode = false;
 
+  static synchronized void setIdentity(Graphics2D g) {
+    AffineTransform af = g.getTransform();
+    af.setToIdentity();
+    g.setTransform(af);
+  }
+
   static synchronized void SetHints(Graphics2D g) {
+    if (g == null)
+      return;
     if (DraftMode) {
       g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -1202,7 +1375,6 @@ public class DLUtil {
     double a = Math.pow(dx, p);
     double b = Math.pow(dy, p);
     double ret = (float) Math.pow(a + b, 1. / p);
-    //    System.err.println(dx + " " + dy + " " + a + " " + b + " " + ret);
     return (float) ret;
   }
 
@@ -1284,6 +1456,28 @@ public class DLUtil {
     }
   }
 
+  /*
+   * static Rectangle GeneralPathBB(GeneralPath p) { final PathIterator pi =
+   * p.getPathIterator(null); final float[] c = new float[6]; float xmin =
+   * Float.MAX_VALUE; float ymin = Float.MAX_VALUE; float xmax =
+   * Float.MIN_VALUE; float ymax = Float.MIN_VALUE; while (!pi.isDone()) { final
+   * int ret = pi.currentSegment(c); switch (ret) { case SEG_MOVETO: if(c[0] <
+   * xmin) xmin = c[0]; if(c[1] < ymin) ymin = c[1]; if(c[0] > xmax) xmax =
+   * c[0]; if(c[1] > ymax) ymax = c[1]; // System.err.println("moveTo( " + c[0]
+   * + ", " + c[1] + ");"); break; case SEG_LINETO: if(c[0] < xmin) xmin = c[0];
+   * if(c[1] < ymin) ymin = c[1]; if(c[0] > xmax) xmax = c[0]; if(c[1] > ymax)
+   * ymax = c[1]; // System.err.println("lineTo( " + c[0] + ", " + c[1] + ");");
+   * break; case SEG_QUADTO:
+   * 
+   * if(c[0] < xmin) xmin = c[0]; if(c[1] < ymin) ymin = c[1]; if(c[0] > xmax)
+   * xmax = c[0]; if(c[1] > ymax) ymax = c[1];
+   * 
+   * System.err.println("quadTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " +
+   * c[3] + ");"); break; case SEG_CUBICTO: System.err.println("cubicTo( " +
+   * c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ", " + c[4] + ", " + c[5]
+   * + ");"); break; case SEG_CLOSE: System.err.println("closePath();"); break;
+   * default: break; } pi.next(); } }
+   */
   // Compute the distance from AB to C
   // if isSegment is true, AB is a segment, not a line.
   static double linePointDist(Point2D.Float A, Point2D.Float B, Point2D.Float C, boolean isSegment) {
@@ -1315,15 +1509,27 @@ public class DLUtil {
     int l = 0;
     for (int i = 0; i < iwidth; i++) {
       for (int j = 0; j < iheight; j++) {
-        al[l++] = new int[] { xa[i], ya[j] };
+        al[l++] = new int[] {
+          xa[i], ya[j]
+        };
       }
     }
     DLUtil.shuffleArray(al);
     return al;
   }
 
+  static Shape fitShapeIn(Shape s, float x, float y, float w, float h, boolean kar) {
+    Rectangle2D r = s.getBounds2D();
+    AffineTransform tr = _computeTransform(x, (float) r.getX(),
+        y, (float) r.getY(),
+        w, (float) r.getWidth(),
+        h, (float) r.getHeight(), kar);
+    s = tr.createTransformedShape(s);
+    return s;
+  }
+
   static Shape Heart(float x, float y, float w, float h, boolean smooth, float angle) {
-    Path2D.Float p = Heart(smooth, 1);
+    DLPath p = Heart(smooth, 1);
     Rectangle2D.Float b = (Rectangle2D.Float) p.getBounds2D();
     Rectangle2D.Float tb = new Rectangle2D.Float(x, y, w, h);
 
@@ -1345,17 +1551,17 @@ public class DLUtil {
     return Heart(x, y, w, h, smooth, RangeRandom(-PI / 8, PI / 8));
   }
 
-  static Path2D.Float Star(float cx, float cy, float r1, float r2, int branches) {
+  static DLPath Star(float cx, float cy, float r1, float r2, int branches) {
     float a = RandomAngle();
     return Star(cx, cy, r1, r2, branches, a);
   }
 
-  static Path2D.Float Star(float cx, float cy, float r1, float r2, int branches, float startAngle) {
+  static DLPath Star(float cx, float cy, float r1, float r2, int branches, float startAngle) {
 
     final float di = TWO_PI / branches;
     final float start = PI + startAngle;
     final float end = start + TWO_PI;
-    Path2D.Float p = null;
+    DLPath p = null;
     for (float i = start; i < end; i += di) {
       final float c1 = Cos(i);
       final float s1 = Sin(i);
@@ -1375,16 +1581,16 @@ public class DLUtil {
     return p;
   }
 
-  static Path2D.Float Polygon(Point2D.Float p, int sides, float radius, float startAngle) {
+  static DLPath Polygon(Point2D.Float p, int sides, float radius, float startAngle) {
     return Polygon(p.x, p.y, sides, radius, startAngle);
   }
 
-  static Path2D.Float Polygon(float cx, float cy, int sides, float radius) {
+  static DLPath Polygon(float cx, float cy, int sides, float radius) {
     return Polygon(cx, cy, sides, radius, DLUtil.RandomAngle());
   }
 
-  static Path2D.Float Polygon(float cx, float cy, int sides, float radius, float startAngle) {
-    Path2D.Float path = null;
+  static DLPath Polygon(float cx, float cy, int sides, float radius, float startAngle) {
+    DLPath path = null;
     float a = TWO_PI / sides;
     for (int i = 0; i < sides; i++) {
       float ia = i * a + startAngle;
@@ -1394,6 +1600,14 @@ public class DLUtil {
     }
     path.closePath();
     return path;
+  }
+
+  static Arc2D.Float Arc(float x, float y, float w, float h, float start, float extent) {
+    return new Arc2D.Float(x - w / 2f, y - h / 2f, w, h, start, extent, Arc2D.OPEN);
+  }
+
+  static Line2D.Float Line(float x1, float y1, float x2, float y2) {
+    return new Line2D.Float(x1, y1, x2, y2);
   }
 
   static Rectangle2D.Float Square(float cx, float cy, float s) {
@@ -1416,33 +1630,68 @@ public class DLUtil {
     return new Ellipse2D.Float(x - s / 2, y - s / 2, s, s);
   }
 
+  static Ellipse2D.Float Ellipse(float x, float y, float s1, float s2) {
+    return new Ellipse2D.Float(x - s1 / 2, y - s2 / 2, s1, s2);
+  }
+
+  static int intConversion = 3;
+
+  public static int Int(float f) {
+    switch (intConversion) {
+    case 0:
+      return (int) f;
+    case 1:
+      return (int) Math.floor(f);
+    case 2:
+      return Floor(f);
+    default:
+      return (int) (f < 0 ? f - 0.5f : f + 0.5f);
+    }
+  }
+
   static Shape Char(int s, String family, int style, int size) {
     return Char("" + s, family, style, size);
   }
 
-  static Shape Char(String s, String family, int style, int size) {
+  static Shape Char(String s, String family, int style, float size) {
     final BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
     final Graphics2D g = img.createGraphics();
     DLUtil.SetHints(g);
 
-    final Font font = new Font(family, style, size);
+    final Font font = new Font(family, style, (int) size).deriveFont(size);
+    g.setFont(font);
     final FontRenderContext frc = g.getFontMetrics(font).getFontRenderContext();
     final GlyphVector v = font.createGlyphVector(frc, s);
     final Shape shape = v.getOutline();
     return shape;
   }
 
-  static Path2D.Float toPath(DLPointList points) {
-    Path2D.Float p = null;
+  static Shape[] Target(float x, float y, float r) {
+    float m = 3;
+    Shape s1 = new Ellipse2D.Float(x - r, y - r, 2 * r, 2 * r);
+    Shape l1 = new Line2D.Float(x - r - m, y, x - r / 2f + m, y);
+    Shape l2 = new Line2D.Float(x, y - r - m, x, y - r / 2f + m);
+    Shape l3 = new Line2D.Float(x + r + m, y, x + r / 2f - m, y);
+    Shape l4 = new Line2D.Float(x, y + r + m, x, y + r / 2f - m);
+    s1.getPathIterator(null);
+    r = r / 2;
+    Shape s2 = new Ellipse2D.Float(x - r, y - r, 2 * r, 2 * r);
+    return new Shape[] {
+      s1, s2, l1, l2, l3, l4
+    };
+  }
+
+  static DLPath toPath(DLPointList points) {
+    DLPath p = null;
     for (int i = 0; i < points.size(); i++)
       p = DLUtil.AddPoint(points.get(i), p);
     return p;
   }
 
-  static Path2D.Float toSpline(DLPointList points) {
+  static DLPath toSpline(DLPointList points) {
 
     final int sz = points.size();
-    final Path2D.Float p = new Path2D.Float();
+    final DLPath p = new DLPath();
     if (sz > 0) {
       Point2D.Float[] fcp = new Point2D.Float[sz - 1];
       Point2D.Float[] scp = new Point2D.Float[sz - 1];
@@ -1455,17 +1704,16 @@ public class DLUtil {
         final Point2D cp2 = scp[i];
         final DLPoint pt = points.get(i + 1);
         p.curveTo(cp1.getX(), cp1.getY(), cp2.getX(), cp2.getY(), pt.x, pt.y);
-
       }
     }
     return p;
   }
 
-  static Path2D.Float Heart(boolean smooth) {
+  static DLPath Heart(boolean smooth) {
     return Heart(smooth, 1);
   }
 
-  static Path2D.Float Heart(boolean smooth, float scale) {
+  static DLPath Heart(boolean smooth, float scale) {
 
     DLPointList points = new DLPointList();
     for (float t = 0; t < TWO_PI; t += SAMPLE_PRECISION) {
@@ -1476,7 +1724,7 @@ public class DLUtil {
       points.add(new DLPoint(x, y));
     }
 
-    Path2D.Float p = null;
+    DLPath p = null;
     if (smooth)
       p = toSpline(points);
     else {
@@ -1519,25 +1767,43 @@ public class DLUtil {
       try {
         img = ImageIO.read(imageResource);
         if (size != null)
-          // img = DLUtil.toBufferedImage(img.getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH));
           img = GetScaledInstance(img, size);
       } catch (IOException e) {
         e.printStackTrace();
       }
     } else {
-      img = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
-      CausticsFilter cf = new CausticsFilter();
-      img = cf.filter(img, img);
+      if (size != null) {
+        img = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+        CausticsFilter cf = new CausticsFilter();
+        img = cf.filter(img, img);
+      }
     }
     return img;
   }
 
   static BufferedImage LoadImage(String imageResource, Dimension size) {
+    if (imageResource == null)
+      return null;
     return LoadImage(DLUtil.class.getResource(imageResource), size);
   }
 
   static BufferedImage GetScaledInstance(BufferedImage image, Dimension size) {
+    if(image == null)
+      return null;
     return GetScaledInstance(image, size.width, size.height);
+  }
+
+  static int IntColor(int r, int g, int b) {
+    return 0xff << 24 | r << 16 | g << 8 | b;
+  }
+
+  static int IntColor(float c) {
+    return IntColor(c, c, c);
+  }
+
+  static int IntColor(float r, float g, float b) {
+    int col = 0xff << 24 | (int) r << 16 | (int) g << 8 | (int) b;
+    return col;
   }
 
   static BufferedImage GetScaledInstance(BufferedImage image, int width, int height) {
@@ -1551,7 +1817,7 @@ public class DLUtil {
     return bi;
   }
 
-  static BufferedImage Merge(BufferedImage i1, BufferedImage i2, float r /* 0 -> 1 */) {
+  static BufferedImage Merge(BufferedImage i1, BufferedImage i2, float r, BufferedImage result) {
 
     if (i1 == null && i2 == null) {
       return null;
@@ -1592,9 +1858,11 @@ public class DLUtil {
 
       rgb[i] = 0xff << 24 | red << 16 | green << 8 | blue;
     }
-    BufferedImage i = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
-    i.setRGB(0, 0, iwidth, iheight, rgb, 0, iwidth);
-    return i;
+
+    if (result == null)
+      result = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
+    result.setRGB(0, 0, iwidth, iheight, rgb, 0, iwidth);
+    return result;
   }
 
   static public void Save(RenderedImage image, File f) {
@@ -1693,7 +1961,8 @@ class PolyUtils {
       firstControlPoints[i] = new Point2D.Float(x[i], y[i]);
       // Second control point
       if (i < n - 1)
-        secondControlPoints[i] = new Point2D.Float(2 * knots.get(i + 1).x - x[i + 1], 2 * knots.get(i + 1).y - y[i + 1]);
+        secondControlPoints[i] = new Point2D.Float(2 * knots.get(i + 1).x - x[i + 1],
+            2 * knots.get(i + 1).y - y[i + 1]);
       else
         secondControlPoints[i] = new Point2D.Float((knots.get(n).x + x[n - 1]) / 2, (knots.get(n).y + y[n - 1]) / 2);
     }

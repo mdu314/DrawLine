@@ -179,4 +179,30 @@ public class DLPlasma extends DLImage {
     return new int[] { 0, 100 };
   }
 
+  public static void main(String[] a) {
+    int w = 500;
+    int h = 300;
+    int w2 = w / 2;
+    int h2 = h / 2;
+
+    Object[][] params = {
+        {
+            "width", w
+        }, {
+            "height", h
+        }, {
+            "iwidth", w
+        }, {
+            "iheight", h
+        }, {
+            "x", w2
+        }, {
+            "y", h2
+        }, {
+            "threadSleep", 5
+        }
+    };
+
+    DLMain.Main(DLPlasma.class, params);
+  }
 }

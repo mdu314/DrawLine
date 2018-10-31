@@ -31,13 +31,13 @@ class DLVonKoch extends DLCurve {
   }
 
   @Override
-  Path2D.Float path() {
+  DLPath path() {
 
     final int s = (int) (pow(2, 2 * steps) + 1);
     final float[] xs = new float[s];
     final float[] ys = new float[s];
 
-    Path2D.Float p = null;
+    DLPath p = null;
 
     final float a = DLUtil.TWO_PI / sides;
 

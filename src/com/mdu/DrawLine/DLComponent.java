@@ -14,7 +14,7 @@ import java.awt.geom.Rectangle2D;
 public abstract class DLComponent implements DLRandom, DLShadow, Movable {
   DLComponent menuComponent;
   float angle = 0;
-  DrawLine parent;
+  DLContainer parent;
   float scaleX = 1;
   float scaleY = 1;
   Shadow shadowImage = null;
@@ -24,12 +24,14 @@ public abstract class DLComponent implements DLRandom, DLShadow, Movable {
   AffineTransform transformation = new AffineTransform();
   Selection selection = null;
   boolean selected = false;
-  Movable movableProxy;
+  private Movable movableProxy;
   DLPropertySheet sheet;
 
   float x = 0;
   float y = 0;
 
+  abstract void reset();
+  
   abstract DLComponent copy();
 
   abstract void paint(Graphics g);
@@ -44,8 +46,7 @@ public abstract class DLComponent implements DLRandom, DLShadow, Movable {
 
   abstract void transform(AffineTransform tr);
 
-  void prepareForDisplay() {
-  }
+  abstract void prepareForDisplay();
 
   public void paint(Graphics2D g, float tx, float ty) {
     AffineTransform t = AffineTransform.getTranslateInstance(tx, ty);
@@ -96,6 +97,9 @@ public abstract class DLComponent implements DLRandom, DLShadow, Movable {
   Rectangle addSelectionBounds(Rectangle r) {
     if (selection != null) {
       Rectangle s = selection.boundingBox();
+      // To Be fixed
+      DLUtil.expand(s,  0.1f);
+      
       Rectangle2D.union(r, s, s);
       return s;
     }
@@ -160,15 +164,11 @@ public abstract class DLComponent implements DLRandom, DLShadow, Movable {
     return y;
   }
 
-  public void moved(float x, float y) {
-  }
-
   protected void _setXY(float x, float y) {
     if (this.x == x && this.y == y)
       return;
     this.x = x;
     this.y = y;
-    moved(x, y);
   }
 
   boolean hitTest(Point p) {
@@ -291,48 +291,36 @@ public abstract class DLComponent implements DLRandom, DLShadow, Movable {
   void clear() {
   }
 
+  public Movable getMovableProxy() {
+    return movableProxy;
+  }
+  
+  public void setMovableProxy(Movable m) {
+    movableProxy = m;
+  }
+  
   /*
-    public float getAngle() {
-      return angle;
-    }
-
-    public void setAngle(float angle) {
-      Rectangle r = redisplayStart();
-      this.angle = angle;
-      clear();
-      AffineTransform tr = AffineTransform.getRotateInstance(angle, x, y);
-      transform(tr);
-      redisplay(r);
-    }
-
-    public float[] rangeAngle() {
-      return new float[] { 0, DLUtil.TWO_PI };
-    }
-
-    public float getScaleX() {
-      return scaleX;
-    }
-
-    public void setScaleX(float scaleX) {
-      Rectangle r = redisplayStart();
-      this.scaleX = scaleX;
-      clear();
-      AffineTransform tr = AffineTransform.getScaleInstance(scaleX, scaleY);
-      transform(tr);
-      redisplay(r);
-    }
-
-    public float getScaleY() {
-      return scaleY;
-    }
-
-    public void setScaleY(float scaleY) {
-      Rectangle r = redisplayStart();
-      this.scaleY = scaleY;
-      clear();
-      AffineTransform tr = AffineTransform.getScaleInstance(scaleX, scaleY);
-      transform(tr);
-      redisplay(r);
-    }
-    */
+   * public float getAngle() { return angle; }
+   * 
+   * public void setAngle(float angle) { Rectangle r = redisplayStart();
+   * this.angle = angle; clear(); AffineTransform tr =
+   * AffineTransform.getRotateInstance(angle, x, y); transform(tr);
+   * redisplay(r); }
+   * 
+   * public float[] rangeAngle() { return new float[] { 0, DLUtil.TWO_PI }; }
+   * 
+   * public float getScaleX() { return scaleX; }
+   * 
+   * public void setScaleX(float scaleX) { Rectangle r = redisplayStart();
+   * this.scaleX = scaleX; clear(); AffineTransform tr =
+   * AffineTransform.getScaleInstance(scaleX, scaleY); transform(tr);
+   * redisplay(r); }
+   * 
+   * public float getScaleY() { return scaleY; }
+   * 
+   * public void setScaleY(float scaleY) { Rectangle r = redisplayStart();
+   * this.scaleY = scaleY; clear(); AffineTransform tr =
+   * AffineTransform.getScaleInstance(scaleX, scaleY); transform(tr);
+   * redisplay(r); }
+   */
 }

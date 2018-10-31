@@ -8,7 +8,6 @@ import static com.mdu.DrawLine.DLUtil.Sin;
 import static com.mdu.DrawLine.DLUtil.TWO_PI;
 
 import java.awt.Rectangle;
-import java.awt.geom.Path2D;
 
 class DLKnot extends DLCurve {
   float a = 2f;
@@ -52,7 +51,7 @@ class DLKnot extends DLCurve {
   }
 
   @Override
-  Path2D path() {
+  DLPath path() {
     DLPointList points;
     switch (mode) {
     case 0:
@@ -64,7 +63,7 @@ class DLKnot extends DLCurve {
       break;
     }
 
-    Path2D.Float p = null;
+    DLPath p = null;
     if (smooth)
       p = toSpline(points);
     else {
@@ -123,7 +122,7 @@ class DLKnot extends DLCurve {
   }
 
   public float[] rangeTours() {
-    return new float[] { 0, 10 };
+    return new float[] { 0.1f, 10 };
   }
 
   @Override

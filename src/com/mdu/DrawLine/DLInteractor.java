@@ -40,7 +40,7 @@ public class DLInteractor {
   }
 
   DLComponent hitTest(Point p) {
-    final Iterator<DLComponent> i = drawLine.components.iterator();
+    final Iterator<DLComponent> i = drawLine.canvas.components.iterator();
     while (i.hasNext()) {
       final DLComponent dlc = i.next();
       if (dlc.hitTest(p))

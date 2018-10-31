@@ -23,7 +23,7 @@ import com.pc.delaunay.Pnt;
 import com.pc.delaunay.Triangle;
 import com.pc.delaunay.Triangulation;
 
-public class DLDelaunay extends DLImage {
+public class DLDelaunay extends DLPointImage {
   int threadSleep = 50;
   boolean inited = false;
   private Triangulation triangulation;
@@ -52,6 +52,7 @@ public class DLDelaunay extends DLImage {
   boolean paintFPS = true;
   boolean gradient = false;
   boolean edges = false;
+
   ShowException exception;
 
   public DLDelaunay() {
@@ -152,27 +153,28 @@ public class DLDelaunay extends DLImage {
       g.setColor(DLUtil.Invert(exception.color));
       g.fill(r2d);
 
-      //      exception.color = DLUtil.TransparenterColor(exception.color, 0.9f);
+      // exception.color = DLUtil.TransparenterColor(exception.color, 0.9f);
       g.setColor(exception.color);
       if (exception.count-- <= 0)
         exception = null;
     } else {
-      s = " F#: " + ff.format(frameCount) + " Fps: " + nf.format(1000. / frameTime) + " Ft: " + tf.format(frameTime)
-          + " ms ";
+      s = " F#: " + ff.format(frameCount) + 
+          " Fps: " + nf.format(1000. / frameTime) + 
+          " Ft: " + tf.format(frameTime) + " ms ";
       FontMetrics m = g.getFontMetrics();
       float w = m.stringWidth(s);
       float h = m.getMaxAscent() + m.getMaxDescent();
       float x = 5;
-      float y = iheight - h;
+      float y = iheight - h - 5;
       Rectangle2D.Float r2d = new Rectangle2D.Float(x, y, w, h);
-      //      g.setStroke(new BasicStroke());
+      // g.setStroke(new BasicStroke());
       Color c = new Color(0x66, 0, 0x33);
       g.setColor(DLUtil.TransparenterColor(DLUtil.Invert(c), 0.65f));
       g.fill(r2d);
       g.setColor(c);
       g.draw(r2d);
     }
-    g.drawString(s, 5, iheight - descent);
+    g.drawString(s, 5, iheight - descent - 5);
   }
 
   BufferedImage image() {
@@ -249,7 +251,7 @@ public class DLDelaunay extends DLImage {
 
     while (sites.size() > initialPoints)
       sites.remove(0);
-    while (sites.size() < initialPoints)      
+    while (sites.size() < initialPoints)
       sites.add(createSite());
 
   }
@@ -298,7 +300,7 @@ public class DLDelaunay extends DLImage {
         int i = 0;
         for (Triangle tri : list)
           vertices[i++] = tri.getCircumcenter();
-        Path2D.Float pa = null;
+        DLPath pa = null;
         for (Pnt p : vertices)
           pa = DLUtil.AddPoint(p.coord(0), p.coord(1), pa);
         pa.closePath();
@@ -306,7 +308,11 @@ public class DLDelaunay extends DLImage {
           Rectangle2D.Float rect = (Rectangle2D.Float) pa.getBounds2D();
           float radius = radius(rect);
           RadialGradientPaint r = new RadialGradientPaint((float) site.coord(0), (float) site.coord(1), radius,
-              new float[] { 0, 1 }, new Color[] { Color.yellow, Color.blue });
+              new float[] {
+                  0, 1
+              }, new Color[] {
+                  Color.yellow, Color.blue
+              });
           g.setPaint(r);
           g.fill(pa);
         } else {
@@ -333,7 +339,7 @@ public class DLDelaunay extends DLImage {
     if (delaunayFill == null && delaunayStroke == null)
       return;
     for (Triangle triangle : triangulation) {
-      Path2D.Float pa = null;
+      DLPath pa = null;
       for (Pnt p : triangle)
         pa = DLUtil.AddPoint(p.coord(0), p.coord(1), pa);
       pa.closePath();
@@ -423,7 +429,9 @@ public class DLDelaunay extends DLImage {
   }
 
   public int[] rangeThreadSleep() {
-    return new int[] { 0, 100 };
+    return new int[] {
+        0, 100
+    };
   }
 
   public float getDeltaT() {
@@ -435,7 +443,9 @@ public class DLDelaunay extends DLImage {
   }
 
   public float[] rangeDeltaT() {
-    return new float[] { 0.1f, 2f };
+    return new float[] {
+        0.1f, 2f
+    };
   }
 
   public boolean getClearImage() {
@@ -526,7 +536,9 @@ public class DLDelaunay extends DLImage {
   }
 
   public float[] rangeVmax() {
-    return new float[] { 0.1f, 20f };
+    return new float[] {
+        0.1f, 20f
+    };
   }
 
   public int getNumSites() {
@@ -541,7 +553,9 @@ public class DLDelaunay extends DLImage {
   }
 
   public int[] rangeNumSites() {
-    return new int[] { 0, 1000 };
+    return new int[] {
+        0, 1000
+    };
   }
 
   public float getRadius() {
@@ -553,7 +567,9 @@ public class DLDelaunay extends DLImage {
   }
 
   public float[] rangeRadius() {
-    return new float[] { 0, 1 };
+    return new float[] {
+        0, 1
+    };
   }
 
   public Color getVoronoiStroke() {

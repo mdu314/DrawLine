@@ -3,7 +3,7 @@ package com.mdu.DrawLine;
 class DLParams {
   static boolean DEBUG = false;
   static float DRAW_PRECISION = 2f;
-  static int DRAWING_STEP = 12;
+  static int DRAWING_STEP = 15;
   static int HANDLE_SIZE = 3;
   static int MAX_X = 1000;
   static int MAX_Y = 1000;

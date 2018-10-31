@@ -1,7 +1,6 @@
 package com.mdu.DrawLine;
 
 import java.awt.Rectangle;
-import java.awt.geom.Path2D;
 
 class DLStar extends DLCurve {
   int branches;
@@ -27,8 +26,8 @@ class DLStar extends DLCurve {
   }
 
   @Override
-  Path2D path() {
-    Path2D.Float p = DLUtil.Star(0, 0, r1, r2, branches, startAngle);
+  DLPath path() {
+    DLPath p = DLUtil.Star(0, 0, r1, r2, branches, startAngle);
     transform(p);
     return p;
   }

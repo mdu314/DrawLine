@@ -41,10 +41,9 @@ public class DLWave extends DLImage {
   }
 
   public void f(Graphics2D g, DLThread t) {
-    long start = System.currentTimeMillis();
-    long dt = 0;
+    
     while (1 > 0) {
-      start = System.currentTimeMillis();
+      
       if (t != null && t.isStopped())
         break;
 
@@ -55,7 +54,6 @@ public class DLWave extends DLImage {
       }
       if (parent != null)
         parent.paint(this);
-      dt = System.currentTimeMillis() - start;
       if (threadSleep > 0) {
         try {
           Thread.sleep(threadSleep);
@@ -170,7 +168,7 @@ public class DLWave extends DLImage {
         /* The side quads. 2 and 4 is used for the coloring of each of these quads */
         float darkFactor = 1.4f;
         g.setColor(DLUtil.GetGrey(2));
-        Path2D.Float f = new Path2D.Float();
+        DLPath f = new DLPath();
         f.moveTo(isox2, isoy2 - y);
         f.lineTo(isox3, isoy3 - y);
         f.lineTo(isox3, isoy3 + 40);

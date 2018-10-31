@@ -16,8 +16,8 @@ import java.awt.geom.Point2D;
 
 public abstract class DLCurve extends DLComponent {
   Color fill = null;
-  Path2D path = null;
-  Color stroke = null;
+  DLPath path = null;
+  Color stroke = Color.black;
   boolean smooth;
 
   DLCurve() {
@@ -29,58 +29,32 @@ public abstract class DLCurve extends DLComponent {
     fill = c.fill;
     stroke = c.stroke;
     if (c.path != null)
-      path = (Path2D) c.path.clone();
+      path = (DLPath) c.path.clone();
   }
 
   DLCurve(float x, float y) {
     super(x, y);
   }
 
-  Path2D.Float toPath(DLPointList points) {
+  DLPath toPath(DLPointList points) {
     return DLUtil.toPath(points);
   }
 
-  Path2D.Float toSpline(DLPointList points) {
+  DLPath toSpline(DLPointList points) {
     return DLUtil.toSpline(points);
   }
 
-  /*
-    Path2D.Float toPath(DLPointList points) {
-      Path2D.Float p = null;
-      for (int i = 0; i < points.size(); i++)
-        p = DLUtil.AddPoint(points.get(i), p);
-      return p;
-    }
-
-    Path2D.Float toSpline(DLPointList points) {
-
-      final int sz = points.size();
-      final Path2D.Float p = new Path2D.Float();
-      if (sz > 0) {
-        Point2D.Float[] fcp = new Point2D.Float[sz - 1];
-        Point2D.Float[] scp = new Point2D.Float[sz - 1];
-        PolyUtils.GetCurveControlPoints(points, fcp, scp);
-
-        p.moveTo(points.get(0).x, points.get(0).y);
-
-        for (int i = 0; i < sz - 1; i++) {
-          final Point2D cp1 = fcp[i];
-          final Point2D cp2 = scp[i];
-          final DLPoint pt = points.get(i + 1);
-          p.curveTo(cp1.getX(), cp1.getY(), cp2.getX(), cp2.getY(), pt.x, pt.y);
-
-        }
-      } else {
-        p.moveTo(x, y);
-      }
-      return p;
-    }
-  */
+  public void reset() {
+    
+  }
+  
   public boolean getSmooth() {
     return smooth;
   }
 
   public void setSmooth(boolean smooth) {
+    if(this.smooth == smooth)
+      return;
     Rectangle r = redisplayStart();
     this.smooth = smooth;
     clear();
@@ -105,7 +79,6 @@ public abstract class DLCurve extends DLComponent {
     Rectangle bounds = new Rectangle(path.getBounds());
     if (deco) {
       bounds = addShadowBounds(bounds);
-
       bounds = addSelectionBounds(bounds);
     }
     return bounds;
@@ -138,7 +111,6 @@ public abstract class DLCurve extends DLComponent {
     }
   }
 
-  
   @Override
   public void paint(Graphics gr, boolean deco) {
     final Graphics2D g = (Graphics2D) gr;
@@ -177,13 +149,13 @@ public abstract class DLCurve extends DLComponent {
         pi.next();
       }
 
-      final Rectangle r2 = getBounds();
-      g.draw(r2);
+//      final Rectangle r2 = getBounds();
+//      g.draw(r2);
     }
 
   }
 
-  abstract Path2D path();
+  abstract DLPath path();
 
   @Override
   public void randomize() {
@@ -225,9 +197,25 @@ public abstract class DLCurve extends DLComponent {
   }
 
   void transform(Path2D p) {
+    if(p == null)
+      return;
     final AffineTransform tr = new AffineTransform();
     tr.translate(x, y);
     tr.concatenate(transformation);
     p.transform(tr);
   };
+
+  void transform() {
+    if(path == null)
+      path = path();
+    final AffineTransform tr = new AffineTransform();
+    tr.translate(x, y);
+    tr.concatenate(transformation);
+    path.transform(tr);
+  };
+
+  void prepareForDisplay() {
+
+  }
+
 }

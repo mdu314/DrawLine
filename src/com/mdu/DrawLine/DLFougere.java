@@ -12,7 +12,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-public class DLFougere extends DLImage {
+public class DLFougere extends DLPointImage {
   boolean cleanIsolatedPoints = false;
   Color color = Color.black;
   float fangle = (float) Math.PI / 2;

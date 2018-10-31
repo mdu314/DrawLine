@@ -28,8 +28,8 @@ class DLSuperEllipse extends DLCurve {
   }
 
   @Override
-  Path2D.Float path() {
-    Path2D.Float c = new Path2D.Float();
+  DLPath path() {
+    DLPath c = new DLPath();
     for (float t = 0; t < 2 * Math.PI; t += SAMPLE_PRECISION) {
       final double cost = cos(t);
       final double sint = sin(t);

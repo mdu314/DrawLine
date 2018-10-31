@@ -26,9 +26,9 @@ class DLSpiral extends DLCurve {
     super(s);
     a = s.a;
     b = s.b;
-    tours = s.tours;
-    p = s.p;
     k = s.k;
+    p = s.p;
+    tours = s.tours;
     mode = s.mode;
   }
 
@@ -42,7 +42,7 @@ class DLSpiral extends DLCurve {
   }
 
   // http://www.mathcurve.com/courbes2d/doppler/doppler.htm
-  Path2D p1() {
+  DLPath p1() {
     DLPointList points = new DLPointList();
 
     for (float t = 0; t < tours * TWO_PI; t += SAMPLE_PRECISION) {
@@ -50,7 +50,7 @@ class DLSpiral extends DLCurve {
       float j = a * Pow(t, p) * Sin(t);
       points.add(i, j);
     }
-    Path2D.Float p = null;
+    DLPath p = null;
 
     if (smooth)
       p = toSpline(points);
@@ -60,7 +60,7 @@ class DLSpiral extends DLCurve {
     return p;
   }
 
-  Path2D p2() {
+  DLPath p2() {
 
     DLPointList points = new DLPointList();
 
@@ -70,7 +70,7 @@ class DLSpiral extends DLCurve {
       points.add(i, j);
     }
 
-    Path2D.Float p = null;
+    DLPath p = null;
     if (smooth)
       p = toSpline(points);
     else {
@@ -79,18 +79,18 @@ class DLSpiral extends DLCurve {
     return p;
   }
 
-  Path2D p3() {
+  DLPath p3() {
     DLPointList points = new DLPointList();
-    
+
     float r = tours; // < 2 ? tours : 2;
-    
+
     for (float t = 0; t < r * TWO_PI; t += SAMPLE_PRECISION) {
       float i = a * Pow(E, t * p / 10) * Cos(t);
       float j = a * Pow(E, t * p / 10) * Sin(t);
       points.add(i, j);
     }
 
-    Path2D.Float p = null;
+    DLPath p = null;
     if (smooth)
       p = toSpline(points);
     else {
@@ -100,8 +100,8 @@ class DLSpiral extends DLCurve {
   }
 
   @Override
-  Path2D path() {
-    final Path2D c;
+  DLPath path() {
+    final DLPath c;
     switch (mode) {
     default:
     case ONE:
@@ -217,4 +217,13 @@ class DLSpiral extends DLCurve {
   public String[] enumMode() {
     return new String[] { ONE, TWO, THREE };
   }
+
+  Rectangle getBounds(boolean deco) {
+    Rectangle r = super.getBounds(deco);
+    if(shadow)
+      return r;
+    DLUtil.expand(r, 0.5f);
+    return r;
+  }
+  
 }

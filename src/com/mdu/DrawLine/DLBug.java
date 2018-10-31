@@ -30,8 +30,8 @@ class DLBug extends DLCurve {
   }
 
   @Override
-  Path2D.Float path() {
-    Path2D.Float p = null;
+  DLPath path() {
+    DLPath p = null;
     for (double t = 0; t < 2 * PI; t += SAMPLE_PRECISION / 10) {
       final double r = sin(cos(tan(t)));
       final double x = scale * r * cos(t);

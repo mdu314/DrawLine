@@ -26,7 +26,7 @@ class DLTrefle extends DLCurve {
   }
 
   @Override
-  Path2D path() {
+  DLPath path() {
     DLPointList points = new DLPointList();
     
     for (float t = 0; t < TWO_PI; t += SAMPLE_PRECISION / 5) {
@@ -40,7 +40,7 @@ class DLTrefle extends DLCurve {
       float y = scale * r * cost;
       points.add(x, y);
     }
-    Path2D.Float p = null;
+    DLPath p = null;
     if (smooth)
       p = toSpline(points);
     else 

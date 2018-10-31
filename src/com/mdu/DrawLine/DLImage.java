@@ -1,86 +1,39 @@
 package com.mdu.DrawLine;
 
-import static com.mdu.DrawLine.DLUtil.RangeRandom;
-
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
-
-import com.jhlabs.image.CausticsFilter;
-import com.jhlabs.image.PlasmaFilter;
+import com.jhlabs.image.BoxBlurFilter;
+import com.jhlabs.image.EdgeFilter;
 
 abstract class DLImage extends DLComponent implements Threaded, JPG {
   ArrayList<DLThread> threads = new ArrayList<DLThread>();
   boolean threaded = true;
   BufferedImage image = null;
-  int iheight = 200;
-  int iwidth = 200;
-  float pointSize = 0f;
+  int iheight; // = 200;
+  int iwidth; // = 200;
   boolean selectCheckTransparentPixel = false;
-  public static final String EllipsePoint = "ellipsePoint";
-  public static final String PolyPoint = "polyPoint";
-  public static final String RectanglePoint = "rectPoint";
-  public static final String StarPoint = "starPoint";
-  public static final String LinePoint = "linePoint";
-  public static final String HeartPoint = "heartPoint";
-  public static final String[] pointShapes = { EllipsePoint, PolyPoint, RectanglePoint, StarPoint, LinePoint,
-      HeartPoint };
-  String pointShape = EllipsePoint;
-  Paint pointFill;
-  Paint pointStroke;
   Color backgroundColor;
+  String filterName = "null";
+  BufferedImageOp filter = getFilterFromString(filterName);
+  int res = 1;
 
   void reportException(Throwable e) {
     System.err.println(e);
-  }
-
-  public String getPointShape() {
-    return pointShape;
-  }
-
-  public void setPointShape(String pointShape) {
-    this.pointShape = pointShape;
-    stopAll();
-    clear();
-    run();
-  }
-
-  public String[] enumPointShape() {
-    return new String[] { EllipsePoint, PolyPoint, RectanglePoint, LinePoint, StarPoint, HeartPoint };
-  }
-
-  public float getPointSize() {
-    return pointSize;
-  }
-
-  public void setPointSize(float s) {
-    pointSize = s;
-    stopAll();
-    clear();
-    run();
-  }
-
-  public float[] rangePointSize() {
-    return new float[] { 0, 20 };
+    e.printStackTrace();
   }
 
   DLImage() {
@@ -91,8 +44,8 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     super(c);
     iwidth = c.iwidth;
     iheight = c.iheight;
-    image = new BufferedImage(c.iwidth, c.iheight, BufferedImage.TYPE_INT_ARGB);
     threaded = c.threaded;
+    reset(true);
   }
 
   DLImage(float x, float y) {
@@ -105,206 +58,45 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     iheight = ih;
   }
 
+  public void reset() {
+    image = image();
+  }
+  
   void clear() {
     clearImage();
     clearShadow();
   }
 
+  void clearImage(BufferedImage img) {
+    if (backgroundColor == null) {
+      final Graphics2D g = img.createGraphics();
+      Composite c = g.getComposite();
+      g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
+      final Rectangle rect = new Rectangle(0, 0, iwidth, iheight);
+      g.fill(rect);
+      g.setComposite(c);
+    } else {
+      Graphics2D g = img.createGraphics();
+      g.setColor(backgroundColor);
+      g.fillRect(0, 0, iwidth, iheight);
+    }
+  }
+  
   void clearImage() {
     if (image == null) {
       image = image();
     } else {
-      if (backgroundColor == null) {
-        final Graphics2D g = image.createGraphics();
-        Composite c = g.getComposite();
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
-        final Rectangle rect = new Rectangle(0, 0, iwidth, iheight);
-        g.fill(rect);
-        g.setComposite(c);
-      } else {
-        Graphics2D g = image.createGraphics();
-        g.setColor(backgroundColor);
-        g.fillRect(0, 0, iwidth, iheight);
-      }
+      clearImage(image);
     }
 
-    if (DLParams.DEBUG) {
+    if (DLParams.DEBUG ) {
       final Graphics2D g = image.createGraphics();
       g.setColor(Color.darkGray);
-      g.drawRect(0, 0, iwidth - 1, iheight - 1);
+      g.drawRect(1, 1, iwidth - 2, iheight - 2);
     }
   }
 
   abstract DLImage copy();
-
-  void drawPoint(double x, double y) {
-    drawPoint((float) x, (float) y);
-  }
-
-  void drawPoint(float x, float y) {
-    if (image != null)
-      drawPoint(image.createGraphics(), x, y);
-  }
-
-  void paintAsCircle(Graphics2D g, float x, float y, float s) {
-    Shape sh = DLUtil.Circle(x, y, s);
-    if (pointFill != null) {
-      g.setPaint(pointFill);
-      g.fill(sh);
-    }
-    if (pointStroke != null) {
-      g.setPaint(pointStroke);
-      g.draw(sh);
-    }
-  }
-
-  void paintAsPolygon(Graphics2D g, float x, float y, float s) {
-    Shape sh = DLUtil.Polygon(x, y, 5, s / 2);
-    if (pointFill != null) {
-      g.setPaint(pointFill);
-      g.fill(sh);
-    }
-    if (pointStroke != null) {
-      g.setPaint(pointStroke);
-      g.draw(sh);
-    }
-  }
-
-  void paintAsRectangle(Graphics2D g, float x, float y, float s) {
-    Shape sh = DLUtil.Square(x, y, s);
-    if (pointFill != null) {
-      g.setPaint(pointFill);
-      g.fill(sh);
-    }
-    if (pointStroke != null) {
-      g.setPaint(pointStroke);
-      g.draw(sh);
-    }
-  }
-
-  void paintAsIntLine(Graphics2D g, float x, float y) {
-    int ix = (int) (x + 0.5f);
-    int iy = (int) (y + 0.5f);
-    Line2D.Float l = new Line2D.Float(ix, iy, ix, iy);
-    if (pointFill != null) {
-      g.setPaint(pointFill);
-    }
-    if (pointStroke != null) {
-      g.setPaint(pointStroke);
-    }
-    g.draw(l);
-  }
-
-  void paintAsLine(Graphics2D g, float x, float y) {
-    Line2D.Float l = new Line2D.Float(x, y, x, y);
-    g.draw(l);
-  }
-
-  void paintAsLine(Graphics2D g, float x, float y, float size) {
-    //    Line2D.Float l = new Line2D.Float(x - size / 2, y - size / 2, x + size / 2, y + size / 2);
-    float s2 = size / 2;
-    Path2D.Float p = new Path2D.Float();
-    p.moveTo(x - s2, y - s2);
-    p.lineTo(x + s2, y + s2);
-    p.moveTo(x - s2, y + s2);
-    p.lineTo(x + s2, y - s2);
-    if (pointStroke != null) {
-      g.setPaint(pointStroke);
-      g.draw(p);
-    }
-  }
-
-  void paintAsStar(Graphics2D g, float x, float y, float size) {
-    size = size / 2f;
-    Shape s = DLUtil.Star(x, y, size / 2, size, 7, 0);
-    if (pointFill != null) {
-      g.setPaint(pointFill);
-      g.fill(s);
-    }
-    if (pointStroke != null) {
-      g.setPaint(pointStroke);
-      g.draw(s);
-    }
-  }
-
-  void paintAsHeart(Graphics2D g, float x, float y, float size) {
-    Shape s = DLUtil.Heart(x - size / 2, y - size / 2, size, size, true);
-    if (pointFill != null) {
-      g.setPaint(pointFill);
-      g.fill(s);
-    }
-    if (pointStroke != null) {
-      g.setPaint(pointStroke);
-      g.draw(s);
-    }
-  }
-
-  Shape getPointForme(String pointShape, float size) {
-    Shape s = null;
-    switch (pointShape) {
-    case EllipsePoint:
-      s = DLUtil.Circle(x, y, size);
-      break;
-    case PolyPoint:
-      s = DLUtil.Polygon(x, y, 5, size / 2);
-      break;
-    case RectanglePoint:
-      s = DLUtil.Square(x, y, size);
-      break;
-    case StarPoint:
-      size = size / 2f;
-      s = DLUtil.Star(x, y, size / 2, size, 7, 0);
-      break;
-    case LinePoint:
-      float s2 = size / 2;
-      Path2D.Float p = new Path2D.Float();
-      p.moveTo(x - s2, y - s2);
-      p.lineTo(x + s2, y + s2);
-      p.moveTo(x - s2, y + s2);
-      p.lineTo(x + s2, y - s2);
-      s = p;
-      break;
-    default:
-      break;
-    }
-    return s;
-  }
-
-  void drawPoint(Graphics2D g, double x, double y) {
-    drawPoint(g, (float) x, (float) y);
-  }
-
-  void drawPoint(Graphics2D g, String shape, float ps, float x, float y) {
-    if (ps == 0) {
-      paintAsIntLine(g, x, y);
-    } else {
-      switch (shape) {
-      case EllipsePoint:
-        paintAsCircle(g, x, y, ps);
-        break;
-      case PolyPoint:
-        paintAsPolygon(g, x, y, ps);
-        break;
-      case RectanglePoint:
-        paintAsRectangle(g, x, y, ps);
-        break;
-      case StarPoint:
-        paintAsStar(g, x, y, ps);
-        break;
-      case LinePoint:
-        paintAsLine(g, x, y, ps);
-        break;
-      case HeartPoint:
-        paintAsHeart(g, x, y, ps);
-      default:
-        break;
-      }
-    }
-  }
-
-  void drawPoint(Graphics2D g, float x, float y) {
-    drawPoint(g, pointShape, pointSize, x, y);
-  }
 
   Rectangle getBounds() {
     return getBounds(true);
@@ -313,7 +105,12 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   Rectangle getBounds(boolean deco) {
     if (image == null)
       image = image();
-    Rectangle bounds = new Rectangle((int) (x - iwidth / 2), (int) (y - iheight / 2), iwidth, iheight);
+    float fx = x - iwidth / 2f;
+    float fy = y - iheight / 2f;
+    int ifx = (int) fx; //Math.floor(fx);
+    int ify = (int) fy; //Math.floor(fy);
+    Rectangle bounds = new Rectangle(ifx - 1, ify - 1 , iwidth + 2, iheight + 2);
+   
     if (deco)
       bounds = addShadowBounds(bounds);
 
@@ -358,6 +155,10 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     transform(tr);
   }
 
+  void paint() {
+    paint(image.createGraphics());
+  }
+  
   @Override
   public void paint(Graphics gr) {
     paint(gr, true);
@@ -373,7 +174,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     if (deco)
       shadow(g);
 
-    g.drawImage(image, (int) (x - iwidth / 2), (int) (y - iheight / 2), null);
+    g.drawImage(image, (int) (x - iwidth / 2f), (int) (y - iheight / 2f), null);
 
     if (deco && DLParams.DEBUG) {
       final Rectangle b = getBounds();
@@ -385,9 +186,6 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   @Override
   public void randomize() {
     super.randomize();
-    iwidth = RangeRandom(20, 60);
-    iheight = RangeRandom(20, 60);
-    setShadow(true);
   };
 
   @Override
@@ -396,10 +194,6 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     final Point2D dst = tr.transform(src, null);
     x = (float) dst.getX();
     y = (float) dst.getY();
-  }
-
-  public int[] rangeSteps() {
-    return new int[] { 10, 100000 };
   }
 
   public boolean isThreaded() {
@@ -473,7 +267,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
       }
     };
     DLThread t = new DLThread(run);
-    run.setThread(t);
+//    run.setThread(t);
     stopAll();
     synchronized (threads) {
       threads.add(t);
@@ -481,24 +275,109 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     t.start();
   }
 
-  public Paint getPointFill() {
-    return pointFill;
-  }
-
-  public void setPointFill(Paint pointFill) {
-    this.pointFill = pointFill;
-  }
-
-  public Paint getPointStroke() {
-    return pointStroke;
-  }
-
-  public void setPointStroke(Paint pointStroke) {
-    this.pointStroke = pointStroke;
-  }
-
-  
   public void save(File f) {
     DLUtil.Save(image, f);
   }
+
+  void prepareForDisplay() {
+
+  }
+
+  public String getFilter() {
+    return filterName;
+  }
+
+  public void setFilter(String f) {
+    filterName = f;
+    filter = getFilterFromString(f);
+  }
+
+  public String[] enumFilter() {
+    return new String[] { "none", "edges", "blur" };
+  }
+
+  float filterStrength = 0f;
+
+  public void setFilterStrength(float br) {
+    filterStrength = br;
+  }
+
+  public float getFilterStrength() {
+    return filterStrength;
+  }
+
+  public float[] rangeFilterStrength() {
+    return new float[] { 0f, 1f };
+  }
+
+  private static BufferedImageOp getFilterFromString(String s) {
+    switch (s) {
+
+    case "null":
+      return null;
+
+    case "blur":
+      BoxBlurFilter bf = new BoxBlurFilter();
+      bf.setHRadius(5);
+      bf.setVRadius(5);
+      bf.setIterations(5);
+      return bf;
+
+    case "edge":
+      EdgeFilter ef = new EdgeFilter();
+      return ef;
+
+    default:
+      return null;
+    }
+  }
+
+  void applyFilter() {
+    if (filter == null)
+      return;
+    BufferedImage bi = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+    filter.filter(image, bi);
+    image = DLUtil.Merge(image, bi, filterStrength, null);
+  }
+
+  void zoom() {
+    BufferedImage i = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
+    zoom(image, i);
+    image = i;
+  }
+
+  BufferedImage zoom(BufferedImage src, BufferedImage dst) {
+    if (src == null || dst == null)
+      return null;
+
+    AffineTransform tx = new AffineTransform();
+    float sx = dst.getWidth() / src.getWidth();
+    float sy = dst.getHeight() / src.getHeight();
+    tx.scale(sx, sy);
+    AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BICUBIC);
+    op.filter(src, dst);
+    return dst;
+  }
+
+//  public int getRes() {
+//    return res;
+//  }
+
+//  public void setRes(int res) {
+//    this.res = res;
+//    reset();
+//  }
+
+  void reset(boolean img) {
+    if(img)
+      image = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
+    stopAll();
+    clear();
+    run();
+  }
+  
+  public int[] rangeRes() {
+    return new int[] { 1, 16 };
+  }
+
 }

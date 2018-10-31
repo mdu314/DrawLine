@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-class DLNoise extends DLImage {
+class DLNoise extends DLPointImage {
   Color color1 = new Color(255, 0, 0);
   Color color2 = new Color(0, 0, 0);
   String noiseType = "perlin";
@@ -64,7 +64,7 @@ class DLNoise extends DLImage {
     if (noiseType.indexOf("perlin") != -1) {
       if (noise == null)
         noise = Noise.GenerateWhiteNoise(iwidth, iheight);
-      noise = Noise.GeneratePerlinNoise(noise, octaves, persistence);
+      noise = Noise.GeneratePerlinNoise(noise, getOctaves(), persistence);
     }
     if ((t != null) && t.isStopped())
       return;

@@ -110,10 +110,10 @@ class DLChar extends DLCurve {
   }
 
   @Override
-  Path2D path() {
+  DLPath path() {
     final GeneralPath s = convert(text);
     transform(s);
-    return s;
+    return new DLPath(s);
   }
 
   @Override

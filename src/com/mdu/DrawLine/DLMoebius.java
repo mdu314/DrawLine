@@ -6,7 +6,6 @@ import static com.mdu.DrawLine.DLUtil.Sin;
 import static com.mdu.DrawLine.DLUtil.TWO_PI;
 
 import java.awt.Rectangle;
-import java.awt.geom.Path2D;
 
 class DLMoebius extends DLCurve {
   float a = 15f;
@@ -66,9 +65,9 @@ class DLMoebius extends DLCurve {
   }
 
   @Override
-  Path2D path() {
+  DLPath path() {
     DLPointList points = p2();
-    Path2D.Float p = null;
+    DLPath p = null;
     if (smooth)
       p = toSpline(points);
     else {
@@ -114,7 +113,6 @@ class DLMoebius extends DLCurve {
   }
 
   int[] rangeK() {
-
     return new int[] { 1, 30 };
   }
 }

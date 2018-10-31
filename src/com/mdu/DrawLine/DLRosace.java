@@ -58,8 +58,8 @@ class DLRosace extends DLCurve {
   }
 
   @Override
-  Path2D.Float path() {
-    Path2D.Float p = null;
+  DLPath path() {
+    DLPath p = null;
     for (double t = 0; t < 2 * PI; t += SAMPLE_PRECISION / 10) {
       final double r = a * sin(n * t);
       final double x = r * sin(t);

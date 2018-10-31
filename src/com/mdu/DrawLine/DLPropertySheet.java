@@ -22,18 +22,14 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -51,13 +47,15 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
-import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import static com.mdu.DrawLine.Const.*;
 
 class Accessor implements Comparable<Accessor> {
   Object component;
@@ -141,7 +139,7 @@ class BoolEditor extends Editor {
       public void actionPerformed(ActionEvent e) {
         final boolean i = button.isSelected();
         final Object comp = accessor.component;
-        final String name = "set" + accessor.shortName;
+        final String name = SET + accessor.shortName;
         try {
           final Method m = comp.getClass().getMethod(name, accessor.type);
           m.invoke(comp, i);
@@ -167,12 +165,19 @@ class ColorEditor extends Editor {
   ColorEditor(final Accessor accessor) {
     super(accessor);
     button = new JButton() {
-      public void paint(Graphics g) {
-        super.paint(g);
+      public void paintComponent(Graphics g) {
+        // super.paint(g);
         Color b = button.getBackground();
         b = new Color((b.getRGB() & 0x00ffffff) | 0xbb000000, true);
         g.setColor(b);
-        g.fillRect(0, 0, getWidth(), getHeight());
+
+        int m = 3;
+        int x = m;
+        int y = m;
+        int w = getWidth() - 2 * m;
+        int h = getHeight() - 2 * m;
+        int r = h / 4;
+        g.fillRoundRect(x, y, w, h, r, r);
       }
     };
 
@@ -283,6 +288,30 @@ class StringEditor extends Editor {
 }
 
 @SuppressWarnings("serial")
+class PushEditor extends Editor {
+  final JButton but;
+
+  PushEditor(final Accessor accessor) {
+    super(accessor);
+    Push ps = (Push) invokeGetter();
+    String s = ps != null ? ps.getString() : "Push";
+    but = new JButton(s);
+
+    final JPanel p = new JPanel(new BorderLayout());
+    p.add(but, BorderLayout.CENTER);
+
+    but.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        invokeSetter(null);
+      }
+    });
+    add(but);
+  }
+
+}
+
+@SuppressWarnings("serial")
 class FontEditor extends Editor {
   final JButton button;
 
@@ -310,13 +339,12 @@ class FontEditor extends Editor {
       public void actionPerformed(ActionEvent e) {
         final Object comp = accessor.component;
         Font f = _getFont();
-        JFontChooser fontChooser = new JFontChooser();
+        FontChooser fontChooser = new FontChooser();
         Object parent = getParent(comp);
         int result = fontChooser.showDialog((Component) parent);
-        if (result == JFontChooser.OK_OPTION) {
+        if (result == FontChooser.OK_OPTION) {
           Font font = fontChooser.getSelectedFont();
           button.setFont(font);
-          System.out.println("Selected Font : " + font);
         }
         try {
           invokeSetter(f);
@@ -349,47 +377,41 @@ class FontEditor extends Editor {
 
 @SuppressWarnings("serial")
 public class DLPropertySheet extends JFrame {
-  Object comp;
+  DLComponent comp;
   ArrayList<Editor> editors = new ArrayList<Editor>();
   HashMap<String, Accessor> accessors;
 
   static String ShortClassName(Object c) {
     String cls = c.getClass().getName();
     int i = cls.lastIndexOf('.');
+    if (i <= 0)
+      return cls;
     return cls.substring(i + 1, cls.length());
   }
 
-  public DLPropertySheet(Object c) {
+  public DLPropertySheet(DLComponent c) {
     this("Properties for " + ShortClassName(c), c);
   }
 
-  public DLPropertySheet(String title, Object c) {
+  public DLPropertySheet(String title, DLComponent c) {
     super(title);
     comp = c;
-    if (c instanceof DLComponent)
-      ((DLComponent) c).sheet = this;
+    c.sheet = this;
     getContentPane().setLayout(new BorderLayout());
 
-    final JComponent p = page();
-    setSize(300, 200);
-    final HashMap<String, Method> raw = listProperties();
-    final HashMap<String, Accessor> acc = cleanProperties(raw);
+    JComponent p = page();
+    // setSize(300, 200);
+    HashMap<String, Method> raw = listProperties();
+    HashMap<String, Accessor> acc = cleanProperties(raw);
     accessors = acc;
     Collection<Accessor> values = acc.values();
-    List<Accessor> list = new ArrayList<Accessor>(values);
+    ArrayList<Accessor> list = new ArrayList<Accessor>(values);
     Collections.sort(list);
-    for (final Accessor a : list) {
-      final String property = a.shortName;
+    for (Accessor a : list) {
       final Editor e = Editor.getEditor(a);
       if (e != null) {
         p.add(e);
         editors.add(e);
-      } else {
-        final Class<?> propertyType = a.type;
-        final String str = property + " " + propertyType.getName();
-        final JButton jl = new JButton(str);
-        jl.setHorizontalAlignment(SwingConstants.LEFT);
-        p.add(jl);
       }
     }
 
@@ -402,9 +424,9 @@ public class DLPropertySheet extends JFrame {
     final int x = (dim.width - w) / 2;
     final int y = (dim.height - h) / 2;
 
-    // Move the window
     setLocation(x, y);
     setVisible(true);
+    dump();
   }
 
   void close() {
@@ -433,8 +455,8 @@ public class DLPropertySheet extends JFrame {
       Accessor a = null;
       String shortName = null;
       Method m = null;
-      if (s.startsWith("set")) {
-        final String sn = s.substring("set".length());
+      if (s.startsWith(SET)) {
+        final String sn = s.substring(SET.length());
         shortName = sn;
         m = methods.get("get" + sn);
         if (m == null) {
@@ -449,7 +471,7 @@ public class DLPropertySheet extends JFrame {
       if (s.startsWith("get")) {
         final String sn = s.substring("get".length());
         shortName = sn;
-        m = methods.get("set" + sn);
+        m = methods.get(SET + sn);
         if (m == null) {
           methods.remove(s);
           continue;
@@ -498,12 +520,46 @@ public class DLPropertySheet extends JFrame {
       final Method[] ms = cls.getDeclaredMethods();
       for (final Method m : ms) {
         final String name = m.getName();
-        if (name.startsWith("set") || name.startsWith("get") || name.startsWith("range") || name.startsWith("enum"))
+        if (name.startsWith(SET) || name.startsWith(GET) || name.startsWith(RANGE) || name.startsWith(ENUM))
           accessors.put(name, m);
       }
       cls = cls.getSuperclass();
     }
     return accessors;
+  }
+
+  void dump() {
+    Class<?> cls = comp.getClass();
+    HashMap<String, Method> setters = new HashMap<String, Method>();
+    HashMap<String, Method> getters = new HashMap<String, Method>();
+
+    while (cls != null) {
+      final Method[] ms = cls.getDeclaredMethods();
+      for (final Method m : ms) {
+        final String name = m.getName();
+        if (name.startsWith(SET))
+          setters.put(name, m);
+        if (name.startsWith(GET))
+          getters.put(name, m);
+      }
+      cls = cls.getSuperclass();
+    }
+
+    final String[] skeys = setters.keySet().toArray(new String[] {});
+
+    for (String k : skeys) {
+      final String sn = k.substring(SET.length());
+      Method m = getters.get(GET + sn);
+      if (m != null) {
+        try {
+          Object res = m.invoke(comp);
+          System.err.println(sn + " " + (res != null ? res.toString() : null));
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+          System.err.println(m.getName() + " " + e.getMessage());
+        }
+      }
+    }
+
   }
 
   private JComponent page() {
@@ -526,10 +582,7 @@ abstract class Editor extends JPanel {
 
   Editor(Accessor accessor) {
     this.accessor = accessor;
-    //    setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-    //    setAlignmentX(0f);
     setLayout(new GridLayout(1, 0));
-    //    setLayout(new FlowLayout(FlowLayout.CENTER, 1, 1));
     final JLabel label = new JLabel(accessor.shortName);
     add(label, BorderLayout.LINE_START);
   }
@@ -537,7 +590,6 @@ abstract class Editor extends JPanel {
   static JDialog dialog = null;
 
   static void _ShowHideWait(boolean show, Component parent) {
-    System.err.println("ShowHideWait " + show + " " + parent);
     if (dialog != null) {
       dialog.setVisible(false);
       dialog = null;
@@ -559,7 +611,7 @@ abstract class Editor extends JPanel {
           dialog.repaint();
         }
       });
-      //      dialog.repaint();
+      // dialog.repaint();
     }
   }
 
@@ -586,6 +638,8 @@ abstract class Editor extends JPanel {
       return new EnumEditor(accessor);
     if (cls == int.class)
       return new IntEditor(accessor);
+    if (cls == long.class)
+      return new LongEditor(accessor);
     if (cls == float.class)
       return new FloatEditor(accessor);
     if (cls == double.class)
@@ -602,20 +656,19 @@ abstract class Editor extends JPanel {
       return new FontEditor(accessor);
     if (cls == String.class)
       return new StringEditor(accessor);
+    if (cls == Push.class)
+      return new PushEditor(accessor);
     return null;
   }
 
   void invokeSetter(Object o) {
     try {
       final Object comp = accessor.component;
-      final String name = "set" + accessor.shortName;
+      final String name = SET + accessor.shortName;
       final Method m = comp.getClass().getMethod(name, accessor.type);
       m.invoke(comp, o);
     } catch (final Exception ex) {
       ex.printStackTrace();
-      final Object comp = accessor.component;
-      final String name = "set" + accessor.shortName;
-      System.err.println(comp + " " + name);
     }
   }
 
@@ -641,7 +694,7 @@ abstract class Editor extends JPanel {
 class FloatEditor extends Editor {
   JSlider slider;
   JTextField sliderLabel;
-  float mult = 10000;
+  final float mult = 10000;
   DecimalFormat dc = new DecimalFormat("###0.000");
 
   public void update(Object o) {
@@ -764,14 +817,55 @@ class IntEditor extends Editor {
 }
 
 @SuppressWarnings("serial")
+class LongEditor extends Editor {
+  JSlider slider;
+  JTextField sliderLabel;
+
+  public void update(Object o) {
+    Long i = (Long) o;
+    slider.setValue(i.intValue());
+    sliderLabel.setText(i.toString());
+  }
+
+  LongEditor(final Accessor accessor) {
+    super(accessor);
+
+    slider = new JSlider();
+    final long[] a = (long[]) accessor.getRange();
+    if (a != null) {
+      slider.setMinimum((int) a[0]);
+      slider.setMaximum((int) a[1]);
+    }
+    final Long v = (Long) invokeGetter();
+    slider.setValue(v.intValue());
+
+    JPanel sliderPanel = new JPanel(new BorderLayout());
+    sliderLabel = new JTextField();
+
+    slider.addChangeListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        final int i = slider.getValue();
+        invokeSetter(i);
+        sliderLabel.setText("" + i);
+      }
+    });
+    sliderPanel.add(slider, BorderLayout.CENTER);
+    sliderLabel.setText("" + v);
+    sliderLabel.setColumns(5);
+    sliderPanel.add(sliderLabel, BorderLayout.LINE_END);
+
+    add(sliderPanel);
+  }
+}
+
+@SuppressWarnings("serial")
 class EnumEditor extends Editor {
   JComboBox<Object> combo;
 
   public void update(Object o) {
     combo.setSelectedItem(o);
   }
-
-  HashMap<Object, BufferedImage> imageMap = new HashMap<>();
 
   EnumEditor(Accessor accessor) {
     super(accessor);
@@ -796,69 +890,16 @@ class EnumEditor extends Editor {
           panel.setPreferredSize(d);
           return panel;
         }
-        BufferedImage image = imageMap.get(value);
 
-        String s = value.toString();
-        File f;
-        URL url;
+        BufferedImage image = DLUtil.getImage(value, size);
 
-        if (image == null) {
-          if (new File(s).exists()) {
-            System.err.println("loading " + s);
-            image = DLUtil.LoadImage(s, size);
-          }
-          if (image == null) {
-            url = DrawLine.class.getResource(s);
-            if (url != null) {
-              try {
-                f = new File(url.toURI());
-              } catch (URISyntaxException e) {
-                f = new File(url.getPath());
-              }
-              if (f.exists()) {
-                System.err.println("loading " + f);
-                image = DLUtil.LoadImage(url, size);
-              }
-            }
-          }
-          if (image == null) {
-            url = DrawLine.class.getResource("images/" + s);
-            if (url != null) {
-              try {
-                f = new File(url.toURI());
-              } catch (URISyntaxException e) {
-                f = new File(url.getPath());
-              }
-              if (f.exists()) {
-                System.err.println("loading " + f);
-                image = DLUtil.LoadImage(url, size);
-              }
-            }
-          }
-          if (image == null) {
-            url = DrawLine.class.getResource("images/textures/" + s);
-            if (url != null) {
-              try {
-                f = new File(url.toURI());
-              } catch (URISyntaxException e) {
-                f = new File(url.getPath());
-              }
-              if (f.exists()) {
-                System.err.println("loading " + f);
-                image = DLUtil.LoadImage(url, size);
-              }
-            }
-          }
-          imageMap.put(value, image);
-        }
         if (image == null) {
           return renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         } else {
-
           JPanel panel = new JPanel();
           panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
           final BufferedImage fimage = image;
-          final String str = s;
+          final String str = value.toString();
           JPanel imagePanel = new JPanel() {
             public void paint(Graphics g) {
               Graphics2D gr = fimage.createGraphics();
@@ -878,7 +919,101 @@ class EnumEditor extends Editor {
           return panel;
         }
       }
+    });
 
+    Object o = invokeGetter();
+    combo.setSelectedItem(o);
+    combo.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Object o = combo.getSelectedItem();
+        invokeSetter(o);
+      }
+    });
+    add(combo);
+  }
+}
+
+@SuppressWarnings("serial")
+class EnumEditor2 extends Editor {
+
+  static HashMap<Object, BufferedImage> imageMap = new HashMap<>();
+
+  JComboBox<Object> combo;
+
+  public void update(Object o) {
+    combo.setSelectedItem(o);
+  }
+
+  public Component renderImage(JList<? extends Object> list, Object value, int index, boolean isSelected,
+      boolean cellHasFocus) {
+
+    int size = 100;
+
+    if (value == null) {
+      JPanel panel = new JPanel();
+      Dimension d = new Dimension(size, size);
+      panel.setSize(d);
+      panel.setMinimumSize(d);
+      panel.setMaximumSize(d);
+      panel.setPreferredSize(d);
+      return panel;
+    }
+
+    BufferedImage image = DLUtil.getImage(value, size);
+
+    if (image == null) {
+      ListCellRenderer<? super Object> renderer = combo.getRenderer();
+      return renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    } else {
+      final JPanel panel = new JPanel();
+      panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+      final BufferedImage fimage = image;
+      final String str = value.toString();
+      final JPanel imagePanel = new JPanel() {
+        public void paint(Graphics g) {
+          Graphics2D gr = fimage.createGraphics();
+          Font f = new Font(Font.MONOSPACED, Font.PLAIN, 10);
+          g.setFont(f);
+          g.setColor(Color.red);
+          gr.drawString(str, 0, fimage.getHeight() / 2);
+          g.drawImage(fimage, 0, 0, null);
+        }
+      };
+      Dimension d = new Dimension(size, size);
+      panel.setSize(d);
+      panel.setMinimumSize(d);
+      panel.setMaximumSize(d);
+      panel.setPreferredSize(d);
+      panel.add(imagePanel, BorderLayout.CENTER);
+      return panel;
+    }
+  }
+
+  static HashMap<Object, Component> renderedCell = new HashMap<Object, Component>();
+
+  EnumEditor2(Accessor accessor) {
+    super(accessor);
+    final Object[] a = (Object[]) accessor.getEnum();
+
+    combo = new JComboBox<Object>(a);
+
+    combo.setRenderer(new ListCellRenderer<Object>() {
+      public Component getListCellRendererComponent(final JList<? extends Object> list, final Object value,
+          final int index, final boolean isSelected, final boolean cellHasFocus) {
+
+        Component c = renderedCell.get(value);
+        if (c != null)
+          return c;
+        new SwingWorker<String, Component>() {
+          public String doInBackground() {
+            Component c = renderImage(list, value, index, isSelected, cellHasFocus);
+            renderedCell.put(value, c);
+            return "";
+          }
+        }.execute();
+        JButton b = new JButton();
+        return b;
+      }
     });
 
     Object o = invokeGetter();
@@ -927,7 +1062,7 @@ class PointEditor extends Editor {
       yMax = 100;
     }
     Point2D.Float ret = new Point2D.Float();
-    ret.y = DLUtil.Normalize(xMin, xMax, 0, pwidth, p.x);
+    ret.x = DLUtil.Normalize(xMin, xMax, 0, pwidth, p.x);
     ret.y = DLUtil.Normalize(yMin, yMax, 0, pheight, p.y);
 
     return ret;
@@ -956,7 +1091,7 @@ class PointEditor extends Editor {
     }
     Point2D.Float ret = new Point2D.Float();
     ret.x = DLUtil.Normalize(0, pwidth, xMin, xMax, p.x);
-    ret.y = DLUtil.Normalize(0, pheight, yMin, yMax, p.x);
+    ret.y = DLUtil.Normalize(0, pheight, yMin, yMax, p.y);
     return ret;
   }
 
@@ -999,6 +1134,7 @@ class PointEditor extends Editor {
     square.addMouseMotionListener(new MouseMotionAdapter() {
       public void mouseDragged(MouseEvent e) {
         Point p = e.getPoint();
+        Point pp = new Point(p);
         if (last != null) {
           Rectangle2D b = shape.getBounds2D();
           double cx = b.getX() + b.getWidth() / 2;
@@ -1026,7 +1162,7 @@ class PointEditor extends Editor {
           xylabel.setText(s);
           invokeSetter(ep);
         }
-        last = p;
+        last = pp;
       }
     });
     Dimension d = new Dimension(pwidth, pheight);
@@ -1038,5 +1174,17 @@ class PointEditor extends Editor {
     parent.add(square);
     parent.add(xylabel);
     add(parent);
+  }
+}
+
+class Push {
+  String str;
+
+  Push(String s) {
+    str = s;
+  }
+
+  String getString() {
+    return str;
   }
 }

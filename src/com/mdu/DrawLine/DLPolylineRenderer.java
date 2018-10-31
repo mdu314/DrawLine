@@ -25,10 +25,10 @@ public class DLPolylineRenderer extends DLRenderer {
     final Point2D[] pts = new Point2D[sz];
     for (int i = 0; i < sz; i++) {
       final DLPoint s = polyline.points.get(i);
-      pts[i] = new Point2D.Double(s.x, s.y);
+      pts[i] = new Point2D.Float(s.x, s.y);
     }
-    final Point2D.Double[] fcp = new Point2D.Double[sz - 1];
-    final Point2D.Double[] scp = new Point2D.Double[sz - 1];
+    final Point2D.Float[] fcp = new Point2D.Float[sz - 1];
+    final Point2D.Float[] scp = new Point2D.Float[sz - 1];
     PolyUtils.GetCurveControlPoints(pts, fcp, scp);
 
     final GeneralPath p = new GeneralPath();
@@ -66,17 +66,17 @@ public class DLPolylineRenderer extends DLRenderer {
     DLUtil.SetHints(g);
     final DLPoint ls = polyline.points.get(i - 1);
     final DLPoint s = polyline.points.get(i);
-    final double x = s.x;
-    final double y = s.y;
-    final double dx = x - ls.x;
-    final double dy = y - ls.y;
+    final float x = s.x;
+    final float y = s.y;
+    final float dx = x - ls.x;
+    final float dy = y - ls.y;
 
-    final double size = 5;
-    final Rectangle2D rect = new Rectangle2D.Double(x - size / 2, y - size / 2, size, size);
+    final float size = 5;
+    final Rectangle2D rect = new Rectangle2D.Float(x - size / 2, y - size / 2, size, size);
 
-    final double factor = Math.abs(dy) < 0.1 ? 0 : Math.abs(dx / dy);
+    final float factor = Math.abs(dy) < 0.1 ? 0 : Math.abs(dx / dy);
     g.setColor(DLUtil.BrighterColor(color, factor));
-    final Line2D line = new Line2D.Double(ls.x, ls.y, x, y);
+    final Line2D line = new Line2D.Float(ls.x, ls.y, x, y);
     g.draw(line);
     g.fill(rect);
   }

@@ -21,8 +21,9 @@ class Selection {
 
   Rectangle boundingBox() {
     Rectangle r = comp.getBounds(false);
-    //    r = comp.addShadowBounds(r);
-    return new Rectangle(r.x, r.y, r.width, r.height);
+    r = new Rectangle(r.x, r.y, r.width, r.height);
+    //DLUtil.expand(r, 2f);
+    return r;
   }
 
   void draw(Graphics2D g) {
@@ -57,7 +58,7 @@ class Selection {
       ih = 1;
     BufferedImage image = new BufferedImage(iw, ih, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = (Graphics2D) image.getGraphics();
-    DLUtil.SetHints(g);
+//    DLUtil.SetHints(g);
     Color oColor = g.getColor();
     if (color != null)
       g.setColor(color);
