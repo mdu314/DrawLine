@@ -50,9 +50,9 @@ class DLLorem extends DLSegmentedComponent {
   void drawPoint(Graphics2D g, int i) {
     final DLPoint p = points.get(i);
     if (p.dlc == null) {
-      final String s = DLUtil.lorem.substring(loremIndex, loremIndex + 1);
+      final String s = DLUtil.getLorem().substring(loremIndex, loremIndex + 1);
       loremIndex++;
-      if (loremIndex >= DLUtil.lorem.length())
+      if (loremIndex >= DLUtil.getLorem().length())
         loremIndex = 0;
       final DLChar dlc = new DLChar((int) Math.rint(p.x), (int) Math.rint(p.y));
       randomize(dlc);
@@ -116,9 +116,9 @@ class DLLorem extends DLSegmentedComponent {
     for (int i = 0; i < points.size(); i++) {
       final DLPoint p = points.get(i);
       if (p.dlc == null) {
-        final String s = DLUtil.lorem.substring(loremIndex, loremIndex + 1);
+        final String s = DLUtil.getLorem().substring(loremIndex, loremIndex + 1);
         loremIndex++;
-        if (loremIndex >= DLUtil.lorem.length())
+        if (loremIndex >= DLUtil.getLorem().length())
           loremIndex = 0;
         final DLChar dlc = new DLChar((int) Math.rint(p.x), (int) Math.rint(p.y));
         randomize(dlc);

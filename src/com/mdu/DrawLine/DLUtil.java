@@ -78,7 +78,7 @@ public class DLUtil {
       DLMap.class, DLKandinsky.class, DLApollon.class, DLRings.class, DLPattern.class, DLFlowers.class,
       DLStarField.class, DLMagicalTree.class, DLSinCosLines.class, DLChess.class, DLKaleidoscope.class));
 
-  static String lorem = ReadFile("resources/Lorem.txt");
+  private static String lorem; // ReadFile("resources/Lorem.txt");
   static final float PI = 3.1415926535897932384626433f;
   static final float TWO_PI = 6.2831853071795864769252866f;
   static final float Log3 = (float) Math.log(3);
@@ -1090,14 +1090,21 @@ public class DLUtil {
     return new Rectangle2D.Float(xMin - margin, yMin - margin, xMax - xMin + 2 * margin, yMax - yMin + 2 * margin);
   }
 
+  static String getLorem() {
+    if (lorem == null)
+      lorem = ReadFile("resources/Lorem.txt");
+    return lorem;
+  }
+
   static synchronized String RandomChar() {
-    int i = RangeRandom(0, lorem.length() - 1);
-    char c = lorem.charAt(i);
+    String lo = getLorem();
+    int i = RangeRandom(0, lo.length() - 1);
+    char c = lo.charAt(i);
     while (c != ' ' && i > 0) {
       i--;
-      c = lorem.charAt(i);
+      c = lo.charAt(i);
     }
-    final String ret = lorem.substring(i + 1, i + 2);
+    final String ret = lo.substring(i + 1, i + 2);
     return ret;
   }
 
@@ -1146,26 +1153,27 @@ public class DLUtil {
   }
 
   static synchronized String RandomWord() {
-    int i = RangeRandom(0, lorem.length() - 1);
+    String lo = getLorem();
+    int i = RangeRandom(0, lo.length() - 1);
 
-    char c = lorem.charAt(i);
+    char c = lo.charAt(i);
     while (c != ' ' && i > 0) {
       i--;
-      c = lorem.charAt(i);
+      c = lo.charAt(i);
     }
 
-    while (c == ' ' && i < lorem.length() - 1) {
+    while (c == ' ' && i < lo.length() - 1) {
       i++;
-      c = lorem.charAt(i);
+      c = lo.charAt(i);
     }
     final int start = i;
 
-    while (c != ' ' && i < lorem.length() - 1) {
+    while (c != ' ' && i < lo.length() - 1) {
       i++;
-      c = lorem.charAt(i);
+      c = lo.charAt(i);
     }
     final int end = i;
-    return lorem.substring(start, end);
+    return lo.substring(start, end);
   }
 
   static synchronized double RangeRandom(double min, double max) {
@@ -1788,7 +1796,7 @@ public class DLUtil {
   }
 
   static BufferedImage GetScaledInstance(BufferedImage image, Dimension size) {
-    if(image == null)
+    if (image == null)
       return null;
     return GetScaledInstance(image, size.width, size.height);
   }
