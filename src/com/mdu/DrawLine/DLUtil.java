@@ -76,9 +76,9 @@ public class DLUtil {
 
   static ArrayList<Class<? extends DLComponent>> otherList = new ArrayList<Class<? extends DLComponent>>(Arrays.asList(
       DLMap.class, DLKandinsky.class, DLApollon.class, DLRings.class, DLPattern.class, DLFlowers.class,
-      DLStarField.class, DLMagicalTree.class, DLSinCosLines.class, DLChess.class));
+      DLStarField.class, DLMagicalTree.class, DLSinCosLines.class, DLChess.class, DLKaleidoscope.class));
 
-  static String lorem = ReadFile("Lorem.txt");
+  static String lorem = ReadFile("resources/Lorem.txt");
   static final float PI = 3.1415926535897932384626433f;
   static final float TWO_PI = 6.2831853071795864769252866f;
   static final float Log3 = (float) Math.log(3);
