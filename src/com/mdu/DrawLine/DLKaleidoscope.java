@@ -16,7 +16,7 @@ public class DLKaleidoscope extends DLImage {
   int threadSleep = 50;
   int frameCount = 1;
   String textures = "images/kaleidoscope/";
-  String defaultTexture = firstImage(textures); // "mantsun-intro-2.jpg";
+  String defaultTexture = randomImage(textures); // "mantsun-intro-2.jpg";
   String imageResource = textures + defaultTexture;
   BufferedImage baseTexture;
   BufferedImage texture;
@@ -30,6 +30,7 @@ public class DLKaleidoscope extends DLImage {
   boolean clear = false;
   ArrayList<DLPath> shapes = new ArrayList<DLPath>();
   float imageScale = 1f;
+  float currentAngle;
 
   public String toString() {
     String s = "imageResource " + imageResource + "\n";
@@ -264,14 +265,16 @@ public class DLKaleidoscope extends DLImage {
   }
 
   HashMap<String, BufferedImage> imageCache = new HashMap<String, BufferedImage>();
-  
+
   void loadImage() {
-    
-    baseTexture = imageCache.get(imageResource);
-    if(baseTexture == null) {
-      System.err.print("Load base texture " + imageResource);
-      baseTexture = DLUtil.LoadImage(imageResource, null);
-      imageCache.put(imageResource,  baseTexture);
+
+    synchronized (imageCache) {
+      baseTexture = imageCache.get(imageResource);
+      if (baseTexture == null) {
+        System.err.print("Load base texture " + imageResource);
+        baseTexture = DLUtil.LoadImage(imageResource, null);
+        imageCache.put(imageResource, baseTexture);
+      }
     }
 
     try {
@@ -312,8 +315,8 @@ public class DLKaleidoscope extends DLImage {
     return list[0];
   }
 
-  String randomImage() {
-    URL url = getClass().getResource(textures);
+  String randomImage(String t) {
+    URL url = getClass().getResource(t);
     File f;
     try {
       f = new File(url.toURI());
@@ -324,8 +327,6 @@ public class DLKaleidoscope extends DLImage {
     int r = DLUtil.RangeRandom(0, list.length);
     return list[r];
   }
-
-  float currentAngle;
 
   void frame(Graphics2D g) {
 
