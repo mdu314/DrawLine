@@ -359,7 +359,7 @@ public class DLUtil {
     String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);
     String methodName = Thread.currentThread().getStackTrace()[deux].getMethodName();
     int lineNumber = Thread.currentThread().getStackTrace()[deux].getLineNumber();
-    System.err.println(message + " " + className + "." + methodName + "():" + lineNumber);
+    Log(message + " " + className + "." + methodName + "():" + lineNumber);
   }
 
   static HashMap<Object, BufferedImage> imageMap = new HashMap<>();
@@ -374,7 +374,7 @@ public class DLUtil {
 
     if (image == null) {
       if (new File(s).exists()) {
-        System.err.println("loading " + s);
+        Log("loading " + s);
         image = DLUtil.LoadImage(s, size);
       }
       if (image == null) {
@@ -386,7 +386,7 @@ public class DLUtil {
             f = new File(url.getPath());
           }
           if (f.exists()) {
-            System.err.println("loading " + f);
+            Log("loading " + f);
             image = DLUtil.LoadImage(url, size);
           }
         }
@@ -400,7 +400,7 @@ public class DLUtil {
             f = new File(url.getPath());
           }
           if (f.exists()) {
-            System.err.println("loading " + f);
+            Log("loading " + f);
             image = DLUtil.LoadImage(url, size);
           }
         }
@@ -414,7 +414,7 @@ public class DLUtil {
             f = new File(url.getPath());
           }
           if (f.exists()) {
-            System.err.println("loading " + f);
+            Log("loading " + f);
             image = DLUtil.LoadImage(url, size);
           }
         }
@@ -1435,33 +1435,35 @@ public class DLUtil {
     return Math.sqrt(d1 * d1 + d2 * d2);
   }
 
-  static void DumpGeneralPath(GeneralPath p) {
+  static String DumpGeneralPath(GeneralPath p) {
     final PathIterator pi = p.getPathIterator(null);
     final float[] c = new float[6];
+    StringBuffer sb = new StringBuffer();
     while (!pi.isDone()) {
       final int ret = pi.currentSegment(c);
       switch (ret) {
       case SEG_MOVETO:
-        System.err.println("moveTo( " + c[0] + ", " + c[1] + ");");
+        sb.append("moveTo( " + c[0] + ", " + c[1] + ");");
         break;
       case SEG_LINETO:
-        System.err.println("lineTo( " + c[0] + ", " + c[1] + ");");
+        sb.append("lineTo( " + c[0] + ", " + c[1] + ");");
         break;
       case SEG_QUADTO:
-        System.err.println("quadTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ");");
+        sb.append("quadTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ");");
         break;
       case SEG_CUBICTO:
-        System.err.println("cubicTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ", " + c[4] + ", " + c[5]
+        sb.append("cubicTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ", " + c[4] + ", " + c[5]
             + ");");
         break;
       case SEG_CLOSE:
-        System.err.println("closePath();");
+        sb.append("closePath();");
         break;
       default:
         break;
       }
       pi.next();
     }
+    return sb.toString();
   }
 
   /*
@@ -1840,7 +1842,7 @@ public class DLUtil {
     int iwidth = i1.getWidth();
     int iheight = i1.getHeight();
     if (i1.getWidth() != i2.getWidth() || i1.getHeight() != i2.getHeight()) {
-      System.err.println("images should have same size " + i1.getWidth() + " X " + i1.getHeight() + " != "
+      Log("images should have same size " + i1.getWidth() + " X " + i1.getHeight() + " != "
           + i2.getWidth() + " X " + i2.getHeight());
       i1 = GetScaledInstance(i1, iwidth, iheight);
       i2 = GetScaledInstance(i2, iwidth, iheight);

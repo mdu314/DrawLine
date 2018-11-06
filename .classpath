@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/Home"/>
-	<classpathentry kind="lib" path="lib/jsoup-1.8.1.jar" sourcepath="/home/mdurocher/tools/jdk1.7.0_75/src.zip"/>
-	<classpathentry kind="output" path="target"/>
+	<classpathentry kind="lib" path="dist/Filters.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="lib/jogl-all.jar"/>
+	<classpathentry kind="lib" path="lib/jsoup-1.8.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

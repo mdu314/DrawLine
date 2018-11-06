@@ -13,10 +13,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DLKaleidoscope extends DLImage {
+  private static final String FlipHorizontal = "flip horizontal";
+  private static final String FlipVertical = "flip vertical";
+  private static final String DoNotFlip = "do not flip";
+  String flip = DoNotFlip;
   int threadSleep = 50;
   int frameCount = 1;
   String textures = "images/kaleidoscope/";
-  String defaultTexture = randomImage(textures); // "mantsun-intro-2.jpg";
+  String defaultTexture = randomImage(textures);
   String imageResource = textures + defaultTexture;
   BufferedImage baseTexture;
   BufferedImage texture;
@@ -31,6 +35,8 @@ public class DLKaleidoscope extends DLImage {
   ArrayList<DLPath> shapes = new ArrayList<DLPath>();
   float imageScale = 1f;
   float currentAngle;
+  HashMap<String, BufferedImage> imageCache = new HashMap<String, BufferedImage>();
+  boolean clip = true;
 
   public String toString() {
     String s = "imageResource " + imageResource + "\n";
@@ -113,13 +119,13 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public int[] rangeAngleDiv() {
-    return new int[] {
-      2, 20
-    };
+    return new int[] { 2, 20 };
   }
 
   public void setRadius(int r) {
     radius = r;
+    if (sheet != null)
+      sheet.update("Tx", getTx());
     clearImage();
   }
 
@@ -128,9 +134,7 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public int[] rangeRadius() {
-    return new int[] {
-      1, 500
-    };
+    return new int[] { 1, 500 };
   }
 
   public void setRotation(float r) {
@@ -142,9 +146,15 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public float[] rangeRotation() {
-    return new float[] {
-      0.001f, 0.5f
-    };
+    return new float[] { 0.001f, 0.5f };
+  }
+
+  public boolean getClip() {
+    return clip;
+  }
+
+  public void setClip(boolean c) {
+    clip = c;
   }
 
   void step(Graphics2D g) {
@@ -172,9 +182,7 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public int[] rangeTx() {
-    return new int[] {
-      0, radius
-    };
+    return new int[] { 0, radius };
   }
 
   public void setTy(int t) {
@@ -190,9 +198,7 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public int[] rangeTy() {
-    return new int[] {
-      0, radius
-    };
+    return new int[] { 0, radius };
   }
 
   public void randomize() {
@@ -209,9 +215,7 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public int[] rangeThreadSleep() {
-    return new int[] {
-      0, 1000
-    };
+    return new int[] { 0, 1000 };
   }
 
   public String getImageResource() {
@@ -219,7 +223,11 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public void setImageResource(String ir) {
-    imageResource = textures + ir;
+    boolean b = ir.indexOf(File.separator) != -1;
+    if (b)
+      imageResource = ir;
+    else
+      imageResource = textures + ir;
     loadImage();
   }
 
@@ -234,9 +242,14 @@ public class DLKaleidoscope extends DLImage {
       f = new File(url.getPath());
     }
     String[] list = f.list();
+
     String[] items = new String[list.length + 1];
-    for (int i = 0; i < list.length; i++)
-      items[i] = list[i];
+    for (int i = 0; i < list.length; i++) {
+      String s = list[i];
+      items[i] = s;
+      String path = new String(textures + File.separator + s);
+      items[i] = path;
+    }
     items[list.length] = null;
     return items;
   }
@@ -251,11 +264,22 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public float[] rangeImageScale() {
-    return new float[] {
-      0.01f, 2f
-    };
+    return new float[] { 0.01f, 2f };
   }
 
+  public String getFlip() {
+    return flip;
+  }
+  
+  public void setFlip(String f) {
+    flip = f;
+    loadImage();
+  }
+  
+  public String[] enumFlip() {
+    return new String[] {FlipHorizontal, FlipVertical, DoNotFlip};
+  }
+  
   void scaleBaseTexture() {
     if (imageScale != 1f) {
       AffineTransform t = AffineTransform.getScaleInstance(imageScale, imageScale);
@@ -264,19 +288,47 @@ public class DLKaleidoscope extends DLImage {
     }
   }
 
-  HashMap<String, BufferedImage> imageCache = new HashMap<String, BufferedImage>();
+  void flipBaseTexture() {
+    switch (flip) {
+    case FlipHorizontal: {
+      AffineTransform t = AffineTransform.getScaleInstance(1, -1);
+      t.translate(0, -baseTexture.getHeight());
+      AffineTransformOp op = new AffineTransformOp(t, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+      baseTexture = op.filter(baseTexture, null);
+      break;
+    }
+    case FlipVertical: {
+      AffineTransform t = AffineTransform.getScaleInstance(-1, 1);
+      t.translate(-baseTexture.getWidth(), 0);
+      AffineTransformOp op = new AffineTransformOp(t, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+      baseTexture = op.filter(baseTexture, null);
+      break;
+    }
+    case DoNotFlip:
+      break;
+    }
+  }
+
+  BufferedImage getImage(String t) {
+    BufferedImage i = imageCache.get(imageResource);
+    if (i == null) {
+      System.err.print("Load base texture " + imageResource);
+      i = DLUtil.LoadImage(imageResource, null);
+      if (i != null)
+        imageCache.put(imageResource, i);
+    }
+    return i;
+  }
 
   void loadImage() {
 
-    synchronized (imageCache) {
-      baseTexture = imageCache.get(imageResource);
-      if (baseTexture == null) {
-        System.err.print("Load base texture " + imageResource);
-        baseTexture = DLUtil.LoadImage(imageResource, null);
-        imageCache.put(imageResource, baseTexture);
-      }
+    baseTexture = getImage(imageResource);
+    try {
+      flipBaseTexture();
+    } catch (Exception e) {
+      DLError.report(e, "Caught " + e);
     }
-
+    
     try {
       scaleBaseTexture();
     } catch (Exception e) {
@@ -292,6 +344,10 @@ public class DLKaleidoscope extends DLImage {
   }
 
   void updateTexture() {
+    if (baseTexture == null)
+      baseTexture = getImage(imageResource);
+    if (baseTexture == null)
+      throw new Error("Cannot load " + imageResource);
     int bw = baseTexture.getWidth();
     int bh = baseTexture.getHeight();
     if (radius + tx >= bw || radius + ty >= bh)
@@ -369,25 +425,22 @@ public class DLKaleidoscope extends DLImage {
 
     for (DLPath s : shapes) {
 
-      Shape clip = g.getClip();
-      g.setClip(s);
+      Shape oclip = g.getClip();
+      if (clip)
+        g.setClip(s);
 
       AffineTransform tr = AffineTransform.getRotateInstance(s.getAngle(), iwidth / 2, iheight / 2);
       AffineTransform str = g.getTransform();
       g.setTransform(tr);
       try {
         if (img != null)
-          g.drawImage(img,
-              (int) cx,
-              (int) cy,
-              (int) (cx + radius),
-              (int) (cy + radius),
-              0, 0, img.getWidth(), img.getHeight(), null);
+          g.drawImage(img, (int) cx, (int) cy, (int) (cx + radius), (int) (cy + radius), 0, 0, img.getWidth(),
+              img.getHeight(), null);
       } catch (NullPointerException e) {
         DLError.report(e, "Caught " + e + " img " + img + " texture " + texture + " invert " + invert);
       }
       g.setTransform(str);
-      g.setClip(clip);
+      g.setClip(oclip);
       if (img == texture)
         img = invert;
       else
@@ -404,19 +457,7 @@ public class DLKaleidoscope extends DLImage {
     int w = 500;
     int h = 500;
 
-    Object[][] params = {
-      {
-        "iwidth", w
-      }, {
-        "iheight", h
-      }, {
-        "x", w / 2
-      }, {
-        "y", h / 2
-      }, {
-        "threadSleep", 5
-      }
-    };
+    Object[][] params = { { "iwidth", w }, { "iheight", h }, { "x", w / 2 }, { "y", h / 2 }, { "threadSleep", 5 } };
 
     DLMain.Main(DLKaleidoscope.class, params);
   }
