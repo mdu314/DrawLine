@@ -270,16 +270,16 @@ public class DLKaleidoscope extends DLImage {
   public String getFlip() {
     return flip;
   }
-  
+
   public void setFlip(String f) {
     flip = f;
     loadImage();
   }
-  
+
   public String[] enumFlip() {
-    return new String[] {FlipHorizontal, FlipVertical, DoNotFlip};
+    return new String[] { FlipHorizontal, FlipVertical, DoNotFlip };
   }
-  
+
   void scaleBaseTexture() {
     if (imageScale != 1f) {
       AffineTransform t = AffineTransform.getScaleInstance(imageScale, imageScale);
@@ -328,7 +328,7 @@ public class DLKaleidoscope extends DLImage {
     } catch (Exception e) {
       DLError.report(e, "Caught " + e);
     }
-    
+
     try {
       scaleBaseTexture();
     } catch (Exception e) {

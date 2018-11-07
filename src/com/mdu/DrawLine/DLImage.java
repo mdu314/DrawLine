@@ -31,10 +31,10 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   BufferedImageOp filter = getFilterFromString(filterName);
   int res = 1;
 
-  void reportException(Throwable e) {
-    System.err.println(e);
-    e.printStackTrace();
-  }
+  // void reportException(Throwable e) {
+  // System.err.println(e);
+  // e.printStackTrace();
+  // }
 
   DLImage() {
     super(0, 0);
@@ -61,7 +61,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   public void reset() {
     image = image();
   }
-  
+
   void clear() {
     clearImage();
     clearShadow();
@@ -81,7 +81,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
       g.fillRect(0, 0, iwidth, iheight);
     }
   }
-  
+
   void clearImage() {
     if (image == null) {
       image = image();
@@ -89,7 +89,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
       clearImage(image);
     }
 
-    if (DLParams.DEBUG ) {
+    if (DLParams.DEBUG) {
       final Graphics2D g = image.createGraphics();
       g.setColor(Color.darkGray);
       g.drawRect(1, 1, iwidth - 2, iheight - 2);
@@ -107,10 +107,10 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
       image = image();
     float fx = x - iwidth / 2f;
     float fy = y - iheight / 2f;
-    int ifx = (int) fx; //Math.floor(fx);
-    int ify = (int) fy; //Math.floor(fy);
-    Rectangle bounds = new Rectangle(ifx - 1, ify - 1 , iwidth + 2, iheight + 2);
-   
+    int ifx = (int) fx; // Math.floor(fx);
+    int ify = (int) fy; // Math.floor(fy);
+    Rectangle bounds = new Rectangle(ifx - 1, ify - 1, iwidth + 2, iheight + 2);
+
     if (deco)
       bounds = addShadowBounds(bounds);
 
@@ -158,7 +158,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   void paint() {
     paint(image.createGraphics());
   }
-  
+
   @Override
   public void paint(Graphics gr) {
     paint(gr, true);
@@ -171,9 +171,11 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     if (image == null)
       image = image();
 
+    applyFilter();
+    
     if (deco)
       shadow(g);
-
+    
     g.drawImage(image, (int) (x - iwidth / 2f), (int) (y - iheight / 2f), null);
 
     if (deco && DLParams.DEBUG) {
@@ -267,7 +269,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
       }
     };
     DLThread t = new DLThread(run);
-//    run.setThread(t);
+    // run.setThread(t);
     stopAll();
     synchronized (threads) {
       threads.add(t);
@@ -335,13 +337,13 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   void applyFilter() {
     if (filter == null)
       return;
-    BufferedImage bi = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+    BufferedImage bi = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
     filter.filter(image, bi);
-    image = DLUtil.Merge(image, bi, filterStrength, null);
+    image = DLUtil.Merge(image, bi, filterStrength, image);
   }
 
   void zoom() {
-    BufferedImage i = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
+    BufferedImage i = new BufferedImage(iwidth, iheight, image.getType());
     zoom(image, i);
     image = i;
   }
@@ -359,25 +361,25 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     return dst;
   }
 
-//  public int getRes() {
-//    return res;
-//  }
+  // public int getRes() {
+  // return res;
+  // }
 
-//  public void setRes(int res) {
-//    this.res = res;
-//    reset();
-//  }
+  // public void setRes(int res) {
+  // this.res = res;
+  // reset();
+  // }
 
   void reset(boolean img) {
-    if(img)
+    if (img)
       image = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
     stopAll();
     clear();
     run();
   }
-  
-  public int[] rangeRes() {
-    return new int[] { 1, 16 };
-  }
+
+  // public int[] rangeRes() {
+  // return new int[] { 1, 16 };
+  // }
 
 }

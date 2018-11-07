@@ -244,8 +244,8 @@ public class DLTunnel extends DLImage {
           int c_y = (angles[x][y] + shiftY) % th;
           try {
             pixels[cursor] = t.getRGB(c_x, c_y);
-          } catch (Throwable e) {
-            reportException(e);
+          } catch (Exception e) {
+           DLError.report(e);
           }
         }
       }
@@ -296,7 +296,7 @@ public class DLTunnel extends DLImage {
         }
 
       } catch (Exception e) {
-        reportException(e);
+        DLError.report(e);
       }
       if (parent != null)
         parent.paint(this);
@@ -305,7 +305,7 @@ public class DLTunnel extends DLImage {
         try {
           Thread.sleep(threadSleep);
         } catch (InterruptedException e) {
-          reportException(e);
+          DLError.report(e);
         }
       }
     }
