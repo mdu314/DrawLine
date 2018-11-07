@@ -896,11 +896,11 @@ class EnumEditor extends Editor {
 				BufferedImage image = DLUtil.getImage(value, size);
 
 				if (image == null) {
-					if (value instanceof String) {
-						String t = (String) value;
-						if (t.length() > 10)
-							value = t.substring(0, 10);
-					}
+//					if (value instanceof String) {
+//						String t = (String) value;
+//						if (t.lastIndexOf('/') > 0)
+//							value = t.substring(t.lastIndexOf('/'), t.length());
+//					}
 					return renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 				} else {
 					JPanel panel = new JPanel();

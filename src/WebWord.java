@@ -23,13 +23,7 @@ public class WebWord {
       System.out.println("title : " + title);
       String s = doc.body().text();
       return s;
-      // Elements links = doc.select("a[href]");
-      // if(false)
-      //   for (Element link : links) {
-      // get the value from href attribute
-      //        System.out.println("\nlink : " + link.attr("href"));
-      //        System.out.println("text : " + link.text());
-      //      }
+      
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -43,11 +37,6 @@ public class WebWord {
   static ArrayList<String> ToArrayList(String s) {
     String[] a = ToArray(s);
     ArrayList<String> list = new ArrayList<String>(Arrays.asList(a));
-//    Collections.sort(list, new Comparator<String>() {
-//      public int compare(String o1, String o2) {
-//        return ((String) o1).length() - ((String) o2).length();
-//      }
-//    });
     ArrayList<String> toRemove = new ArrayList<String>();
     for (String l : list) {
       if (l.length() < 3)

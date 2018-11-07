@@ -18,6 +18,9 @@ import java.util.ArrayList;
 
 import com.jhlabs.image.BoxBlurFilter;
 import com.jhlabs.image.EdgeFilter;
+import com.jhlabs.image.EmbossFilter;
+import com.jhlabs.image.EqualizeFilter;
+import com.jhlabs.image.OilFilter;
 
 abstract class DLImage extends DLComponent implements Threaded, JPG {
   ArrayList<DLThread> threads = new ArrayList<DLThread>();
@@ -27,15 +30,20 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   int iwidth; // = 200;
   boolean selectCheckTransparentPixel = false;
   Color backgroundColor;
-  String filterName = "null";
+  static final String NullFilter = "null";
+  static final String BlurFilter = "blur";
+  static final String EdgeFilter = "edge";
+  static final String EmbossFilter = "emboss";
+  static final String EqualizeFilter = "equalize";
+  static final String OilFilter = "oil";
+  int frameCount = 1;
+  int threadSleep = 50;
+
+  String filterName = NullFilter;
   BufferedImageOp filter = getFilterFromString(filterName);
   int res = 1;
-
-  // void reportException(Throwable e) {
-  // System.err.println(e);
-  // e.printStackTrace();
-  // }
-
+  boolean clear = true;
+  
   DLImage() {
     super(0, 0);
   }
@@ -143,7 +151,16 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     return true;
   }
 
-  abstract BufferedImage image();
+  BufferedImage image() {
+    final BufferedImage img = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
+    final Graphics2D g = img.createGraphics();
+    DLUtil.SetHints(g);
+
+    if (threaded)
+      runThreaded(g);
+
+    return img;
+  }
 
   boolean mouse(MouseEvent e) {
     return false;
@@ -172,10 +189,10 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
       image = image();
 
     applyFilter();
-    
+
     if (deco)
       shadow(g);
-    
+
     g.drawImage(image, (int) (x - iwidth / 2f), (int) (y - iheight / 2f), null);
 
     if (deco && DLParams.DEBUG) {
@@ -236,7 +253,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     f(g, null);
   }
 
-  public abstract void f(Graphics2D g, DLThread t);
+  // public abstract void f(Graphics2D g, DLThread t);
 
   public void run() {
     if (threaded)
@@ -247,6 +264,39 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     if (image == null)
       image = image();
     runThreaded(image.createGraphics());
+  }
+
+  void setup() {
+
+  }
+
+  void step(Graphics2D g) {
+
+  }
+
+  public void f(Graphics2D g, DLThread t) {
+    setup();
+    while (frameCount++ > 0) {
+
+      if (t != null && t.isStopped())
+        break;
+
+      if (clear)
+        clearImage();
+
+      step(g);
+
+      if (parent != null)
+        parent.paint(this);
+
+      if (threadSleep > 0) {
+        try {
+          Thread.sleep(threadSleep);
+        } catch (InterruptedException e) {
+          DLError.report(e);
+        }
+      }
+    }
   }
 
   public void runThreaded(final Graphics2D g) {
@@ -292,10 +342,11 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   public void setFilter(String f) {
     filterName = f;
     filter = getFilterFromString(f);
+    System.err.println("filter set to " + filter);
   }
 
   public String[] enumFilter() {
-    return new String[] { "none", "edges", "blur" };
+    return new String[] { NullFilter, EdgeFilter, BlurFilter, EmbossFilter, EqualizeFilter, OilFilter };
   }
 
   float filterStrength = 0f;
@@ -315,19 +366,31 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   private static BufferedImageOp getFilterFromString(String s) {
     switch (s) {
 
-    case "null":
+    case NullFilter:
       return null;
 
-    case "blur":
+    case BlurFilter:
       BoxBlurFilter bf = new BoxBlurFilter();
       bf.setHRadius(5);
       bf.setVRadius(5);
       bf.setIterations(5);
       return bf;
 
-    case "edge":
+    case EdgeFilter:
       EdgeFilter ef = new EdgeFilter();
       return ef;
+
+    case EmbossFilter:
+      EmbossFilter cf = new EmbossFilter();
+      return cf;
+
+    case EqualizeFilter:
+      EqualizeFilter eqf = new EqualizeFilter();
+      return eqf;
+
+    case OilFilter:
+      OilFilter of = new OilFilter();
+      return of;
 
     default:
       return null;
@@ -337,9 +400,11 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   void applyFilter() {
     if (filter == null)
       return;
+    if (filterStrength <= 0.001f)
+      return;
     BufferedImage bi = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
     filter.filter(image, bi);
-    image = DLUtil.Merge(image, bi, filterStrength, image);
+    DLUtil.Merge(image, bi, filterStrength, image);
   }
 
   void zoom() {
@@ -381,5 +446,13 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   // public int[] rangeRes() {
   // return new int[] { 1, 16 };
   // }
+
+  public boolean getClear() {
+    return clear;
+  }
+
+  public void setClear(boolean c) {
+    clear = c;
+  }
 
 }

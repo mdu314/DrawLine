@@ -16,7 +16,7 @@ import java.text.NumberFormat;
 import com.jhlabs.image.EdgeFilter;
 
 public class DLTunnel extends DLImage {
-  int threadSleep = 20;
+//  int threadSleep = 20;
   static String textures = "images/textures/";
   static String defaultTexture = "doesnotexist.png";
   String imageResource = textures + defaultTexture;
@@ -277,40 +277,21 @@ public class DLTunnel extends DLImage {
     }
   }
 
-  public void f(Graphics2D g, DLThread t) {
-    setup(true, true, true);
-    long start = System.currentTimeMillis();
-    long dt = 0;
-    while (frameCount++ > 0) {
-      start = System.currentTimeMillis();
-      if (t != null && t.isStopped())
-        break;
-      try {
-        synchronized (this) {
-          nextImage();
-          move();
-          tunnel();
-          merge();
-          tzoom();
-          paintFps(g, dt);
-        }
-
-      } catch (Exception e) {
-        DLError.report(e);
-      }
-      if (parent != null)
-        parent.paint(this);
-      dt = System.currentTimeMillis() - start;
-      if (threadSleep > 0) {
-        try {
-          Thread.sleep(threadSleep);
-        } catch (InterruptedException e) {
-          DLError.report(e);
-        }
-      }
+  void step(Graphics2D g) {
+    synchronized (this) {
+      nextImage();
+      move();
+      tunnel();
+      merge();
+      tzoom();
+      paintFps(g, 0);
     }
   }
-
+  
+  void setup() {
+    setup(true, true, true);
+  }
+  
   void paintFps(Graphics2D g, long frameTime) {
 
     if (!paintFPS)
@@ -372,9 +353,6 @@ public class DLTunnel extends DLImage {
       runThreaded(g);
     image = zoomedImage;
     return zoomedImage;
-  }
-
-  void step(Graphics2D g) {
   }
 
   public void randomize() {

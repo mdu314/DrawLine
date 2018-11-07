@@ -17,8 +17,6 @@ public class DLKaleidoscope extends DLImage {
   private static final String FlipVertical = "flip vertical";
   private static final String DoNotFlip = "do not flip";
   String flip = DoNotFlip;
-  int threadSleep = 50;
-  int frameCount = 1;
   String textures = "images/kaleidoscope/";
   String defaultTexture = randomImage(textures);
   String imageResource = textures + defaultTexture;
@@ -31,7 +29,7 @@ public class DLKaleidoscope extends DLImage {
   int angleDiv = 7;
   float gangle = DLUtil.PI / angleDiv;
   float rotation = 0;
-  boolean clear = false;
+  // boolean clear = true;
   ArrayList<DLPath> shapes = new ArrayList<DLPath>();
   float imageScale = 1f;
   float currentAngle;
@@ -66,47 +64,6 @@ public class DLKaleidoscope extends DLImage {
 
   void setup() {
     loadImage();
-  }
-
-  public void f(Graphics2D g, DLThread t) {
-    setup();
-    while (frameCount++ > 0) {
-
-      if (t != null && t.isStopped())
-        break;
-
-      step(g);
-
-      if (parent != null)
-        parent.paint(this);
-
-      if (threadSleep > 0) {
-        try {
-          Thread.sleep(threadSleep);
-        } catch (InterruptedException e) {
-          DLError.report(e);
-        }
-      }
-    }
-  }
-
-  BufferedImage image() {
-    final BufferedImage img = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
-    final Graphics2D g = img.createGraphics();
-    DLUtil.SetHints(g);
-
-    if (threaded)
-      runThreaded(g);
-
-    return img;
-  }
-
-  public boolean getClear() {
-    return clear;
-  }
-
-  public void setClear(boolean c) {
-    clear = c;
   }
 
   public void setAngleDiv(int ad) {
@@ -158,14 +115,8 @@ public class DLKaleidoscope extends DLImage {
   }
 
   void step(Graphics2D g) {
-    if (clear)
-      clearImage();
     frame(g);
-    try {
-      updateTexture();
-    } catch (Exception e) {
-      DLError.report(e, "Caught " + e);
-    }
+    updateTexture();
     draw(g);
   }
 
@@ -312,7 +263,7 @@ public class DLKaleidoscope extends DLImage {
   BufferedImage getImage(String t) {
     BufferedImage i = imageCache.get(imageResource);
     if (i == null) {
-      System.err.print("Load base texture " + imageResource);
+      System.err.println("Load base texture " + imageResource);
       i = DLUtil.LoadImage(imageResource, null);
       if (i != null)
         imageCache.put(imageResource, i);
@@ -323,6 +274,7 @@ public class DLKaleidoscope extends DLImage {
   void loadImage() {
 
     baseTexture = getImage(imageResource);
+
     try {
       flipBaseTexture();
     } catch (Exception e) {
@@ -334,8 +286,10 @@ public class DLKaleidoscope extends DLImage {
     } catch (Exception e) {
       DLError.report(e, "Caught " + e);
     }
-    texture = null;
-    invert = null;
+
+    // texture = null;
+    // invert = null;
+
     try {
       updateTexture();
     } catch (Exception e) {

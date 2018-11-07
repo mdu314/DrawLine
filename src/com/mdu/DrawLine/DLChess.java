@@ -116,19 +116,7 @@ public class DLChess extends DLImage {
       }
     }
   }
-
-  BufferedImage image() {
-    final BufferedImage img = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
-    final Graphics2D g = img.createGraphics();
-    DLUtil.SetHints(g);
-
-    if (threaded)
-      runThreaded(g);
-
-    clearImage(img);
-    return img;
-  }
-
+  
   public void setPosition(String p) {
     position = p;
     try {
