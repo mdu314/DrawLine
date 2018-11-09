@@ -40,6 +40,13 @@ class DLContainer extends JPanel { // Container {
     return c;
   }
 
+  DLComponent getLastComponent() {
+    if(components.size() == 0)
+      return null;
+    DLComponent c = components.get(components.size() - 1);
+    return c;
+  }
+  
   void addComponent(Object o) {
     addComponent((DLComponent) o);
   }

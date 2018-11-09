@@ -29,7 +29,6 @@ public class DLKaleidoscope extends DLImage {
   int angleDiv = 7;
   float gangle = DLUtil.PI / angleDiv;
   float rotation = 0;
-  // boolean clear = true;
   ArrayList<DLPath> shapes = new ArrayList<DLPath>();
   float imageScale = 1f;
   float currentAngle;
@@ -81,9 +80,10 @@ public class DLKaleidoscope extends DLImage {
 
   public void setRadius(int r) {
     radius = r;
-    if (sheet != null)
+    if (sheet != null) {
       sheet.update("Tx", getTx());
-    clearImage();
+      sheet.update("Ty", getTy());
+    }
   }
 
   public int getRadius() {

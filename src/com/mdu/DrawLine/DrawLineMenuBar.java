@@ -125,6 +125,7 @@ class DrawLineMenuBar extends JMenuBar {
     b.addActionListener(deleteLastActionListener);
 
     final JButton but = b;
+    
     b.addMouseListener(new MouseAdapter() {
       final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
       ScheduledFuture<?> future;
@@ -147,6 +148,8 @@ class DrawLineMenuBar extends JMenuBar {
           }
         };
         future = executor.schedule(runnable, delay, TimeUnit.MILLISECONDS);
+        
+
       }
 
       public void mouseReleased(MouseEvent e) {
@@ -156,6 +159,19 @@ class DrawLineMenuBar extends JMenuBar {
         future = null;
       }
     });
+    add(b);
+   
+    b = new JButton("Properties");
+    final ActionListener propertySheetActionListener = new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        DLComponent c = drawLine.canvas.getLastComponent();
+        if (c != null) {
+          DLPropertySheet ps = new DLPropertySheet(c);
+          ps.setVisible(true);
+        }
+      }
+    };
+    b.addActionListener(propertySheetActionListener);
     add(b);
   }
 
