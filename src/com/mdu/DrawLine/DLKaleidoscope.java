@@ -1,5 +1,9 @@
 package com.mdu.DrawLine;
 
+import static com.mdu.DrawLine.DLUtil.Cos;
+import static com.mdu.DrawLine.DLUtil.Floor;
+import static com.mdu.DrawLine.DLUtil.Sin;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -28,12 +32,13 @@ public class DLKaleidoscope extends DLImage {
   int radius = 200;
   int angleDiv = 7;
   float gangle = DLUtil.PI / angleDiv;
-  float rotation = 0;
+  float fullRotation = 0;
   ArrayList<DLPath> shapes = new ArrayList<DLPath>();
   float imageScale = 1f;
   float currentAngle;
   HashMap<String, BufferedImage> imageCache = new HashMap<String, BufferedImage>();
   boolean clip = true;
+  float rotation = 0f;
 
   public String toString() {
     String s = "imageResource " + imageResource + "\n";
@@ -94,8 +99,21 @@ public class DLKaleidoscope extends DLImage {
     return new int[] { 1, 500 };
   }
 
+  public void setFullRotation(float r) {
+   fullRotation = r;
+  }
+
+  public float getFullRotation() {
+    return fullRotation;
+  }
+
+  public float[] rangeFullRotation() {
+    return new float[] { 0f, 0.5f };
+  }
+
   public void setRotation(float r) {
     rotation = r;
+    loadImage();
   }
 
   public float getRotation() {
@@ -103,7 +121,7 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public float[] rangeRotation() {
-    return new float[] { 0.001f, 0.5f };
+    return new float[] { 0f, PI * 2f };
   }
 
   public boolean getClip() {
@@ -239,6 +257,36 @@ public class DLKaleidoscope extends DLImage {
     }
   }
 
+  public static BufferedImage rotateImage(BufferedImage img, float angle) {
+    float sin = Sin(angle);
+    float cos = Cos(angle);
+if(sin < 0)
+  sin = -sin;
+if(cos < 0)
+  cos = -cos;
+    int w = img.getWidth();
+    int h = img.getHeight();
+
+    int neww = Floor(w*cos + h*sin);
+    int newh = Floor(h*cos + w*sin);
+
+    BufferedImage bimg = new BufferedImage(neww, newh, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g = bimg.createGraphics();
+
+    g.translate((neww-w)/2, (newh-h)/2);
+    g.rotate(Math.toRadians(angle), w/2, h/2);
+    g.drawRenderedImage(img, null);
+    g.dispose();
+
+    return bimg;
+  }
+
+  void rotateBaseTexture() {
+    if(rotation == 0f)
+      return;
+    baseTexture = rotateImage(baseTexture, rotation);
+  }
+  
   void flipBaseTexture() {
     switch (flip) {
     case FlipHorizontal: {
@@ -276,6 +324,12 @@ public class DLKaleidoscope extends DLImage {
     baseTexture = getImage(imageResource);
 
     try {
+      rotateBaseTexture();
+    } catch (Exception e) {
+      DLError.report(e, "Caught " + e);
+    }
+    
+    try {
       flipBaseTexture();
     } catch (Exception e) {
       DLError.report(e, "Caught " + e);
@@ -286,9 +340,6 @@ public class DLKaleidoscope extends DLImage {
     } catch (Exception e) {
       DLError.report(e, "Caught " + e);
     }
-
-    // texture = null;
-    // invert = null;
 
     try {
       updateTexture();
@@ -363,7 +414,7 @@ public class DLKaleidoscope extends DLImage {
 
       shapes.add(p);
     }
-    currentAngle += rotation;
+    currentAngle += fullRotation;
   }
 
   void drawFrame(Graphics2D g) {
@@ -372,7 +423,7 @@ public class DLKaleidoscope extends DLImage {
       g.draw(s);
   }
 
-  void draw(Graphics2D g) {
+  synchronized void draw(Graphics2D g) {
     float cx = iwidth / 2f;
     float cy = iheight / 2f - radius / 2f;
     BufferedImage img = invert;
