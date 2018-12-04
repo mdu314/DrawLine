@@ -265,6 +265,10 @@ public class DLUtil {
     }
   }
 
+  public static float abs(float f) {
+    return f < 0 ? -f : f;
+  }
+  
   public static float sin(float a) {
     return (float) Math.sin(a);
   }

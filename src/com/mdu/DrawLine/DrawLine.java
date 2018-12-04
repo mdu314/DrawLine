@@ -4,6 +4,7 @@ import static com.mdu.DrawLine.DLUtil.RangeRandom;
 import static com.mdu.DrawLine.DLUtil.curveList;
 import static java.awt.event.MouseEvent.BUTTON1;
 import static java.awt.event.MouseEvent.BUTTON2;
+import static java.awt.event.MouseEvent.BUTTON3;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -217,6 +218,7 @@ class DrawLine extends JFrame {
             canvas.addComponent(dlc);
           break;
         case BUTTON2:
+        case BUTTON3:
           setSelection(hitTest(p, true));
           if (canvas.getSelection() != null)
             if (canvas.selection.iterator().hasNext()) {

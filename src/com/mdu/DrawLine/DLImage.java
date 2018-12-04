@@ -15,6 +15,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.swing.SwingWorker;
 
 import com.jhlabs.image.BoxBlurFilter;
 import com.jhlabs.image.EdgeFilter;
@@ -189,7 +192,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
       image = image();
 
     applyFilter();
-
+    
     if (deco)
       shadow(g);
 
