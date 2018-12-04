@@ -20,7 +20,10 @@ import java.util.HashMap;
 public class DLKaleidoscope extends DLImage {
   private static final String FlipHorizontal = "flip horizontal";
   private static final String FlipVertical = "flip vertical";
-  private static final String DoNotFlip = "do not flip";
+  private static final String Rotate90 = "Rotate 90";
+  private static final String Rotate180 = "Rotate 180";
+  private static final String Rotate270 = "Rotate 270";
+  private static final String DoNotFlip = "Do not flip";
   String flip = DoNotFlip;
   String textures = "images/kaleidoscope/";
   String defaultTexture = randomImage(textures);
@@ -245,7 +248,7 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public String[] enumFlip() {
-    return new String[] { FlipHorizontal, FlipVertical, DoNotFlip };
+    return new String[] { FlipHorizontal, FlipVertical, Rotate90, Rotate180, Rotate270, DoNotFlip };
   }
 
   void scaleBaseTexture() {
@@ -302,6 +305,15 @@ public class DLKaleidoscope extends DLImage {
       baseTexture = op.filter(baseTexture, null);
       break;
     }
+    case Rotate90:
+      baseTexture = rotateImage(baseTexture, PI / 2f);
+      break;
+    case Rotate180:
+      baseTexture = rotateImage(baseTexture, PI);
+      break;
+    case Rotate270:
+      baseTexture = rotateImage(baseTexture, 3f * PI / 2f);
+      break;
     case DoNotFlip:
       break;
     }
