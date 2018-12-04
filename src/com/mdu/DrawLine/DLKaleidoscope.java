@@ -1,8 +1,9 @@
 package com.mdu.DrawLine;
 
-import static com.mdu.DrawLine.DLUtil.Cos;
+import static com.mdu.DrawLine.DLUtil.cos;
 import static com.mdu.DrawLine.DLUtil.Floor;
-import static com.mdu.DrawLine.DLUtil.Sin;
+import static com.mdu.DrawLine.DLUtil.sin;
+import static com.mdu.DrawLine.DLUtil.PI;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -142,8 +143,6 @@ public class DLKaleidoscope extends DLImage {
     if (t + radius >= baseTexture.getWidth())
       return;
     tx = t;
-    texture = null;
-    invert = null;
   }
 
   public int getTx() {
@@ -158,8 +157,6 @@ public class DLKaleidoscope extends DLImage {
     if (t + radius >= baseTexture.getHeight())
       return;
     ty = t;
-    texture = null;
-    invert = null;
   }
 
   public int getTy() {
@@ -171,7 +168,9 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public void randomize() {
-    iwidth = 500; // DLUtil.RangeRandom(500, 500);
+    int w = 600;
+    iwidth = DLUtil.RangeRandom(w, 2*w);
+    radius = iwidth / 2;
     iheight = iwidth;
   }
 
@@ -258,12 +257,12 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public static BufferedImage rotateImage(BufferedImage img, float angle) {
-    float sin = Sin(angle);
-    float cos = Cos(angle);
-if(sin < 0)
-  sin = -sin;
-if(cos < 0)
-  cos = -cos;
+    float sin = sin(angle);
+    float cos = cos(angle);
+    if(sin < 0)
+      sin = -sin;
+    if(cos < 0)
+      cos = -cos;
     int w = img.getWidth();
     int h = img.getHeight();
 
@@ -402,12 +401,12 @@ if(cos < 0)
 
       DLPath p = DLUtil.AddPoint(cx, cy, null);
 
-      ax = cx + DLUtil.cos(a + da) * radius;
-      ay = cy + DLUtil.sin(a + da) * radius;
+      ax = cx + cos(a + da) * radius;
+      ay = cy + sin(a + da) * radius;
       p = DLUtil.AddPoint(ax, ay, p);
 
-      ax = cx + DLUtil.cos(a - da) * radius;
-      ay = cy + DLUtil.sin(a - da) * radius;
+      ax = cx + cos(a - da) * radius;
+      ay = cy + sin(a - da) * radius;
       p = DLUtil.AddPoint(ax, ay, p);
 
       p.setAngle(a);
@@ -417,13 +416,14 @@ if(cos < 0)
     currentAngle += fullRotation;
   }
 
+  public 
   void drawFrame(Graphics2D g) {
     g.setColor(Color.lightGray);
     for (Shape s : shapes)
       g.draw(s);
   }
 
-  synchronized void draw(Graphics2D g) {
+  void draw(Graphics2D g) {
     float cx = iwidth / 2f;
     float cy = iheight / 2f - radius / 2f;
     BufferedImage img = invert;
@@ -459,10 +459,11 @@ if(cos < 0)
   }
 
   public static void main(String[] a) {
-    int w = 500;
-    int h = 500;
+    int s = 600;
+    int w = DLUtil.RangeRandom(s,  s * 2);
+    int h = w;
 
-    Object[][] params = { { "iwidth", w }, { "iheight", h }, { "x", w / 2 }, { "y", h / 2 }, { "threadSleep", 5 } };
+    Object[][] params = { { "iwidth", w }, { "iheight", h }, { "x", w / 2 }, { "y", h / 2 }, {"radius", w / 2}, { "threadSleep", 5 } };
 
     DLMain.Main(DLKaleidoscope.class, params);
   }
