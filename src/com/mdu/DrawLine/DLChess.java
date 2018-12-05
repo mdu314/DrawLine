@@ -24,7 +24,7 @@ public class DLChess extends DLImage {
   static final int WHITE_SQUARE = 0;
   static final int BLACK_SQUARE = 1;
   boolean debug = false;
-  String position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/";
+  String position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 
   public DLChess() {
     super();
@@ -132,7 +132,10 @@ public class DLChess extends DLImage {
 
   public String[] enumPosition() {
     return new String[] {
-      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/", "8/8/8/8/8/8/8/8", "2kr3r/1pp2ppp/1n2b3/p3P3/PnP2B2/1K2P3/1P4PP/R4BNR", "r1bq1rk1/2ppbppp/p1n2n2/1p2p3/4P3/1B3N2/PPPPQPPP/RNB2RK1"
+      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/", 
+      "8/8/8/8/8/8/8/8", 
+      "2kr3r/1pp2ppp/1n2b3/p3P3/PnP2B2/1K2P3/1P4PP/R4BNR", 
+      "r1bq1rk1/2ppbppp/p1n2n2/1p2p3/4P3/1B3N2/PPPPQPPP/RNB2RK1"
     };
   }
 

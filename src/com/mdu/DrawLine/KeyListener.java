@@ -44,7 +44,7 @@ class DLKeyListener implements KeyListener {
         JFileChooser fs = new JFileChooser();
         int rv = fs.showOpenDialog(dl);
         if (rv == JFileChooser.APPROVE_OPTION) {
-          ((JPG) d).save(fs.getSelectedFile());
+          ((JPG) d).saveAsJPG(fs.getSelectedFile());
         }
       }
     }

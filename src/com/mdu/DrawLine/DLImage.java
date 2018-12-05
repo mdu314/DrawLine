@@ -15,14 +15,12 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.swing.SwingWorker;
 
 import com.jhlabs.image.BoxBlurFilter;
 import com.jhlabs.image.EdgeFilter;
 import com.jhlabs.image.EmbossFilter;
 import com.jhlabs.image.EqualizeFilter;
+import com.jhlabs.image.KaleidoscopeFilter;
 import com.jhlabs.image.OilFilter;
 
 abstract class DLImage extends DLComponent implements Threaded, JPG {
@@ -38,6 +36,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   static final String EdgeFilter = "edge";
   static final String EmbossFilter = "emboss";
   static final String EqualizeFilter = "equalize";
+  static final String KaleidoscopeFilter = "kaleidoscope";
   static final String OilFilter = "oil";
   int frameCount = 1;
   int threadSleep = 50;
@@ -330,11 +329,11 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     t.start();
   }
 
-  public void save(File f) {
+  public void saveAsJPG(File f) {
     DLUtil.Save(image, f);
   }
 
-  void prepareForDisplay() {
+ void prepareForDisplay() {
 
   }
 
@@ -345,11 +344,10 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   public void setFilter(String f) {
     filterName = f;
     filter = getFilterFromString(f);
-    System.err.println("filter set to " + filter);
   }
 
   public String[] enumFilter() {
-    return new String[] { NullFilter, EdgeFilter, BlurFilter, EmbossFilter, EqualizeFilter, OilFilter };
+    return new String[] { NullFilter, EdgeFilter, BlurFilter, EmbossFilter, EqualizeFilter, OilFilter , KaleidoscopeFilter};
   }
 
   float filterStrength = 0f;
@@ -366,7 +364,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     return new float[] { 0f, 1f };
   }
 
-  private static BufferedImageOp getFilterFromString(String s) {
+  private BufferedImageOp getFilterFromString(String s) {
     switch (s) {
 
     case NullFilter:
@@ -395,6 +393,13 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
       OilFilter of = new OilFilter();
       return of;
 
+    case KaleidoscopeFilter:
+      KaleidoscopeFilter k = new KaleidoscopeFilter();
+      k.setAngle(DLUtil.PI / 5f);
+      k.setAngle2(DLUtil.PI / 3f);
+      k.setRadius((iwidth + iheight) / 4f);
+      k.setSides(5);
+      return k;
     default:
       return null;
     }

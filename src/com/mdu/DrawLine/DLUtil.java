@@ -105,6 +105,21 @@ public class DLUtil {
     1f, 3f / 4f, 2f / 4f, 1f / 4f, 0f
   });
 
+ static DLColorModel ColorModel4 = new DLColorModel("model4",
+      new int[] {
+          0xff001f3f, 0xff39cccc, 0xff3d9970, 0xff2ecc40, 0xffffdc00
+      },
+      new float[] {
+          1f, 3f / 4f, 2f / 4f, 1f / 4f, 0f
+      });
+
+ static DLColorModel[] ColorModels = {
+     ColorModel1, 
+     ColorModel2, 
+     ColorModel3, 
+     ColorModel4 
+ };
+ 
   static long millis() {
     return System.currentTimeMillis();
   }

@@ -310,57 +310,15 @@ public class DLMandelbrot extends DLPointImage {
     runThreaded();
   }
 
+
   public static void main(String[] a) {
-    final JFrame frame = new JFrame();
-    final DLContainer panel = new DLContainer();
-    panel.setFocusable(true);
-    panel.setBackground(new Color(0x0c0c0c));
-    frame.getContentPane().add(panel, BorderLayout.CENTER);
-    frame.setFocusable(true);
-    int width = 400;
-    int height = 300;
-    frame.setSize(width, height);
-    final DLMandelbrot dlg = new DLMandelbrot(width / 2, height / 2);
-    dlg.iwidth = width;
-    dlg.iheight = height;
-    panel.addComponent(dlg);
+    int s = 300;
+    int w = DLUtil.RangeRandom(s,  s * 2);
+    int h = w;
 
-    DLMouse mouse = new DLMouse(panel) {
-      @Override
-      public void mouseWheelMoved(MouseWheelEvent e) {
-        super.mouseWheelMoved(e);
-        final MouseWheelEvent mwe = (MouseWheelEvent) e;
-        float x = e.getX() - (dlg.x - dlg.iwidth / 2);
-        float y = e.getY() - (dlg.y - dlg.iheight / 2);
-        final int d = mwe.getWheelRotation();
-        dlg.zoom(x, y, d);
-      }
+    Object[][] params = { { "iwidth", w }, { "iheight", h }, { "x", w / 2 }, { "y", h / 2 }, {"radius", w / 2}, { "threadSleep", 5 } };
 
-      public void mouseClicked(MouseEvent e) {
-        switch (e.getButton()) {
-        case BUTTON1:
-          if (panel.ps != null)
-            panel.ps.close();
-          panel.ps = new DLPropertySheet(dlg);
-          break;
-        }
-      }
-    };
-    mouse.listen(panel);
-
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        final Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        final int w = frame.getSize().width;
-        final int h = frame.getSize().height;
-        final int x = (dim.width - w) / 2;
-        final int y = (dim.height - h) / 2;
-        // Move the window
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocation(x, y);
-        frame.setVisible(true);
-      }
-    });
+    DLMain.Main(DLMandelbrot.class, params);
   }
+
 }

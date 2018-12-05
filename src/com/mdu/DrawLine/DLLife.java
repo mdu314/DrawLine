@@ -41,8 +41,6 @@ public class DLLife extends DLImage {
   Color deadColor = Color.darkGray;
   Color deadStroke = DLUtil.DarkerColor(Color.red, 0.5f);
 
-  boolean edges = false;
-
   static final String INIT_RANDOM = "initRandom";
   static final String INIT_BLINKER = "initBlinker";
 
@@ -191,11 +189,6 @@ public class DLLife extends DLImage {
     };
   }
 
-  void edges() {
-    EdgeFilter ef = new EdgeFilter();
-    image = ef.filter(image, image);
-  }
-
   void step() {
     step(image.createGraphics(), 0);
   }
@@ -208,8 +201,7 @@ public class DLLife extends DLImage {
       clearImage();
 
       paint(g, dt);
-      if (edges)
-        edges();
+      
       if (parent != null)
         parent.paint(this);
     }
@@ -560,14 +552,6 @@ public class DLLife extends DLImage {
     return new int[] {
         0, 1000
     };
-  }
-
-  public void setEdges(boolean b) {
-    this.edges = b;
-  }
-
-  public boolean getEdges() {
-    return edges;
   }
 
   public void setRun(boolean r) {

@@ -18,14 +18,36 @@ public class DLQuasiCristal extends DLImage {
   BufferedImage filterImage;
   boolean randomize = false;
 
-  static DLColorModel ColorModel1 = new DLColorModel("model1",
-      new int[] {
-          0xff001f3f, 0xff39cccc, 0xff3d9970, 0xff2ecc40, 0xffffdc00
-      },
-      new float[] {
-          1f, 3f / 4f, 2f / 4f, 1f / 4f, 0f
-      });
-
+  String colorModelName = "null";
+  DLColorModel colorModel = null;
+      
+  public void setColorModel(String cm) {
+    colorModelName = cm;
+    if(cm.equals("null")) {
+      colorModel = null;
+      return;
+    }
+    for(DLColorModel com : DLUtil.ColorModels) {
+      if(com.getName().equals(cm)) {
+        colorModelName = cm;
+        colorModel = com;
+        break;
+      }
+    }
+  }
+  
+  public String getColorModel() {
+    return colorModelName;
+  }
+  public String[] enumColorModel() {
+    return new String[] {
+        "null",
+        DLUtil.ColorModel1.getName(),
+        DLUtil.ColorModel2.getName(),
+        DLUtil.ColorModel3.getName(),
+        DLUtil.ColorModel4.getName()
+        };
+  }
   public DLQuasiCristal() {
     super();
   }
@@ -76,7 +98,6 @@ public class DLQuasiCristal extends DLImage {
       step(g);
       if (randomize)
         random(frameCount);
-      filter();
 
       if (parent != null)
         parent.paint(this);
@@ -173,7 +194,11 @@ public class DLQuasiCristal extends DLImage {
     System.err.println(min + " " + max);
   }
 
-  int color(float c) {
+  int color(float c) {    
+    if(colorModel != null) {
+      int color = colorModel.getColor(c);
+      return color | 0xff000000;
+    }
     c = c * 256;
     int icf = (int) c & 0xff;
     if (backgroundColor != null) {
@@ -182,21 +207,6 @@ public class DLQuasiCristal extends DLImage {
       return ret;
     } else {
       return 0xff000000 | icf << 16 | icf << 8 | icf;
-    }
-  }
-
-  void filter() {
-    if (filterStrength > 0) {
-      KaleidoscopeFilter k = new KaleidoscopeFilter();
-      // k.setCentreX(iwidth / 2);
-      // k.setCentreY(iheight / 2);
-      k.setAngle(DLUtil.PI / 5f);
-      k.setAngle2(DLUtil.PI / 3f);
-      k.setRadius((iwidth + iheight) / 4f);
-      k.setSides(5);
-      // EdgeFilter ef = new EdgeFilter();
-      /* BufferedImage filterImage = */k.filter(image, filterImage);
-      image = DLUtil.Merge(image, filterImage, filterStrength, null);
     }
   }
 

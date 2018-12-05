@@ -27,6 +27,10 @@ public class DLColorModel {
     return color >> 16 & 0xff;
   }
 
+  public String getName() {
+    return _name;
+  }
+  
   public DLColorModel(String name, int[] colors, float[] limits) {
     _name = name;
     _colors = colors;
