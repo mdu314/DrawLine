@@ -481,7 +481,14 @@ public class DLKaleidoscope extends DLImage {
     int w = DLUtil.RangeRandom(s,  s * 2);
     int h = w;
 
-    Object[][] params = { { "iwidth", w }, { "iheight", h }, { "x", w / 2 }, { "y", h / 2 }, {"radius", w / 2}, { "threadSleep", 5 } };
+    Object[][] params = { 
+        { "iwidth", w }, 
+        { "iheight", h }, 
+        { "x", w / 2 }, 
+        { "y", h / 2 }, 
+        {"radius", w / 2}, 
+        { "threadSleep", 5 } 
+        };
 
     DLMain.Main(DLKaleidoscope.class, params);
   }
