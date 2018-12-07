@@ -17,9 +17,16 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.jhlabs.image.BoxBlurFilter;
+import com.jhlabs.image.BumpFilter;
+import com.jhlabs.image.CausticsFilter;
+import com.jhlabs.image.ChromeFilter;
+import com.jhlabs.image.ContourFilter;
+import com.jhlabs.image.CrystallizeFilter;
 import com.jhlabs.image.EdgeFilter;
 import com.jhlabs.image.EmbossFilter;
 import com.jhlabs.image.EqualizeFilter;
+import com.jhlabs.image.FlareFilter;
+import com.jhlabs.image.GlowFilter;
 import com.jhlabs.image.KaleidoscopeFilter;
 import com.jhlabs.image.OilFilter;
 
@@ -27,17 +34,26 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   ArrayList<DLThread> threads = new ArrayList<DLThread>();
   boolean threaded = true;
   BufferedImage image = null;
-  int iheight; // = 200;
-  int iwidth; // = 200;
+  int iheight;
+  int iwidth;
   boolean selectCheckTransparentPixel = false;
   Color backgroundColor;
+  
   static final String NullFilter = "null";
   static final String BlurFilter = "blur";
   static final String EdgeFilter = "edge";
   static final String EmbossFilter = "emboss";
   static final String EqualizeFilter = "equalize";
   static final String KaleidoscopeFilter = "kaleidoscope";
+  static final String BumpFilter = "bump";
+  static final String CausticFilter = "caustic";
+  static final String ChromeFilter = "chrome";
   static final String OilFilter = "oil";
+  static final String FlareFilter = "flare";
+  static final String ContourFilter = "contour";
+  static final String GlowFilter = "glow";
+  static final String CrystalizeFilter = "crystallize";
+  
   int frameCount = 1;
   int threadSleep = 50;
 
@@ -45,6 +61,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   BufferedImageOp filter = getFilterFromString(filterName);
   int res = 1;
   boolean clear = true;
+  float filterStrength = 0f;
   
   DLImage() {
     super(0, 0);
@@ -347,10 +364,23 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   }
 
   public String[] enumFilter() {
-    return new String[] { NullFilter, EdgeFilter, BlurFilter, EmbossFilter, EqualizeFilter, OilFilter , KaleidoscopeFilter};
+    return new String[] { 
+        NullFilter, 
+        EdgeFilter, 
+        BlurFilter, 
+        EmbossFilter, 
+        EqualizeFilter, 
+        OilFilter , 
+        KaleidoscopeFilter,
+        BumpFilter,
+        CausticFilter,
+        ChromeFilter,
+        FlareFilter,
+        ContourFilter,
+        GlowFilter,
+        CrystalizeFilter
+        };
   }
-
-  float filterStrength = 0f;
 
   public void setFilterStrength(float br) {
     filterStrength = br;
@@ -400,6 +430,35 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
       k.setRadius((iwidth + iheight) / 4f);
       k.setSides(5);
       return k;
+      
+    case BumpFilter:
+      BumpFilter bft = new BumpFilter();
+      return bft;
+      
+    case CausticFilter:
+      CausticsFilter cft = new CausticsFilter();
+      return cft;
+      
+    case ChromeFilter:
+      ChromeFilter crf = new ChromeFilter();
+      return crf;
+      
+    case FlareFilter:
+      FlareFilter wf = new FlareFilter();
+      return wf;
+      
+    case ContourFilter:
+      ContourFilter cof = new ContourFilter();
+      return cof;
+    
+    case CrystalizeFilter:
+      CrystallizeFilter crft = new CrystallizeFilter();
+      return crft;
+      
+    case GlowFilter:
+      GlowFilter gft = new GlowFilter();
+      return gft;
+      
     default:
       return null;
     }

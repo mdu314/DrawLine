@@ -226,7 +226,11 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public void setImageScale(float s) {
-    imageScale = s;
+    imageScale = s;    
+    if (sheet != null) {
+      sheet.update("Tx", 0); //getTx());
+      sheet.update("Ty", 0); //getTy());
+    }
     loadImage();
   }
 

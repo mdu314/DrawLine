@@ -182,13 +182,23 @@ class DrawLine extends JFrame {
         return false;
       }
       
-      public void mouseClicked(MouseEvent e) {
+      private void button1AndShift(MouseEvent e) {        
+          setSelection(hitTest(p, true));
+          if (canvas.getSelection() != null)
+            if (canvas.selection.iterator().hasNext()) {
+              final DLComponent c = canvas.selection.iterator().next();
+              if (canvas.ps != null)
+                canvas.ps.close();
+              canvas.ps = new DLPropertySheet(c);
+            }
+      }
+      
+      void button1(MouseEvent e) {
+        
         final Point p = e.getPoint();
         final float x = p.x;
-        final float y = p.y;
-        switch (e.getButton()) {
-        case BUTTON1:
-          final DLComponentList old = canvas.getSelection();
+        final float y = p.y;        
+        final DLComponentList old = canvas.getSelection();
           final DLComponentList hit = hitTest(p);
           setSelection(hit);
           if (!isEmpty(hit))
@@ -196,7 +206,7 @@ class DrawLine extends JFrame {
           else if(!isEmpty(old))
             return;
           int k;
-          DLComponent dlc = null;
+              DLComponent dlc = null;
           if ((k = getKey()) != 0)
             dlc = makeACurve(k, x, y);
           else if (e.isShiftDown())
@@ -216,17 +226,19 @@ class DrawLine extends JFrame {
           }
           if (dlc != null)
             canvas.addComponent(dlc);
+      }
+      
+      public void mouseClicked(MouseEvent e) {
+        switch (e.getButton()) {
+        case BUTTON1:
+          if(e.isShiftDown()) 
+            button1AndShift(e);
+          else 
+            button1(e);          
           break;
         case BUTTON2:
         case BUTTON3:
-          setSelection(hitTest(p, true));
-          if (canvas.getSelection() != null)
-            if (canvas.selection.iterator().hasNext()) {
-              final DLComponent c = canvas.selection.iterator().next();
-              if (canvas.ps != null)
-                canvas.ps.close();
-              canvas.ps = new DLPropertySheet(c);
-            }
+          button1AndShift(e);
           break;
         default:
           break;
