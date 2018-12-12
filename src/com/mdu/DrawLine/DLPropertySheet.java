@@ -134,11 +134,11 @@ class BoolEditor extends Editor {
 			final Method m = comp.getClass().getMethod(name);
 			final boolean v = (Boolean) m.invoke(comp);
 			button.setSelected(v);
-		} catch (final Exception e1) {
-			e1.printStackTrace();
+		} catch (final Exception e) {
+			DLError.report(e);
 		}
 		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent av) {
 				final boolean i = button.isSelected();
 				final Object comp = accessor.component;
 				final String name = SET + accessor.shortName;
@@ -147,8 +147,8 @@ class BoolEditor extends Editor {
 					m.invoke(comp, i);
 					Object parent = getParent(comp);
 					((Component) parent).repaint();
-				} catch (final Exception e1) {
-					e1.printStackTrace();
+				} catch (final Exception e) {
+					DLError.report(e);
 				}
 			}
 		});
@@ -189,7 +189,7 @@ class ColorEditor extends Editor {
 
 		button.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent av) {
 				final Object comp = accessor.component;
 				Color c = getColor();
 				Object parent = getParent(comp);
@@ -198,8 +198,8 @@ class ColorEditor extends Editor {
 				try {
 					invokeSetter(c);
 					delete.setSelected(c != null);
-				} catch (final Exception ex) {
-					ex.printStackTrace();
+				} catch (final Exception e) {
+					DLError.report(e);
 				}
 			}
 		});
@@ -226,7 +226,7 @@ class ColorEditor extends Editor {
 			final Color v = (Color) m.invoke(comp);
 			return v;
 		} catch (final Exception e) {
-			e.printStackTrace();
+			DLError.report(e);
 		}
 		return null;
 	}
@@ -338,7 +338,7 @@ class FontEditor extends Editor {
 
 		button.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent av) {
 				final Object comp = accessor.component;
 				Font f = _getFont();
 				FontChooser fontChooser = new FontChooser();
@@ -351,8 +351,8 @@ class FontEditor extends Editor {
 				try {
 					invokeSetter(f);
 					delete.setSelected(f != null);
-				} catch (final Exception ex) {
-					ex.printStackTrace();
+				} catch (final Exception e) {
+					DLError.report(e);
 				}
 			}
 		});
@@ -679,10 +679,11 @@ abstract class Editor extends JPanel {
 			final Object comp = accessor.component;
 			final String name = "get" + accessor.shortName;
 			final Method m = comp.getClass().getMethod(name);
+			System.err.println("invoke " + m);
 			Object o = m.invoke(comp);
 			return o;
-		} catch (final Exception ex) {
-			ex.printStackTrace();
+		} catch (final Exception e) {
+			DLError.report(e);
 		}
 		return null;
 	}

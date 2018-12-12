@@ -19,7 +19,7 @@ class Action extends Thing {
 	}
 }
 
-class Filter extends Action {
+class FFilter extends Action {
 	public void apply(byte[] in, byte[] out, int width, int height) {
 	}
 }
@@ -181,7 +181,7 @@ class JHParticle {
 /**
  * Scroll the image down
  */
-class ShiftDownFilter extends Filter {
+class ShiftDownFilter extends FFilter {
 	public void apply(byte[] in, byte[] out, int width, int height) {
 		int i = 0;
 		int j = 0;
@@ -202,7 +202,7 @@ class ShiftDownFilter extends Filter {
 /**
  * Scroll the image up
  */
-class ShiftUpFilter extends Filter {
+class ShiftUpFilter extends FFilter {
 	public void apply(byte[] in, byte[] out, int width, int height) {
 		int i = width*height-1;
 		int j = i;
@@ -223,7 +223,7 @@ class ShiftUpFilter extends Filter {
 /**
  * Zoom the image out to the left and right
  */
-class ZoomInVFilter extends Filter {
+class ZoomInVFilter extends FFilter {
 	public void apply(byte[] in, byte[] out, int width, int height) {
 		int i = 0;
 		int j = 0;
@@ -254,7 +254,7 @@ class ZoomInVFilter extends Filter {
 /**
  * Zoom the image out sideways
  */
-class ZoomInHFilter extends Filter {
+class ZoomInHFilter extends FFilter {
 	public void apply(byte[] in, byte[] out, int width, int height) {
 		int i = 0;
 		int j = 0;
@@ -285,7 +285,7 @@ class ZoomInHFilter extends Filter {
 /**
  * Do a general convolution on the image (this is much slower than the blur filters)
  */
-class ConvolveFilter extends Filter {
+class ConvolveFilter extends FFilter {
 	protected int[] kernel = {
 		-3, 0, 0, 0, -3,
 		0, 0, 0, 0, 0,
@@ -349,7 +349,7 @@ class ConvolveFilter extends Filter {
 /**
  * Blur horizontally
  */
-class BlurHFilter extends Filter {
+class BlurHFilter extends FFilter {
 	public void apply(byte[] in, byte[] out, int width, int height) {
 		for (int y = 0; y < height; y++) {
 			int index = y*width;
@@ -371,7 +371,7 @@ class BlurHFilter extends Filter {
 /**
  * Blur vertically
  */
-class BlurVFilter extends Filter {
+class BlurVFilter extends FFilter {
 	public void apply(byte[] in, byte[] out, int width, int height) {
 		for (int x = 0; x < width; x++) {
 			int index = x;
@@ -393,7 +393,7 @@ class BlurVFilter extends Filter {
 /**
  * A sort of water-ripple type effect
  */
-class WaterFilter extends Filter {
+class WaterFilter extends FFilter {
 	public void apply(byte[] in, byte[] out, int width, int height) {
 		for (int y = 1; y < height-1; y++) {
 			int index = y*width;
@@ -418,7 +418,7 @@ class WaterFilter extends Filter {
 /**
  * Clears the image to black - you only see the moving particles with this one.
  */
-class ClearFilter extends Filter {
+class ClearFilter extends FFilter {
 	public void apply(byte[] in, byte[] out, int width, int height) {
 		int index = 0;
 		for (int y = 0; y < height; y++) {

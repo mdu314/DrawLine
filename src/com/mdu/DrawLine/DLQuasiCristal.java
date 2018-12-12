@@ -2,20 +2,14 @@ package com.mdu.DrawLine;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
-import com.jhlabs.image.KaleidoscopeFilter;
 
 public class DLQuasiCristal extends DLImage {
-  int threadSleep = 50;
-  int frameCount = 1000;
-  float dimPix = 0.5f;
+  float dimPix = 0.5f;                      
+                      
   int levels = 8;
   float tFactor = 0.3f;
   int[] pixels;
 
-  float filterStrength = 0f;
-  BufferedImage filterImage;
   boolean randomize = false;
 
   String colorModelName = "null";
@@ -48,6 +42,7 @@ public class DLQuasiCristal extends DLImage {
         DLUtil.ColorModel4.getName()
         };
   }
+  
   public DLQuasiCristal() {
     super();
   }
@@ -60,6 +55,7 @@ public class DLQuasiCristal extends DLImage {
     super(x, y);
   }
 
+  @Override
   DLQuasiCristal copy() {
     return new DLQuasiCristal(this);
   }
@@ -87,70 +83,17 @@ public class DLQuasiCristal extends DLImage {
       fcr = DLUtil.RangeRandom(5, 15);
     }
   }
-
-  public void f(Graphics2D g, DLThread t) {
-    setup();
-    while (frameCount++ > 0) {
-
-      if (t != null && t.isStopped())
-        break;
-
-      step(g);
-      if (randomize)
-        random(frameCount);
-
-      if (parent != null)
-        parent.paint(this);
-
-      if (threadSleep > 0) {
-        try {
-          Thread.sleep(threadSleep);
-        } catch (InterruptedException e) {
-          System.err.println(e);
-        }
-      }
-    }
-  }
-
-  BufferedImage image() {
-    filterImage = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
-    final BufferedImage img = new BufferedImage(iwidth, iheight, BufferedImage.TYPE_INT_ARGB);
-    final Graphics2D g = img.createGraphics();
-    DLUtil.SetHints(g);
-
-    if (threaded)
-      runThreaded(g);
-
-    return img;
-  }
-
+  
+  @Override
   void step(Graphics2D g) {
     draw(g);
   }
-
-  public void randomize() {
-    iwidth = DLUtil.RangeRandom(500, 500);
-    iheight = iwidth;
-  }
-
+  
+  @Override
   void setup() {
     pixels = new int[iwidth * iheight];
   }
-
-  public int getThreadSleep() {
-    return threadSleep;
-  }
-
-  public void setThreadSleep(int threadSleep) {
-    this.threadSleep = threadSleep;
-  }
-
-  public int[] rangeThreadSleep() {
-    return new int[] {
-        0, 100
-    };
-  }
-
+  
   void draw(Graphics2D g) {
     float t = frameCount * tFactor;
     int iw2 = iwidth / 2;
@@ -167,9 +110,9 @@ public class DLQuasiCristal extends DLImage {
         float s = 0;
 
         for (int i = 0; i < levels; i++) {
-          float sin = DLUtil.Sin(o);
-          float cos = DLUtil.Cos(o);
-          s += (DLUtil.Cos(cos * x + sin * y + t) + 1f) / 2f;
+          float sin = DLUtil.sin(o);
+          float cos = DLUtil.cos(o);
+          s += (DLUtil.cos(cos * x + sin * y + t) + 1f) / 2f;
           o += DLUtil.PI / levels;
         }
 
@@ -181,17 +124,6 @@ public class DLQuasiCristal extends DLImage {
       }
     }
     image.setRGB(0, 0, iwidth, iheight, pixels, 0, iwidth);
-  }
-
-  float min = Float.MAX_VALUE;
-  float max = Float.MIN_VALUE;
-
-  void check(float c) {
-    if (c < min)
-      min = c;
-    if (c > max)
-      max = c;
-    System.err.println(min + " " + max);
   }
 
   int color(float c) {    
@@ -248,21 +180,25 @@ public class DLQuasiCristal extends DLImage {
 
   public float[] rangeDimPix() {
     return new float[] {
-        0, 1f
+        0, 0.6f
     };
   }
-
-  public void setRandomize(boolean b) {
-    randomize = b;
+  
+  public int getThreadSleep() {
+    return threadSleep;
   }
 
-  public boolean getRandomize() {
-    return randomize;
+  public void setThreadSleep(int threadSleep) {
+    this.threadSleep = threadSleep;
+  }
+
+  public int[] rangeThreadSleep() {
+    return new int[] { 0, 1000 };
   }
 
   public static void main(String[] a) {
     int w = 600;
-    int h = 400;
+    int h = 500;
     Object[][] params = {
         {
             "iwidth", w
@@ -273,7 +209,7 @@ public class DLQuasiCristal extends DLImage {
         }, {
             "y", h / 2
         }, {
-            "threadSleep", 5
+            "threadSleep", 1
         }, {
           "backgroundColor", new Color(53, 53, 20).brighter().brighter().brighter()
         }

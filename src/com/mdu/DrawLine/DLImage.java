@@ -14,21 +14,9 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
-
-import com.jhlabs.image.BoxBlurFilter;
-import com.jhlabs.image.BumpFilter;
-import com.jhlabs.image.CausticsFilter;
-import com.jhlabs.image.ChromeFilter;
-import com.jhlabs.image.ContourFilter;
-import com.jhlabs.image.CrystallizeFilter;
-import com.jhlabs.image.EdgeFilter;
-import com.jhlabs.image.EmbossFilter;
-import com.jhlabs.image.EqualizeFilter;
-import com.jhlabs.image.FlareFilter;
-import com.jhlabs.image.GlowFilter;
-import com.jhlabs.image.KaleidoscopeFilter;
-import com.jhlabs.image.OilFilter;
+import java.util.Arrays;
 
 abstract class DLImage extends DLComponent implements Threaded, JPG {
   ArrayList<DLThread> threads = new ArrayList<DLThread>();
@@ -39,26 +27,11 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   boolean selectCheckTransparentPixel = false;
   Color backgroundColor;
   
-  static final String NullFilter = "null";
-  static final String BlurFilter = "blur";
-  static final String EdgeFilter = "edge";
-  static final String EmbossFilter = "emboss";
-  static final String EqualizeFilter = "equalize";
-  static final String KaleidoscopeFilter = "kaleidoscope";
-  static final String BumpFilter = "bump";
-  static final String CausticFilter = "caustic";
-  static final String ChromeFilter = "chrome";
-  static final String OilFilter = "oil";
-  static final String FlareFilter = "flare";
-  static final String ContourFilter = "contour";
-  static final String GlowFilter = "glow";
-  static final String CrystalizeFilter = "crystallize";
-  
   int frameCount = 1;
   int threadSleep = 50;
 
-  String filterName = NullFilter;
-  BufferedImageOp filter = getFilterFromString(filterName);
+//  String filterName = NullFilter;
+  BufferedImageOp filter = null ; //getFilterFromString(filterName);
   int res = 1;
   boolean clear = true;
   float filterStrength = 0f;
@@ -355,31 +328,37 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   }
 
   public String getFilter() {
-    return filterName;
+    if(filter == null)
+      return "null";
+    return filter.toString();
   }
 
   public void setFilter(String f) {
-    filterName = f;
     filter = getFilterFromString(f);
   }
 
+
+  
+  String[] getFilterNames() {
+    Filter[] f = Filter.filters;
+    int l = f.length;
+    String[] names = new String[l + 1];
+    names[0] = Filter.NULL;
+    for (int i = 0; i < l; i++) {
+      String n = f[i].cls.getName();
+      int li = n.lastIndexOf('.');
+      if (li > 0) { 
+        n = n.substring(li + 1);
+      }
+      names[i + 1] = n;
+    }
+    return names;
+  }
+  
   public String[] enumFilter() {
-    return new String[] { 
-        NullFilter, 
-        EdgeFilter, 
-        BlurFilter, 
-        EmbossFilter, 
-        EqualizeFilter, 
-        OilFilter , 
-        KaleidoscopeFilter,
-        BumpFilter,
-        CausticFilter,
-        ChromeFilter,
-        FlareFilter,
-        ContourFilter,
-        GlowFilter,
-        CrystalizeFilter
-        };
+    String[] names = getFilterNames();
+    Arrays.sort(names);
+    return names;
   }
 
   public void setFilterStrength(float br) {
@@ -389,79 +368,35 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   public float getFilterStrength() {
     return filterStrength;
   }
-
+  
   public float[] rangeFilterStrength() {
     return new float[] { 0f, 1f };
   }
-
+  
+  
   private BufferedImageOp getFilterFromString(String s) {
-    switch (s) {
-
-    case NullFilter:
+    if(s.equals(Filter.NULL))
       return null;
+    for(Filter f:Filter.filters) 
+      if(f.cls.getName().endsWith(s)) {
+        try {
+          Object o = f.cls.newInstance();
+          Object[] p = f.params;
+          if(p != null) {
 
-    case BlurFilter:
-      BoxBlurFilter bf = new BoxBlurFilter();
-      bf.setHRadius(5);
-      bf.setVRadius(5);
-      bf.setIterations(5);
-      return bf;
-
-    case EdgeFilter:
-      EdgeFilter ef = new EdgeFilter();
-      return ef;
-
-    case EmbossFilter:
-      EmbossFilter cf = new EmbossFilter();
-      return cf;
-
-    case EqualizeFilter:
-      EqualizeFilter eqf = new EqualizeFilter();
-      return eqf;
-
-    case OilFilter:
-      OilFilter of = new OilFilter();
-      return of;
-
-    case KaleidoscopeFilter:
-      KaleidoscopeFilter k = new KaleidoscopeFilter();
-      k.setAngle(DLUtil.PI / 5f);
-      k.setAngle2(DLUtil.PI / 3f);
-      k.setRadius((iwidth + iheight) / 4f);
-      k.setSides(5);
-      return k;
-      
-    case BumpFilter:
-      BumpFilter bft = new BumpFilter();
-      return bft;
-      
-    case CausticFilter:
-      CausticsFilter cft = new CausticsFilter();
-      return cft;
-      
-    case ChromeFilter:
-      ChromeFilter crf = new ChromeFilter();
-      return crf;
-      
-    case FlareFilter:
-      FlareFilter wf = new FlareFilter();
-      return wf;
-      
-    case ContourFilter:
-      ContourFilter cof = new ContourFilter();
-      return cof;
-    
-    case CrystalizeFilter:
-      CrystallizeFilter crft = new CrystallizeFilter();
-      return crft;
-      
-    case GlowFilter:
-      GlowFilter gft = new GlowFilter();
-      return gft;
-      
-    default:
-      return null;
-    }
+            for( int i = 0; i < p.length; i += 2) {
+              String k = (String)p[i];
+              Object v = (Object)p[i + 1];
+              Method m = o.getClass().getMethod(k, v.getClass());
+              m.invoke(o, v);
+            }
+          }
+          return (BufferedImageOp)o;
+        } catch (Exception e) {
+          DLError.report(e);
+        }         
+      }
+    return null;
   }
 
   void applyFilter() {
@@ -470,7 +405,11 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     if (filterStrength <= 0.001f)
       return;
     BufferedImage bi = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-    filter.filter(image, bi);
+    try {
+      filter.filter(image, bi);
+    } catch (Exception e) {
+      DLError.report(e);
+    }
     DLUtil.Merge(image, bi, filterStrength, image);
   }
 

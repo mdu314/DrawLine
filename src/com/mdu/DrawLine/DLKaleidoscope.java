@@ -177,18 +177,6 @@ public class DLKaleidoscope extends DLImage {
     iheight = iwidth;
   }
 
-  public int getThreadSleep() {
-    return threadSleep;
-  }
-
-  public void setThreadSleep(int threadSleep) {
-    this.threadSleep = threadSleep;
-  }
-
-  public int[] rangeThreadSleep() {
-    return new int[] { 0, 1000 };
-  }
-
   public String getImageResource() {
     return imageResource;
   }
