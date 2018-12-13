@@ -3,20 +3,27 @@ package com.mdu.DrawLine;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import javax.swing.Timer;
 
 abstract class DLImage extends DLComponent implements Threaded, JPG {
   ArrayList<DLThread> threads = new ArrayList<DLThread>();
@@ -28,7 +35,15 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   Color backgroundColor;
   
   int frameCount = 1;
-  int threadSleep = 50;
+  int threadSleep = 5;
+  int messageOpacity = 255;
+  int messageOpacityDecrement = 7;
+  String messageString = null;
+  int messageDelay = 100;
+  Timer messageTimer = null;
+  int messageMargin = 10;
+  int messageRound = 6;
+  Color messageColor = Color.cyan;
 
 //  String filterName = NullFilter;
   BufferedImageOp filter = null ; //getFilterFromString(filterName);
@@ -185,15 +200,84 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     if (deco)
       shadow(g);
 
-    g.drawImage(image, (int) (x - iwidth / 2f), (int) (y - iheight / 2f), null);
-
+    g.drawImage(image, (int) (x - iwidth / 2f), (int) (y - iheight / 2f), null);    
+    
+    after(g);
+    
     if (deco && DLParams.DEBUG) {
       final Rectangle b = getBounds();
       g.setColor(Color.darkGray);
       g.drawRect(b.x, b.y, b.width - 1, b.height - 1);
     }
   }
+  
+  int drawMessageString(Graphics2D g, String s, int x, int y) {
+    
+      Font f = g.getFont();
+      f = f.deriveFont(20f);
+      g.setFont(f);
+      FontMetrics fm = g.getFontMetrics();
+      int sw = fm.stringWidth(s);
+      int tx = x;
+      int ty = y + fm.getAscent();
+      int mr = messageColor.getRed();
+      int mg = messageColor.getGreen();
+      int mb = messageColor.getBlue();
+      
+      Color c = new Color(255 - mr, 255 - mg, 255 - mb, messageOpacity);
+      g.setColor(c);
+      g.fillRoundRect(tx - messageRound / 2,
+                      ty - fm.getAscent()  - messageRound / 2,
+                      sw + messageRound,
+                      fm.getHeight() + messageRound, 
+                      messageRound, 
+                      messageRound);
+      c = new Color(mr, mg, mb, messageOpacity);      
+      g.setColor(c);
+      g.drawString(s, tx, ty);
+      return fm.getHeight() + messageRound;
+  }
+  
+  void after(Graphics2D g) {
+    if(messageString != null && messageOpacity > 0) {      
+      String[] sa = messageString.split("\n");
+      int tx = messageMargin;
+      int ty = messageMargin;
+      
+      for(String s:sa) {
+        ty += drawMessageString(g, s, tx, ty);        
+      }
+    }
+  }
+  
+  public void setMessage(String s) {
+    System.err.println("setMessage " + s);
+    if(messageTimer != null && messageTimer.isRunning()) {
+      messageTimer.stop();
+    }
+    if(s == null || "".equals(s)) {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      PrintStream stream = new PrintStream(baos);
+      new Error().printStackTrace(stream);
+      String str = new String(baos.toByteArray());
+      setMessage(str);
+    }
+    messageString = s;
+    messageOpacity = 255;
+     messageTimer = new Timer(messageDelay, (ActionEvent e) -> {          
+       messageOpacity -= messageOpacityDecrement;
+       if(messageOpacity <= 0) {
+         messageOpacity = 0;
+         messageTimer.stop();
+       }
+     });
+     messageTimer.start();
+  }
 
+  public String getMessage() {
+    return messageString;
+  }
+  
   @Override
   public void randomize() {
     super.randomize();
@@ -387,8 +471,22 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
             for( int i = 0; i < p.length; i += 2) {
               String k = (String)p[i];
               Object v = (Object)p[i + 1];
-              Method m = o.getClass().getMethod(k, v.getClass());
+              Class<?> cls = v.getClass();
+              try {
+              Method m = o.getClass().getMethod(k, cls);
               m.invoke(o, v);
+              } catch (NoSuchMethodException e) {
+                if(cls == Integer.class) {
+                    Method m = o.getClass().getMethod(k, int.class);
+                    m.invoke(o, v);
+                }  else  if(cls == Float.class) {
+                    Method m = o.getClass().getMethod(k, float.class);
+                    m.invoke(o, v);
+                }  else  if(cls == Double.class) {
+                    Method m = o.getClass().getMethod(k, double.class);
+                    m.invoke(o, v);
+                }                
+              }
             }
           }
           return (BufferedImageOp)o;
@@ -413,6 +511,13 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
     DLUtil.Merge(image, bi, filterStrength, image);
   }
 
+  public void setThreadSleep(int s) {
+    threadSleep = s;
+  }
+  public int getThreadSleep() {
+    return threadSleep;
+  }
+  
   void zoom() {
     BufferedImage i = new BufferedImage(iwidth, iheight, image.getType());
     zoom(image, i);

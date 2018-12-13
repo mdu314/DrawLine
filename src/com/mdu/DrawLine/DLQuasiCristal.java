@@ -4,8 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class DLQuasiCristal extends DLImage {
-  float dimPix = 0.5f;                      
-                      
+  float dimPix = 0.5f;                       
   int levels = 8;
   float tFactor = 0.3f;
   int[] pixels;
@@ -142,6 +141,11 @@ public class DLQuasiCristal extends DLImage {
     }
   }
 
+  public void reset() {
+    super.reset();
+    setup();
+  }
+  
   public void setTFactor(float tf) {
     tFactor = tf;
   }
@@ -182,18 +186,6 @@ public class DLQuasiCristal extends DLImage {
     return new float[] {
         0, 0.6f
     };
-  }
-  
-  public int getThreadSleep() {
-    return threadSleep;
-  }
-
-  public void setThreadSleep(int threadSleep) {
-    this.threadSleep = threadSleep;
-  }
-
-  public int[] rangeThreadSleep() {
-    return new int[] { 0, 1000 };
   }
 
   public static void main(String[] a) {
