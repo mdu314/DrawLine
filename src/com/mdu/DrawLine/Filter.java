@@ -40,8 +40,8 @@ new Filter(BlockFilter.class, null),
 new Filter(CellularFilter.class, null),
 new Filter(HalftoneFilter.class, null),
 new Filter(BoxBlurFilter.class, new Object[] {
-    "setHRadius", 5, 
-    "setVRadius", 5, 
+    "setHRadius", 5f, 
+    "setVRadius", 5f, 
     "setIterations", 5
 }),
 new Filter(BumpFilter.class, null),
