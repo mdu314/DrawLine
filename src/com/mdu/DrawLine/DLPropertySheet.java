@@ -549,18 +549,18 @@ public class DLPropertySheet extends JFrame {
 
 		final String[] skeys = setters.keySet().toArray(new String[] {});
 
-		for (String k : skeys) {
-			final String sn = k.substring(SET.length());
-			Method m = getters.get(GET + sn);
-			if (m != null) {
-				try {
-					Object res = m.invoke(comp);
-					System.err.println(sn + " " + (res != null ? res.toString() : null));
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					System.err.println(m.getName() + " " + e.getMessage());
-				}
-			}
-		}
+//		for (String k : skeys) {
+//			final String sn = k.substring(SET.length());
+//			Method m = getters.get(GET + sn);
+//			if (m != null) {
+//				try {
+//					Object res = m.invoke(comp);
+//					System.err.println(sn + " " + (res != null ? res.toString() : null));
+//				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+//					System.err.println(m.getName() + " " + e.getMessage());
+//				}
+//			}
+//		}
 
 	}
 
@@ -679,7 +679,6 @@ abstract class Editor extends JPanel {
 			final Object comp = accessor.component;
 			final String name = "get" + accessor.shortName;
 			final Method m = comp.getClass().getMethod(name);
-			System.err.println("invoke " + m);
 			Object o = m.invoke(comp);
 			return o;
 		} catch (final Exception e) {

@@ -43,7 +43,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   Timer messageTimer = null;
   int messageMargin = 10;
   int messageRound = 6;
-  Color messageColor = Color.cyan;
+  Color messageColor = Color.lightGray;
 
 //  String filterName = NullFilter;
   BufferedImageOp filter = null ; //getFilterFromString(filterName);
@@ -214,7 +214,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   int drawMessageString(Graphics2D g, String s, int x, int y) {
     
       Font f = g.getFont();
-      f = f.deriveFont(20f);
+      f = f.deriveFont(10f);
       g.setFont(f);
       FontMetrics fm = g.getFontMetrics();
       int sw = fm.stringWidth(s);
@@ -251,7 +251,6 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   }
   
   public void setMessage(String s) {
-    System.err.println("setMessage " + s);
     if(messageTimer != null && messageTimer.isRunning()) {
       messageTimer.stop();
     }
@@ -261,6 +260,7 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
       new Error().printStackTrace(stream);
       String str = new String(baos.toByteArray());
       setMessage(str);
+      return;
     }
     messageString = s;
     messageOpacity = 255;
