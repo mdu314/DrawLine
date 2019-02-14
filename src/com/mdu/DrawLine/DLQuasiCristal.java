@@ -5,21 +5,20 @@ import java.awt.Graphics2D;
 
 public class DLQuasiCristal extends DLImage {
   float dimPix = 0.5f;                       
-  int levels = 8;
+  int levels = 7;
   float tFactor = 0.3f;
   int[] pixels;
 
-  boolean randomize = false;
-
   String colorModelName = "null";
   DLColorModel colorModel = null;
-      
+  
   public void setColorModel(String cm) {
     colorModelName = cm;
     if(cm.equals("null")) {
       colorModel = null;
       return;
     }
+    
     for(DLColorModel com : DLUtil.ColorModels) {
       if(com.getName().equals(cm)) {
         colorModelName = cm;
@@ -94,6 +93,7 @@ public class DLQuasiCristal extends DLImage {
   }
   
   void draw(Graphics2D g) {
+    
     float t = frameCount * tFactor;
     int iw2 = iwidth / 2;
     int ih2 = iheight / 2;
@@ -184,29 +184,26 @@ public class DLQuasiCristal extends DLImage {
 
   public float[] rangeDimPix() {
     return new float[] {
-        0, 0.6f
+        0.00001f, 0.5f
     };
   }
 
-  public static void main(String[] a) {
-    int w = 600;
-    int h = 500;
+  public static void main(String[] a) throws ClassNotFoundException {
+    String cls = new Throwable().getStackTrace()[0].getClassName();
+    Class<?> classe = Class.forName(cls);
+
+    int w = 400;
+    int h = 400;
     Object[][] params = {
-        {
-            "iwidth", w
-        }, {
-            "iheight", h
-        }, {
-            "x", w / 2
-        }, {
-            "y", h / 2
-        }, {
-            "threadSleep", 1
-        }, {
-          "backgroundColor", new Color(53, 53, 20).brighter().brighter().brighter()
-        }
+        { "iwidth", w }, 
+        {  "iheight", h }, 
+        {  "x", w / 2 }, 
+        {  "y", h / 2 }, 
+        { "clear", false },
+        { "colorModel", DLUtil.ColorModel2},
+        { "dimPix", 0.25f},
+        { "backgroundColor", new Color(53, 53, 20).brighter().brighter().brighter() }
     };
-    Class<? extends DLComponent> cls = DLQuasiCristal.class;
-    DLMain.Main(cls, params);
+    DLMain.Main(classe, params);
   }
 }
