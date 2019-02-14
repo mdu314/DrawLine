@@ -351,15 +351,16 @@ abstract class DLImage extends DLComponent implements Threaded, JPG {
   }
 
   public void f(Graphics2D g, DLThread t) {
+    
     setup();
+    
     while (frameCount++ > 0) {
-
       if (t != null && t.isStopped())
         break;
 
       if (clear)
         clearImage();
-
+      
       step(g);
 
       if (parent != null)

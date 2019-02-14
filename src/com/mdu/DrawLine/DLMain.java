@@ -56,7 +56,7 @@ public class DLMain {
     return i;
   }
 
-  static DLComponent Main(Class<? extends DLComponent> cls, Object[][] params) {
+  static DLComponent Main(Class<?> cls, Object[][] params) {
     DLMain.params = params;
     int width = getWidth();
     int height = getHeight();
@@ -72,7 +72,7 @@ public class DLMain {
     panel.setBackground(new Color(0xc0c0c0));
     DLComponent dlc = null;
     try {
-      Constructor<? extends DLComponent> ctr = cls.getConstructor();
+      Constructor<?> ctr = cls.getConstructor();
       dlc = (DLComponent) ctr.newInstance();
       init(dlc);
       panel.addComponent(dlc);
@@ -157,7 +157,6 @@ public class DLMain {
   }
 
   static void setAttribute(DLComponent c, String att, Object val) {
-    // System.err.println("setAtt " + att + " " + val);
     try {
       Class<?> cls = c.getClass();
       Field f = getField(cls, att);

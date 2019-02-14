@@ -18,6 +18,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -301,19 +302,19 @@ public class DLUtil {
    */
   final public static float Sin(float ang) {
     float t = ang % TWO_PI;
-    int indexA = (int) (t / step);
-    int indexB = indexA + 1;
+    float indexA = t / step;
+    float indexB = indexA + 1;
     while (indexA < 0)
       indexA += size;
     indexA %= size;
     if (indexB >= size)
-      return sintable[indexA];
+      return sintable[(int)indexA];
     while (indexB < 0)
       indexB += size;
     indexB %= size;
 
-    float a = sintable[indexA];
-    return a + (sintable[indexB] - a) * (t - (indexA * step)) * invStep;
+    float a = sintable[(int)indexA];
+    return a + (sintable[(int)indexB] - a) * (t - (indexA * step)) * invStep;
 
   }
 
@@ -330,20 +331,20 @@ public class DLUtil {
    */
   final public static float Cos(float ang) {
     float t = ang % TWO_PI;
-    int indexA = (int) (t / step);
-    int indexB = indexA + 1;
+    float indexA = (int) (t / step);
+    float indexB = indexA + 1;
     while (indexA < 0)
       indexA += size;
     indexA %= size;
     if (indexB >= size)
-      return costable[indexA];
+      return costable[(int)indexA];
     while (indexB < 0)
       indexB += size;
     indexB %= size;
 
-    float a = costable[indexA];
+    float a = costable[(int)indexA];
 
-    return a + (costable[indexB] - a) * (t - (indexA * step)) * invStep;
+    return a + (costable[(int)indexB] - a) * (t - (indexA * step)) * invStep;
   }
 
   static synchronized void shuffleArray(int[] ar) {
@@ -1458,6 +1459,7 @@ public class DLUtil {
     final PathIterator pi = p.getPathIterator(null);
     final float[] c = new float[6];
     StringBuffer sb = new StringBuffer();
+    System.err.print("Dump GeneralPath ");
     while (!pi.isDone()) {
       final int ret = pi.currentSegment(c);
       switch (ret) {
@@ -1478,35 +1480,75 @@ public class DLUtil {
         sb.append("closePath();");
         break;
       default:
-        break;
+        throw new RuntimeException("Illegal switch " + ret);
+//        break;
       }
       pi.next();
     }
+    System.err.println("Done");
     return sb.toString();
   }
 
-  /*
-   * static Rectangle GeneralPathBB(GeneralPath p) { final PathIterator pi =
-   * p.getPathIterator(null); final float[] c = new float[6]; float xmin =
-   * Float.MAX_VALUE; float ymin = Float.MAX_VALUE; float xmax =
-   * Float.MIN_VALUE; float ymax = Float.MIN_VALUE; while (!pi.isDone()) { final
-   * int ret = pi.currentSegment(c); switch (ret) { case SEG_MOVETO: if(c[0] <
-   * xmin) xmin = c[0]; if(c[1] < ymin) ymin = c[1]; if(c[0] > xmax) xmax =
-   * c[0]; if(c[1] > ymax) ymax = c[1]; // System.err.println("moveTo( " + c[0]
-   * + ", " + c[1] + ");"); break; case SEG_LINETO: if(c[0] < xmin) xmin = c[0];
-   * if(c[1] < ymin) ymin = c[1]; if(c[0] > xmax) xmax = c[0]; if(c[1] > ymax)
-   * ymax = c[1]; // System.err.println("lineTo( " + c[0] + ", " + c[1] + ");");
-   * break; case SEG_QUADTO:
-   * 
-   * if(c[0] < xmin) xmin = c[0]; if(c[1] < ymin) ymin = c[1]; if(c[0] > xmax)
-   * xmax = c[0]; if(c[1] > ymax) ymax = c[1];
-   * 
-   * System.err.println("quadTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " +
-   * c[3] + ");"); break; case SEG_CUBICTO: System.err.println("cubicTo( " +
-   * c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ", " + c[4] + ", " + c[5]
-   * + ");"); break; case SEG_CLOSE: System.err.println("closePath();"); break;
-   * default: break; } pi.next(); } }
-   */
+  static Rectangle2D GeneralPathBB(GeneralPath p) {
+    final PathIterator pi = p.getPathIterator(null);
+    final float[] c = new float[6];
+    float xmin = Float.MAX_VALUE;
+    float ymin = Float.MAX_VALUE;
+    float xmax = Float.MIN_VALUE;
+    float ymax = Float.MIN_VALUE;
+    while (!pi.isDone()) {
+      final int ret = pi.currentSegment(c);
+      switch (ret) {
+        case SEG_MOVETO:
+          if (c[0] < xmin)
+            xmin = c[0];
+          if (c[1] < ymin)
+            ymin = c[1];
+          if (c[0] > xmax)
+            xmax = c[0];
+          if (c[1] > ymax)
+            ymax = c[1];
+          // System.err.println("moveTo( " + c[0] + ", " + c[1] + ");");
+          break;
+        case SEG_LINETO:
+          if (c[0] < xmin)
+            xmin = c[0];
+          if (c[1] < ymin)
+            ymin = c[1];
+          if (c[0] > xmax)
+            xmax = c[0];
+          if (c[1] > ymax)
+            ymax = c[1];
+          // System.err.println("lineTo( " + c[0] + ", " + c[1] + ");");
+          break;
+        case SEG_QUADTO:
+          if (c[0] < xmin)
+            xmin = c[0];
+          if (c[1] < ymin)
+            ymin = c[1];
+          if (c[0] > xmax)
+            xmax = c[0];
+          if (c[1] > ymax)
+            ymax = c[1];
+          // System.err.println("quadTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " +
+          // c[3] + ");");
+          break;
+        case SEG_CUBICTO:
+          // System.err.println("cubicTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " +
+          // c[3] + ", " + c[4] + ", " + c[5] + ");");
+          break;
+        case SEG_CLOSE:
+          System.err.println("closePath();");
+          break;
+        default:
+          break;
+      }
+      pi.next();
+    }
+    return new Rectangle2D.Float(xmin, ymin, xmax - xmin, ymax - ymin);
+  }
+  
+  
   // Compute the distance from AB to C
   // if isSegment is true, AB is a segment, not a line.
   static double linePointDist(Point2D.Float A, Point2D.Float B, Point2D.Float C, boolean isSegment) {
@@ -1678,6 +1720,17 @@ public class DLUtil {
     }
   }
 
+  static Rectangle2D GetBounds(Font font, String u) { 
+    Image image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    Graphics graphics = image.getGraphics();
+    FontMetrics metrics = graphics.getFontMetrics(font);
+    int hgt = metrics.getHeight();
+    float h = hgt;
+    int adv = metrics.stringWidth(u);
+    float w = adv;
+    return new Rectangle2D.Float(0, 0, w, h);
+  }
+  
   static Shape Char(int s, String family, int style, int size) {
     return Char("" + s, family, style, size);
   }
@@ -1687,7 +1740,7 @@ public class DLUtil {
     final Graphics2D g = img.createGraphics();
     DLUtil.SetHints(g);
 
-    final Font font = new Font(family, style, (int) size).deriveFont(size);
+    final Font font = new Font(family, style, (int) (size + 0.5f)).deriveFont(size);
     g.setFont(font);
     final FontRenderContext frc = g.getFontMetrics(font).getFontRenderContext();
     final GlyphVector v = font.createGlyphVector(frc, s);

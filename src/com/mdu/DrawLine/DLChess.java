@@ -24,7 +24,8 @@ public class DLChess extends DLImage {
   static final int WHITE_SQUARE = 0;
   static final int BLACK_SQUARE = 1;
   boolean debug = false;
-  String position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+//  String position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+  String position = "pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp";
 
   public DLChess() {
     super();
@@ -132,6 +133,7 @@ public class DLChess extends DLImage {
 
   public String[] enumPosition() {
     return new String[] {
+      "pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp",
       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/", 
       "8/8/8/8/8/8/8/8", 
       "2kr3r/1pp2ppp/1n2b3/p3P3/PnP2B2/1K2P3/1P4PP/R4BNR", 
@@ -194,9 +196,9 @@ public class DLChess extends DLImage {
       }, {
         "y", h / 2
       }, {
-        "threadSleep", 50
+        "threadSleep", 500
       }, {
-        "backgroundColor", new Color(53, 53, 20).brighter().brighter().brighter()
+        "backgroundColor", null
       }
     };
     DLMain.Main(DLChess.class, params);
@@ -204,15 +206,14 @@ public class DLChess extends DLImage {
 
   class Square {
     Paint paint;
-    int color;
+    int type;
     String piece;
 
-    void setColor(int c) {
-      color = c;
+    void setType(int c) {
+      type = c;
     }
-
-    int getColor() {
-      return color;
+    int getType() {
+      return type;
     }
 
     void setPaint(Paint p) {
@@ -235,9 +236,9 @@ public class DLChess extends DLImage {
           Square s = new Square();
           board[i][j] = s;
           if (k % 2 == 0) {
-            s.setColor(WHITE_SQUARE);
+            s.setType(WHITE_SQUARE);
           } else {
-            s.setColor(BLACK_SQUARE);
+            s.setType(BLACK_SQUARE);
           }
           k++;
         }
@@ -286,26 +287,25 @@ public class DLChess extends DLImage {
       for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
           String p = board[i][j].piece;
+
           if (p == null || p == "")
             continue;
           String u = charMap.get(p);
           if (u == null)
-            continue;
-
+            throw new IllegalArgumentException("Illegal character " + p);
+          
           Rectangle2D r = getRect(i, j, margx, margy);
-
-          Shape s = DLUtil.Char(u, f.getFamily(), f.getStyle(), d);
-
+          Shape s = DLUtil.Char(u, f.getFamily(), f.getStyle(), f.getSize2D());
+          DLUtil.DumpGeneralPath((GeneralPath)s);
           Rectangle2D sr = s.getBounds2D();
-
-          AffineTransform tr = DLUtil.computeTransform(sr, r, false);
-
-          AffineTransform str = g.getTransform();
+//          Rectangle2D sr = DLUtil.GetBounds(f, u);
+          System.err.println(sr);
+          AffineTransform tr = DLUtil.computeTransform2(sr, r, false);
+          AffineTransform otr = g.getTransform();
           g.setTransform(tr);
-
           g.setColor(Color.black);
           g.fill(s);
-          g.setTransform(str);
+          g.setTransform(otr);
         }
       }
     }
@@ -327,7 +327,7 @@ public class DLChess extends DLImage {
     Paint paint = null;
     Shape shp = getRect(i, j, 0, 0);
 
-    switch (s.getColor()) {
+    switch (s.getType()) {
     case WHITE_SQUARE:
       paint = white;
       break;
@@ -368,7 +368,7 @@ public class DLChess extends DLImage {
           String sc = new String(new char[] {c});
           String s = board.charMap.get(sc);
           if(s == null)
-            throw new IllegalArgumentException("Illegal character " + c);
+            throw new IllegalArgumentException("Illegal string for " + sc);
           b[y][x].piece = sc;
           x++;
           x %= 8;

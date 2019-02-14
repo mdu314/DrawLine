@@ -575,33 +575,13 @@ public class DLTunnel extends DLImage {
     int h2 = h / 2;
 
     Object[][] params = {
-        {
-            "width",
-            w
-        },
-        {
-            "height",
-            h
-        },
-        {
-            "iwidth",
-            w
-        },
-        {
-            "iheight",
-            h
-        },
-        {
-            "x",
-            w2
-        },
-        {
-            "y",
-            h2
-        },
-        {
-            "threadSleep",
-            5
+        {     "width", w
+        }, {  "height", h
+        }, {  "iwidth", w
+        }, {  "iheight", h
+        }, {  "x", w2
+        }, {  "y", h2
+        }, {  "threadSleep", 5
         }
     };
 
