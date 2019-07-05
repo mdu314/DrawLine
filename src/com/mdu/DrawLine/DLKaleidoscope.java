@@ -438,28 +438,30 @@ public class DLKaleidoscope extends DLImage {
     float cy = iheight / 2f - radius / 2f;
     BufferedImage img = invert;
 
-    for (DLPath s : shapes) {
+    synchronized (shapes) {
+      for (DLPath s : shapes) {
 
-      Shape oclip = g.getClip();
-      if (clip)
-        g.setClip(s);
+        Shape oclip = g.getClip();
+        if (clip)
+          g.setClip(s);
 
-      AffineTransform tr = AffineTransform.getRotateInstance(s.getAngle(), iwidth / 2, iheight / 2);
-      AffineTransform str = g.getTransform();
-      g.setTransform(tr);
-      try {
-        if (img != null)
-          g.drawImage(img, (int) cx, (int) cy, (int) (cx + radius), (int) (cy + radius), 0, 0, img.getWidth(),
-              img.getHeight(), null);
-      } catch (NullPointerException e) {
-        DLError.report(e, "Caught " + e + " img " + img + " texture " + texture + " invert " + invert);
+        AffineTransform tr = AffineTransform.getRotateInstance(s.getAngle(), iwidth / 2, iheight / 2);
+        AffineTransform str = g.getTransform();
+        g.setTransform(tr);
+        try {
+          if (img != null)
+            g.drawImage(img, (int) cx, (int) cy, (int) (cx + radius), (int) (cy + radius), 0, 0, img.getWidth(),
+                img.getHeight(), null);
+        } catch (NullPointerException e) {
+          DLError.report(e, "Caught " + e + " img " + img + " texture " + texture + " invert " + invert);
+        }
+        g.setTransform(str);
+        g.setClip(oclip);
+        if (img == texture)
+          img = invert;
+        else
+          img = texture;
       }
-      g.setTransform(str);
-      g.setClip(oclip);
-      if (img == texture)
-        img = invert;
-      else
-        img = texture;
     }
   }
 
