@@ -24,8 +24,8 @@ public class DLChess extends DLImage {
   static final int WHITE_SQUARE = 0;
   static final int BLACK_SQUARE = 1;
   boolean debug = false;
-//  String position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-  String position = "pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp";
+  String position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+//  String position = "pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp";
 
   public DLChess() {
     super();
@@ -295,17 +295,20 @@ public class DLChess extends DLImage {
             throw new IllegalArgumentException("Illegal character " + p);
           
           Rectangle2D r = getRect(i, j, margx, margy);
-          Shape s = DLUtil.Char(u, f.getFamily(), f.getStyle(), f.getSize2D());
-          DLUtil.DumpGeneralPath((GeneralPath)s);
-          Rectangle2D sr = s.getBounds2D();
-//          Rectangle2D sr = DLUtil.GetBounds(f, u);
-          System.err.println(sr);
-          AffineTransform tr = DLUtil.computeTransform2(sr, r, false);
+          Shape s = DLUtil.Char(u, f);
+//          DLUtil.DumpGeneralPath(s);
+//          Rectangle2D sr = s.getBounds2D();
+          Rectangle2D sr = DLUtil.GetBounds(f, u);
+          AffineTransform tr = DLUtil.computeTransform(sr, r, false);
           AffineTransform otr = g.getTransform();
           g.setTransform(tr);
           g.setColor(Color.black);
           g.fill(s);
+          g.setColor(Color.green);
+          g.draw(sr);
           g.setTransform(otr);
+          g.setColor(Color.red);
+          g.draw(r);
         }
       }
     }

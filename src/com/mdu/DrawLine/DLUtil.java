@@ -1456,7 +1456,17 @@ public class DLUtil {
   }
 
   static String DumpGeneralPath(GeneralPath p) {
-    final PathIterator pi = p.getPathIterator(null);
+    return DumpGeneralPath(p, null);
+  }
+  
+  static String DumpGeneralPath(Shape p) {
+    if(p instanceof GeneralPath)
+      return DumpGeneralPath((GeneralPath)p, null);
+    return "Not a generalPath but a " + p.getClass();
+  }
+  
+  static String DumpGeneralPath(GeneralPath p, AffineTransform af) {
+    final PathIterator pi = p.getPathIterator(af);
     final float[] c = new float[6];
     StringBuffer sb = new StringBuffer();
     System.err.print("Dump GeneralPath ");
@@ -1473,8 +1483,7 @@ public class DLUtil {
         sb.append("quadTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ");");
         break;
       case SEG_CUBICTO:
-        sb.append("cubicTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ", " + c[4] + ", " + c[5]
-            + ");");
+        sb.append("cubicTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ", " + c[4] + ", " + c[5] + ");");
         break;
       case SEG_CLOSE:
         sb.append("closePath();");
@@ -1733,10 +1742,18 @@ public class DLUtil {
   
   static Shape Char(int s, String family, int style, int size) {
     return Char("" + s, family, style, size);
+  } 
+  
+  static Shape Char(int s, Font font) {
+    return Char("" + s, font.getFamily(), font.getStyle(), font.getSize2D());
+  }
+
+  static Shape Char(String s, Font font) {
+    return Char(s, font.getFamily(), font.getStyle(), font.getSize2D());
   }
 
   static Shape Char(String s, String family, int style, float size) {
-    final BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    final BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
     final Graphics2D g = img.createGraphics();
     DLUtil.SetHints(g);
 
