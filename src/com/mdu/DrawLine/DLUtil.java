@@ -768,6 +768,15 @@ public class DLUtil {
     return dot;
   }
 
+  static double SMALL_DOUBLE = 0.0000001;
+  static boolean isNullRect(Rectangle2D r) {
+    if(Math.abs(r.getWidth()) < SMALL_DOUBLE)
+      return true;
+    if(Math.abs(r.getHeight()) < SMALL_DOUBLE)
+      return true;
+    return false;
+  }
+  
   /**
    * Reduce the points in shape between the specified first and last index. Mark
    * the points to keep in marked[]
@@ -1474,19 +1483,19 @@ public class DLUtil {
       final int ret = pi.currentSegment(c);
       switch (ret) {
       case SEG_MOVETO:
-        sb.append("moveTo( " + c[0] + ", " + c[1] + ");");
+        sb.append("moveTo( " + c[0] + ", " + c[1] + ");\n");
         break;
       case SEG_LINETO:
-        sb.append("lineTo( " + c[0] + ", " + c[1] + ");");
+        sb.append("lineTo( " + c[0] + ", " + c[1] + ");\n");
         break;
       case SEG_QUADTO:
-        sb.append("quadTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ");");
+        sb.append("quadTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ");\n");
         break;
       case SEG_CUBICTO:
-        sb.append("cubicTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ", " + c[4] + ", " + c[5] + ");");
+        sb.append("cubicTo( " + c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ", " + c[4] + ", " + c[5] + ");\n");
         break;
       case SEG_CLOSE:
-        sb.append("closePath();");
+        sb.append("closePath();\n");
         break;
       default:
         throw new RuntimeException("Illegal switch " + ret);
@@ -1494,8 +1503,10 @@ public class DLUtil {
       }
       pi.next();
     }
+    String s = sb.toString();
+    System.err.println(s);
     System.err.println("Done");
-    return sb.toString();
+    return s;
   }
 
   static Rectangle2D GeneralPathBB(GeneralPath p) {
@@ -1728,7 +1739,13 @@ public class DLUtil {
       return (int) (f < 0 ? f - 0.5f : f + 0.5f);
     }
   }
-
+  
+  static Rectangle2D GetBounds(Font f, String s, Graphics2D g) {    
+    FontMetrics metrics = g.getFontMetrics(f);     
+    Rectangle2D r = metrics.getStringBounds(s, g);
+    return r;
+  }
+  
   static Rectangle2D GetBounds(Font font, String u) { 
     Image image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
     Graphics graphics = image.getGraphics();
@@ -1747,22 +1764,51 @@ public class DLUtil {
   static Shape Char(int s, Font font) {
     return Char("" + s, font.getFamily(), font.getStyle(), font.getSize2D());
   }
-
+  
+  static Shape Char(Graphics2D g, String s, Font font) {    
+    return Char(g, s, font.getFamily(), font.getStyle(), font.getSize2D());
+  }
+  
   static Shape Char(String s, Font font) {
     return Char(s, font.getFamily(), font.getStyle(), font.getSize2D());
   }
-
-  static Shape Char(String s, String family, int style, float size) {
-    final BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+  
+  static Shape Char (Graphics2D g, Font font, String s) {
+    FontRenderContext fontRenderContext = g.getFontMetrics(font).getFontRenderContext();
+    GlyphVector v = font.createGlyphVector(fontRenderContext, s);
+    return v.getOutline();
+  }
+  
+  static Shape Char (Font font, String s, int imageSize) {
+    final BufferedImage img = new BufferedImage(imageSize, imageSize, BufferedImage.TYPE_INT_ARGB);
     final Graphics2D g = img.createGraphics();
-    DLUtil.SetHints(g);
-
-    final Font font = new Font(family, style, (int) (size + 0.5f)).deriveFont(size);
-    g.setFont(font);
     final FontRenderContext frc = g.getFontMetrics(font).getFontRenderContext();
     final GlyphVector v = font.createGlyphVector(frc, s);
     final Shape shape = v.getOutline();
     return shape;
+  }
+  
+  static Shape Char (Font font, String s) {
+    final BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    final Graphics2D g = img.createGraphics();
+    final FontRenderContext frc = g.getFontMetrics(font).getFontRenderContext();
+    final GlyphVector v = font.createGlyphVector(frc, s);
+    final Shape shape = v.getOutline();
+    return shape;
+  }
+  
+  static Shape Char(Graphics2D g, String s, String family, int style, float size) {
+    final Font font = new Font(family, style, (int) (size + 0.5f)).deriveFont(size);
+    final FontRenderContext frc = g.getFontMetrics(font).getFontRenderContext();
+    final GlyphVector v = font.createGlyphVector(frc, s);
+    final Shape shape = v.getOutline();
+    return shape;
+  }
+  
+  static Shape Char(String s, String family, int style, float size) {
+    final BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    final Graphics2D g = img.createGraphics();
+   return Char(g, s, family, style, size);
   }
 
   static Shape[] Target(float x, float y, float r) {

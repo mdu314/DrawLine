@@ -6,33 +6,44 @@ import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 
 public class DLChess extends DLImage {
   int threadSleep = 1000;
   int frameCount = 1;
   float imargin = 50f;
-  float margx = 7;
+  float margx = 5;
   float margy = 5;
   Board board = new Board();
   Paint black = Color.gray;
   Paint white = Color.lightGray;
-  Font font = new Font("Arial", Font.PLAIN, 30);
+  /* Apple Symbols, Arial Unicode MS, Menlo, Monospaced */
+  Font font = new Font("Arial Unicode MS", Font.PLAIN, 20);
   static final int WHITE_SQUARE = 0;
   static final int BLACK_SQUARE = 1;
   boolean debug = false;
   String position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 //  String position = "pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp";
 
-  public DLChess() {
+  public DLChess()  {
     super();
     setPosition(position);
+/*    
+    try {
+      URL u = DrawLine.class.getResource("fonts/meridia.ttf");
+      File f = new File(u.toURI());
+      font = Font.createFont(Font.TRUETYPE_FONT, f);
+      
+    } catch (Exception e) {
+      DLError.report(e);
+    }
+*/    
   }
 
-  DLChess(DLChess src) {
+  DLChess(DLChess src)  {
     this();
   }
 
@@ -133,7 +144,6 @@ public class DLChess extends DLImage {
 
   public String[] enumPosition() {
     return new String[] {
-      "pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp",
       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/", 
       "8/8/8/8/8/8/8/8", 
       "2kr3r/1pp2ppp/1n2b3/p3P3/PnP2B2/1K2P3/1P4PP/R4BNR", 
@@ -180,6 +190,7 @@ public class DLChess extends DLImage {
   }
 
   public void setFont(Font f) {
+    System.err.println("setFont " + f);
     font = f;
   }
 
@@ -187,31 +198,60 @@ public class DLChess extends DLImage {
     int w = 600;
     int h = 400;
     Object[][] params = {
-      {
-        "iwidth", w
-      }, {
-        "iheight", h
-      }, {
-        "x", w / 2
-      }, {
-        "y", h / 2
-      }, {
-        "threadSleep", 500
-      }, {
-        "backgroundColor", null
-      }
+      { "iwidth", w }, 
+      {"iheight", h  }, 
+      { "x", w / 2 }, 
+      { "y", h / 2 }, 
+      { "threadSleep", 500 },
+      { "backgroundColor", null }
     };
     DLMain.Main(DLChess.class, params);
   }
 
+  class Piece {
+    String piece;
+    float margin;
+    
+    Piece(String s) {
+      piece = s;
+      switch(s) {
+        case "p":
+        case "P":
+          margin = 5f;
+          break;
+        default:
+          margin = 0f;
+          break;
+      }
+    }
+    
+    /* take the margin as a percentage of reference */
+    float getMargin(float reference) {
+      return reference * margin / 100f;
+    }
+    
+    void setMargin(float m) {
+      margin = m;
+    }
+    
+    float getMargin() {
+      return margin;
+    }
+    
+    String getPiece() {
+      return piece;
+    }
+  }
+  
   class Square {
     Paint paint;
     int type;
-    String piece;
+    Piece piece;
 
     void setType(int c) {
       type = c;
     }
+    
     int getType() {
       return type;
     }
@@ -244,7 +284,6 @@ public class DLChess extends DLImage {
         }
         k++;
       }
-
       charMap.put("K", "\u2654");
       charMap.put("Q", "\u2655");
       charMap.put("R", "\u2656");
@@ -257,7 +296,7 @@ public class DLChess extends DLImage {
       charMap.put("b", "\u265D");
       charMap.put("n", "\u265E");
       charMap.put("p", "\u265F");
-
+      
     }
 
     void paint(Graphics2D g) {
@@ -278,6 +317,14 @@ public class DLChess extends DLImage {
       }
     }
 
+    Rectangle2D grow(Rectangle2D r, float margin) {
+      double x = r.getX();
+      double y = r.getY();
+      double w = r.getWidth();
+      double h = r.getHeight();
+      return new Rectangle2D.Double(x - margin, y, w + 2 * margin, h);
+    }
+    
     void pieces(Graphics2D g) {
 
       float dim = DLUtil.Min(iwidth(), iheight());
@@ -286,33 +333,32 @@ public class DLChess extends DLImage {
 
       for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-          String p = board[i][j].piece;
-
-          if (p == null || p == "")
+          Piece p = board[i][j].piece;
+          if(p == null)
             continue;
-          String u = charMap.get(p);
-          if (u == null)
-            throw new IllegalArgumentException("Illegal character " + p);
-          
+          String s = p.getPiece();
+          String uc = charMap.get(s);
+          if (uc == null)
+            throw new IllegalArgumentException("Illegal character " + s);
           Rectangle2D r = getRect(i, j, margx, margy);
-          Shape s = DLUtil.Char(u, f);
-//          DLUtil.DumpGeneralPath(s);
-//          Rectangle2D sr = s.getBounds2D();
-          Rectangle2D sr = DLUtil.GetBounds(f, u);
-          AffineTransform tr = DLUtil.computeTransform(sr, r, false);
+          Shape shp = DLUtil.Char(f, uc);
+          Rectangle2D sr = shp.getBounds2D();
+          sr = grow(sr, p.getMargin());
+          
           AffineTransform otr = g.getTransform();
+          
+          AffineTransform tr = DLUtil.computeTransform(sr, r, false);       
+          
           g.setTransform(tr);
+          
           g.setColor(Color.black);
-          g.fill(s);
-          g.setColor(Color.green);
-          g.draw(sr);
+          g.fill(shp);
+          
           g.setTransform(otr);
-          g.setColor(Color.red);
-          g.draw(r);
+          
         }
       }
     }
-
   }
 
   Rectangle2D getRect(int i, int j, float mx, float my) {
@@ -369,10 +415,11 @@ public class DLChess extends DLImage {
           continue;
         } else {
           String sc = new String(new char[] {c});
-          String s = board.charMap.get(sc);
-          if(s == null)
-            throw new IllegalArgumentException("Illegal string for " + sc);
-          b[y][x].piece = sc;
+//          String s = board.charMap.get(sc);
+//          if(s == null)
+//            throw new IllegalArgumentException("Illegal string for " + sc);
+          Piece p = new Piece(sc);
+          b[y][x].piece = p;
           x++;
           x %= 8;
         }
