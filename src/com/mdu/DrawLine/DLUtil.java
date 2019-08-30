@@ -610,20 +610,23 @@ public class DLUtil {
     return _computeTransform(tr.x, r.x, tr.y, r.y, tr.width, r.width, tr.height, r.height, keepAspect);
   }
 
-  static synchronized public AffineTransform _computeTransform(float tx, float x, float ty, float y, float tw, float w,
+  static synchronized private AffineTransform _computeTransform(float tx, float x, float ty, float y, float tw, float w,
       float th, float h, boolean keepAspect) {
-    float sx = 1;
-    float sy = 1;
-    if (tw != w)
-      sx = tw / w;
-    if (th != h)
-      sy = th / h;
+
+    float sx = tw / w;
+    float sy = th / h;
+    float ttx = 0;
+    float tty = 0;
+    
     if (keepAspect) {
       float s = sx < sy ? sx : sy;
       sx = s;
       sy = s;
+      // center rectangles
+      ttx = (tw - sx * w) / 2f;
+      tty = (th - sy * h) / 2f;
     }
-    return new AffineTransform(sx, 0, 0, sy, tx - sx * x, ty - sy * y);
+    return new AffineTransform(sx, 0, 0, sy, ttx + tx - sx * x, tty + ty - sy * y);
   }
 
   static synchronized boolean contains(ArrayList<DLPoint> p, int x, int y) {
