@@ -71,7 +71,7 @@ public class DLUtil {
       DLPshit.class, DLNoise.class, DLTexture.class, DLFougere.class, DLMandelbrot.class, DLPlante.class,
       DLParticle.class, DLWater.class, DLParticles.class, DLLife.class, DLVoronoi.class, DLQRCode.class,
       DLDelaunay.class, DLWave.class, DLTunnel.class, DLPlasma.class, DLSub.class, DLWords.class, DLMetaball.class,
-      DLKaleidoscope.class, DLFougere.class, DLKaleidoscope.class, DLQuasiCristal.class,
+      DLKaleidoscope.class, DLFougere.class, DLKaleidoscope.class, DLQuasiCristal.class, DLChess.class,
       DLMultiscaleTuringPatterns.class, DLGravity.class, DLRgbDaze.class, DLCircusFluid.class, DLNeuralNet.class, DL3D.class,
       DLApollonian.class, DLRotators.class));
 
@@ -1482,6 +1482,7 @@ public class DLUtil {
     final float[] c = new float[6];
     StringBuffer sb = new StringBuffer();
     System.err.print("Dump GeneralPath ");
+    System.err.println("\nWinding Rule " + (p.getWindingRule() == GeneralPath.WIND_EVEN_ODD ? "WIND_EVEN_ODD" : "WIND_NON_ZERO"));
     while (!pi.isDone()) {
       final int ret = pi.currentSegment(c);
       switch (ret) {

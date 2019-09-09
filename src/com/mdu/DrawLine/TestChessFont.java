@@ -6,6 +6,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
@@ -29,6 +30,11 @@ public class TestChessFont {
      if(!DLUtil.isNullRect(r)) {
        System.err.println(font);
        System.err.println(blackPawn + " " + r);
+       if(shape instanceof GeneralPath) {
+         GeneralPath gp = (GeneralPath)shape;
+         int wr = gp.getWindingRule();
+         System.err.println("wr " + (wr == GeneralPath.WIND_EVEN_ODD ? "WIND_EVEN_ODD" : "WIND_NON_ZERO"));
+       }
      }
    }
    

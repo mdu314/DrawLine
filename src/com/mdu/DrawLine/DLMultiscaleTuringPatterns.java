@@ -1,19 +1,8 @@
 package com.mdu.DrawLine;
 
-import static java.awt.event.MouseEvent.BUTTON1;
-
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Toolkit;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 
 import com.jhlabs.image.EdgeFilter;
 

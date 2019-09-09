@@ -84,7 +84,9 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public int[] rangeAngleDiv() {
-    return new int[] { 2, 20 };
+    return new int[] {
+        2, 20
+    };
   }
 
   public void setRadius(int r) {
@@ -100,11 +102,13 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public int[] rangeRadius() {
-    return new int[] { 1, 500 };
+    return new int[] {
+        1, 500
+    };
   }
 
   public void setFullRotation(float r) {
-   fullRotation = r;
+    fullRotation = r;
   }
 
   public float getFullRotation() {
@@ -112,7 +116,9 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public float[] rangeFullRotation() {
-    return new float[] { 0f, 0.5f };
+    return new float[] {
+        0f, 0.5f
+    };
   }
 
   public void setImageRotation(float r) {
@@ -125,7 +131,9 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public float[] rangeImageRotation() {
-    return new float[] { 0f, PI * 2f };
+    return new float[] {
+        0f, PI * 2f
+    };
   }
 
   public boolean getClip() {
@@ -153,7 +161,9 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public int[] rangeTx() {
-    return new int[] { 0, radius };
+    return new int[] {
+        0, radius
+    };
   }
 
   public void setTy(int t) {
@@ -167,12 +177,14 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public int[] rangeTy() {
-    return new int[] { 0, radius };
+    return new int[] {
+        0, radius
+    };
   }
 
   public void randomize() {
     int w = 600;
-    iwidth = DLUtil.RangeRandom(w, 2*w);
+    iwidth = DLUtil.RangeRandom(w, 2 * w);
     radius = iwidth / 2;
     iheight = iwidth;
   }
@@ -214,10 +226,10 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public void setImageScale(float s) {
-    imageScale = s;    
+    imageScale = s;
     if (sheet != null) {
-      sheet.update("Tx", 0); //getTx());
-      sheet.update("Ty", 0); //getTy());
+      sheet.update("Tx", 0); // getTx());
+      sheet.update("Ty", 0); // getTy());
     }
     loadImage();
   }
@@ -227,7 +239,9 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public float[] rangeImageScale() {
-    return new float[] { 0.01f, 2f };
+    return new float[] {
+        0.01f, 2f
+    };
   }
 
   public String getFlip() {
@@ -240,7 +254,9 @@ public class DLKaleidoscope extends DLImage {
   }
 
   public String[] enumFlip() {
-    return new String[] { FlipHorizontal, FlipVertical, Rotate90, Rotate180, Rotate270, DoNotFlip };
+    return new String[] {
+        FlipHorizontal, FlipVertical, Rotate90, Rotate180, Rotate270, DoNotFlip
+    };
   }
 
   void scaleBaseTexture() {
@@ -254,17 +270,17 @@ public class DLKaleidoscope extends DLImage {
   public static BufferedImage rotateImage(BufferedImage img, float angle) {
     float sin = abs(sin(angle));
     float cos = abs(cos(angle));
-   
+
     int w = img.getWidth();
     int h = img.getHeight();
 
-    int neww = (int)Math.floor(w*cos + h*sin);
-    int newh = (int)Math.floor(h*cos + w*sin);
+    int neww = (int) Math.floor(w * cos + h * sin);
+    int newh = (int) Math.floor(h * cos + w * sin);
 
     BufferedImage bimg = new BufferedImage(neww, newh, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = bimg.createGraphics();
-    g.translate((neww-w)/2, (newh-h)/2);
-    g.rotate(angle, w/2, h/2);
+    g.translate((neww - w) / 2, (newh - h) / 2);
+    g.rotate(angle, w / 2, h / 2);
     g.drawRenderedImage(img, null);
     g.dispose();
 
@@ -272,48 +288,48 @@ public class DLKaleidoscope extends DLImage {
   }
 
   void rotateBaseTexture() {
-    if(imageRotation == 0f)
+    if (imageRotation == 0f)
       return;
     baseTexture = rotateImage(baseTexture, imageRotation);
   }
-  
+
   static BufferedImage rotate90(BufferedImage img) {
     int w = img.getWidth();
     int h = img.getHeight();
     BufferedImage dest = new BufferedImage(h, w, img.getType());
-    for (int y = 0; y < h; y++) 
-        for (int x = 0; x < w; x++) 
-            dest.setRGB(y, w - x - 1, img.getRGB(x, y));
+    for (int y = 0; y < h; y++)
+      for (int x = 0; x < w; x++)
+        dest.setRGB(y, w - x - 1, img.getRGB(x, y));
     return dest;
   }
-  
+
   void flipBaseTexture() {
     switch (flip) {
-    case FlipHorizontal: {
-      AffineTransform t = AffineTransform.getScaleInstance(1, -1);
-      t.translate(0, -baseTexture.getHeight());
-      AffineTransformOp op = new AffineTransformOp(t, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-      baseTexture = op.filter(baseTexture, null);
-      break;
-    }
-    case FlipVertical: {
-      AffineTransform t = AffineTransform.getScaleInstance(-1, 1);
-      t.translate(-baseTexture.getWidth(), 0);
-      AffineTransformOp op = new AffineTransformOp(t, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-      baseTexture = op.filter(baseTexture, null);
-      break;
-    }
-    case Rotate90:
-      baseTexture = rotate90(baseTexture);
-      break;
-    case Rotate180:
-      baseTexture = rotateImage(baseTexture, PI);
-      break;
-    case Rotate270:
-      baseTexture = rotateImage(baseTexture, 3f * PI / 2f);
-      break;
-    case DoNotFlip:
-      break;
+      case FlipHorizontal: {
+        AffineTransform t = AffineTransform.getScaleInstance(1, -1);
+        t.translate(0, -baseTexture.getHeight());
+        AffineTransformOp op = new AffineTransformOp(t, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        baseTexture = op.filter(baseTexture, null);
+        break;
+      }
+      case FlipVertical: {
+        AffineTransform t = AffineTransform.getScaleInstance(-1, 1);
+        t.translate(-baseTexture.getWidth(), 0);
+        AffineTransformOp op = new AffineTransformOp(t, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        baseTexture = op.filter(baseTexture, null);
+        break;
+      }
+      case Rotate90:
+        baseTexture = rotate90(baseTexture);
+        break;
+      case Rotate180:
+        baseTexture = rotateImage(baseTexture, PI);
+        break;
+      case Rotate270:
+        baseTexture = rotateImage(baseTexture, 3f * PI / 2f);
+        break;
+      case DoNotFlip:
+        break;
     }
   }
 
@@ -337,7 +353,7 @@ public class DLKaleidoscope extends DLImage {
     } catch (Exception e) {
       DLError.report(e, "Caught " + e);
     }
-    
+
     try {
       flipBaseTexture();
     } catch (Exception e) {
@@ -426,8 +442,7 @@ public class DLKaleidoscope extends DLImage {
     currentAngle += fullRotation;
   }
 
-  public 
-  void drawFrame(Graphics2D g) {
+  public void drawFrame(Graphics2D g) {
     g.setColor(Color.lightGray);
     for (Shape s : shapes)
       g.draw(s);
@@ -472,17 +487,24 @@ public class DLKaleidoscope extends DLImage {
 
   public static void main(String[] a) {
     int s = 600;
-    int w = DLUtil.RangeRandom(s,  s * 2);
+    int w = DLUtil.RangeRandom(s, s * 2);
     int h = w;
 
-    Object[][] params = { 
-        { "iwidth", w }, 
-        { "iheight", h }, 
-        { "x", w / 2 }, 
-        { "y", h / 2 }, 
-        {"radius", w / 2}, 
-        { "threadSleep", 5 } 
-        };
+    Object[][] params = {
+        {
+            "iwidth", w
+        }, {
+            "iheight", h
+        }, {
+            "x", w / 2
+        }, {
+            "y", h / 2
+        }, {
+            "radius", w / 2
+        }, {
+            "threadSleep", 5
+        }
+    };
 
     DLMain.Main(DLKaleidoscope.class, params);
   }

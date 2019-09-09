@@ -89,4 +89,26 @@ public class DLMagicalTree extends DLImage {
       g.fill(s);
     }
   }
+
+  public static void main(String[] a) {
+    int w = 600;
+    int h = 400;
+    Object[][] params = {
+        {
+            "iwidth", w
+        }, {
+            "iheight", h
+        }, {
+            "x", w / 2
+        }, {
+            "y", h / 2
+        }, {
+            "threadSleep", 500
+        }, {
+            "backgroundColor", null
+        }
+    };
+    DLMain.Main(DLMagicalTree.class, params);
+  }
+
 }

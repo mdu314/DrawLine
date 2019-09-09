@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.net.URL;
@@ -16,33 +17,42 @@ public class DLChess extends DLImage {
   int threadSleep = 1000;
   int frameCount = 1;
   float imargin = 50f;
-  float margx = 10; // percent of a square side
-  float margy = 10; // percent of a square side
+  float margx = 10; // x margin around a piece expressed as percent of a square side
+  float margy = 10; // y margin around a piece expressed as percent of a square side
   Board board = new Board();
   Paint black = Color.gray;
   Paint white = Color.lightGray;
   /* Apple Symbols, Arial Unicode MS, Menlo, Monospaced */
-  Font font = new Font("Arial Unicode MS", Font.PLAIN, 20);
+//  ChessFont font = new ChessFont("Lucida Bright", Font.PLAIN, 20);  
+  ChessFont font = new ChessFont("Arial Unicode MS", Font.PLAIN, 20);
   static final int WHITE_SQUARE = 0;
   static final int BLACK_SQUARE = 1;
   boolean debug = false;
   String position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-  // String position =
-  // "pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp";
-  boolean normalFont = false;
-
+  boolean useEmbededFont = false;
+  
   public DLChess() {
     super();
     setPosition(position);
-    if (!normalFont)
-      try {
-        URL u = DrawLine.class.getResource("fonts/case.ttf");
-        File f = new File(u.toURI());
-        font = Font.createFont(Font.TRUETYPE_FONT, f);
-
-      } catch (Exception e) {
-        DLError.report(e);
-      }
+    if(useEmbededFont)
+    try {
+      HashMap<String, String> charMap = new HashMap<String, String>();
+      charMap.put("K", "k");
+      charMap.put("Q", "q");
+      charMap.put("R", "r");
+      charMap.put("B", "b");
+      charMap.put("N", "n");
+      charMap.put("P", "p");
+      charMap.put("k", "l");
+      charMap.put("q", "w");
+      charMap.put("r", "t");
+      charMap.put("b", "v");
+      charMap.put("n", "m");
+      charMap.put("p", "o");
+      font = new ChessFont("fonts/case.ttf", charMap);
+    } catch (Exception e) {
+      DLError.report(e);
+    }
   }
 
   DLChess(DLChess src) {
@@ -146,10 +156,8 @@ public class DLChess extends DLImage {
 
   public String[] enumPosition() {
     return new String[] {
-        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/", 
-        "8/8/8/8/8/8/8/8",
-        "2kr3r/1pp2ppp/1n2b3/p3P3/PnP2B2/1K2P3/1P4PP/R4BNR", 
-        "r1bq1rk1/2ppbppp/p1n2n2/1p2p3/4P3/1B3N2/PPPPQPPP/RNB2RK1"
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/", "8/8/8/8/8/8/8/8",
+        "2kr3r/1pp2ppp/1n2b3/p3P3/PnP2B2/1K2P3/1P4PP/R4BNR", "r1bq1rk1/2ppbppp/p1n2n2/1p2p3/4P3/1B3N2/PPPPQPPP/RNB2RK1"
     };
   }
 
@@ -187,12 +195,12 @@ public class DLChess extends DLImage {
     };
   }
 
-  public Font getFont() {
+  public ChessFont getFont() {
     return font;
   }
 
-  public void setFont(Font f) {
-    if(f == null)
+  public void setFont(ChessFont f) {
+    if (f == null)
       return;
     font = f;
   }
@@ -218,14 +226,54 @@ public class DLChess extends DLImage {
     DLMain.Main(DLChess.class, params);
   }
 
+  class ChessFont {
+    HashMap<String, String> charMap;
+    Font font;
+
+    ChessFont(String name, int style, int size) {
+      font = new Font(name, style, size);
+      charMap = new HashMap<String, String>();
+      charMap.put("K", "\u2654");
+      charMap.put("Q", "\u2655");
+      charMap.put("R", "\u2656");
+      charMap.put("B", "\u2657");
+      charMap.put("N", "\u2658");
+      charMap.put("P", "\u2659");
+      charMap.put("k", "\u265A");
+      charMap.put("q", "\u265B");
+      charMap.put("r", "\u265C");
+      charMap.put("b", "\u265D");
+      charMap.put("n", "\u265E");
+      charMap.put("p", "\u265F");
+    }
+
+    ChessFont(String id, HashMap<String, String> charMap) {
+      try {
+        URL u = DrawLine.class.getResource(id);
+        File f = new File(u.toURI());
+        font = Font.createFont(Font.TRUETYPE_FONT, f);
+      } catch (Exception e) {
+        DLError.report(e);
+      }
+      this.charMap = charMap;
+    }
+
+    Font getFont() {
+      return font;
+    }
+
+    String get(String s) {
+      return charMap.get(s);
+    }
+  }
+
   class Piece {
     String piece;
 
     Piece(String s) {
       piece = s;
-
     }
-    
+
     String getPiece() {
       return piece;
     }
@@ -255,7 +303,6 @@ public class DLChess extends DLImage {
 
   class Board {
     Square[][] board = new Square[8][8];
-    HashMap<String, String> charMap = new HashMap<String, String>();
 
     Board() {
       int k = 0;
@@ -271,34 +318,6 @@ public class DLChess extends DLImage {
           k++;
         }
         k++;
-      }
-
-      if (normalFont) {
-        charMap.put("K", "\u2654");
-        charMap.put("Q", "\u2655");
-        charMap.put("R", "\u2656");
-        charMap.put("B", "\u2657");
-        charMap.put("N", "\u2658");
-        charMap.put("P", "\u2659");
-        charMap.put("k", "\u265A");
-        charMap.put("q", "\u265B");
-        charMap.put("r", "\u265C");
-        charMap.put("b", "\u265D");
-        charMap.put("n", "\u265E");
-        charMap.put("p", "\u265F");
-      } else {
-        charMap.put("K", "k");
-        charMap.put("Q", "q");
-        charMap.put("R", "r");
-        charMap.put("B", "b");
-        charMap.put("N", "n");
-        charMap.put("P", "p");
-        charMap.put("k", "l");
-        charMap.put("q", "w");
-        charMap.put("r", "t");
-        charMap.put("b", "v");
-        charMap.put("n", "m");
-        charMap.put("p", "o");
       }
     }
 
@@ -320,11 +339,19 @@ public class DLChess extends DLImage {
       }
     }
 
+    boolean isLowerCase(String s) {
+      return s.equals(s.toLowerCase());
+    }
+
+    boolean isUpperCase(String s) {
+      return s.equals(s.toUpperCase());
+    }
+    
     void pieces(Graphics2D g) {
 
       float dim = DLUtil.Min(iwidth(), iheight());
       float d = dim / 8f; // dimension d une case
-      Font f = getFont().deriveFont(d);
+      Font f = getFont().getFont().deriveFont(d);
 
       for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
@@ -332,13 +359,14 @@ public class DLChess extends DLImage {
           if (p == null)
             continue;
           String s = p.getPiece();
-          String uc = charMap.get(s);
+          String uc = getFont().get(s);
+
           if (uc == null)
             throw new IllegalArgumentException("Illegal character " + s);
           Rectangle2D r = getRect(i, j, margx, margy);
 
-          g.setFont(getFont());
-          Shape shp = DLUtil.Char(f, uc);
+          Shape shp = DLUtil.Char(g, f, uc);
+
           Rectangle2D sr = shp.getBounds2D();
 
           AffineTransform otr = g.getTransform();
@@ -347,6 +375,14 @@ public class DLChess extends DLImage {
 
           g.setTransform(tr);
 
+          if(isUpperCase(s)) {
+            String u = s.toLowerCase();
+            String uuc = getFont().get(u);
+            Shape ushp = DLUtil.Char(g, f, uuc);
+            g.setColor(Color.white);
+            g.fill(ushp);
+          }
+          
           g.setColor(Color.black);
           g.fill(shp);
 
@@ -362,9 +398,8 @@ public class DLChess extends DLImage {
     float d = dim / 8f;
     mx = d * mx / 100f;
     my = d * my / 100f;
-    Rectangle2D shp = new Rectangle2D.Float(x - dim / 2 + j * d + mx, 
-                                            y - dim / 2 + i * d + my,
-                                            d - 2f * mx, d - 2f * my);
+    Rectangle2D shp = new Rectangle2D.Float(x - dim / 2 + j * d + mx, y - dim / 2 + i * d + my, d - 2f * mx,
+        d - 2f * my);
     return shp;
   }
 
