@@ -3,12 +3,12 @@ package com.mdu.DrawLine;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Float;
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
@@ -23,36 +23,44 @@ public class DLChess extends DLImage {
   Paint black = Color.gray;
   Paint white = Color.lightGray;
   /* Apple Symbols, Arial Unicode MS, Menlo, Monospaced */
-//  ChessFont font = new ChessFont("Lucida Bright", Font.PLAIN, 20);  
-  ChessFont font = new ChessFont("Arial Unicode MS", Font.PLAIN, 20);
+  // ChessFont font = new ChessFont("Lucida Bright", Font.PLAIN, 20);
+  ChessFont font;
   static final int WHITE_SQUARE = 0;
   static final int BLACK_SQUARE = 1;
   boolean debug = false;
   String position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
   boolean useEmbededFont = false;
-  
+  boolean keepAspect = true;
+  float pawnAdjust = 15f;
+
+  void font() {
+    if (useEmbededFont)
+      try {
+        HashMap<String, String> charMap = new HashMap<String, String>();
+        charMap.put("K", "k");
+        charMap.put("Q", "q");
+        charMap.put("R", "r");
+        charMap.put("B", "b");
+        charMap.put("N", "n");
+        charMap.put("P", "p");
+        charMap.put("k", "l");
+        charMap.put("q", "w");
+        charMap.put("r", "t");
+        charMap.put("b", "v");
+        charMap.put("n", "m");
+        charMap.put("p", "o");
+        font = new ChessFont("fonts/case.ttf", charMap);
+      } catch (Exception e) {
+        DLError.report(e);
+      }
+    else
+      font = new ChessFont("Arial Unicode MS", Font.PLAIN, 20);
+  }
+
   public DLChess() {
     super();
     setPosition(position);
-    if(useEmbededFont)
-    try {
-      HashMap<String, String> charMap = new HashMap<String, String>();
-      charMap.put("K", "k");
-      charMap.put("Q", "q");
-      charMap.put("R", "r");
-      charMap.put("B", "b");
-      charMap.put("N", "n");
-      charMap.put("P", "p");
-      charMap.put("k", "l");
-      charMap.put("q", "w");
-      charMap.put("r", "t");
-      charMap.put("b", "v");
-      charMap.put("n", "m");
-      charMap.put("p", "o");
-      font = new ChessFont("fonts/case.ttf", charMap);
-    } catch (Exception e) {
-      DLError.report(e);
-    }
+    font();
   }
 
   DLChess(DLChess src) {
@@ -65,6 +73,29 @@ public class DLChess extends DLImage {
 
   DLChess copy() {
     return new DLChess(this);
+  }
+
+  public void setUseEmbededFont(boolean b) {
+    useEmbededFont = b;
+    font();
+  }
+
+  public boolean getUseEmbededFont() {
+    return useEmbededFont;
+  }
+  
+  public float getPawnAdjust() {
+    return pawnAdjust;
+  }
+
+  public void setPawnAdjust(float pa) {
+    pawnAdjust = pa;
+  }
+
+  public float[] rangePawnAdjust() {
+    return new float[] {
+        0, 100f
+    };
   }
 
   public float getMargin() {
@@ -110,6 +141,14 @@ public class DLChess extends DLImage {
   public void setMargx(float m) {
     clearImage();
     margx = m;
+  }
+
+  public void setKeepAspect(boolean k) {
+    keepAspect = k;
+  }
+
+  public boolean getKeepAspect() {
+    return keepAspect;
   }
 
   float iwidth() {
@@ -262,13 +301,15 @@ public class DLChess extends DLImage {
       return font;
     }
 
-    String get(String s) {
+    String getUc(String s) {
       return charMap.get(s);
     }
   }
 
   class Piece {
     String piece;
+    float xmargin = 0f;
+    float ymargin = 0f;
 
     Piece(String s) {
       piece = s;
@@ -281,15 +322,15 @@ public class DLChess extends DLImage {
 
   class Square {
     Paint paint;
-    int type;
+    int color;
     Piece piece;
 
-    void setType(int c) {
-      type = c;
+    void setColor(int c) {
+      color = c;
     }
 
-    int getType() {
-      return type;
+    int getColor() {
+      return color;
     }
 
     void setPaint(Paint p) {
@@ -311,9 +352,9 @@ public class DLChess extends DLImage {
           Square s = new Square();
           board[i][j] = s;
           if (k % 2 == 0) {
-            s.setType(WHITE_SQUARE);
+            s.setColor(WHITE_SQUARE);
           } else {
-            s.setType(BLACK_SQUARE);
+            s.setColor(BLACK_SQUARE);
           }
           k++;
         }
@@ -346,7 +387,11 @@ public class DLChess extends DLImage {
     boolean isUpperCase(String s) {
       return s.equals(s.toUpperCase());
     }
-    
+
+    boolean isPawn(String s) {
+      return s.toLowerCase().equals("p");
+    }
+
     void pieces(Graphics2D g) {
 
       float dim = DLUtil.Min(iwidth(), iheight());
@@ -357,32 +402,36 @@ public class DLChess extends DLImage {
         for (int j = 0; j < 8; j++) {
           Piece p = board[i][j].piece;
           if (p == null)
-            continue;
+            continue; // empty square
           String s = p.getPiece();
-          String uc = getFont().get(s);
+          String uc = getFont().getUc(s);
 
           if (uc == null)
             throw new IllegalArgumentException("Illegal character " + s);
+
           Rectangle2D r = getRect(i, j, margx, margy);
 
           Shape shp = DLUtil.Char(g, f, uc);
 
-          Rectangle2D sr = shp.getBounds2D();
-
+          Rectangle2D.Float sr = (Float) shp.getBounds2D();
+          if (isPawn(s)) {
+            Point2D pt = new Point2D.Double(sr.getX(), sr.getY() - pawnAdjust * sr.getHeight() / 100f);
+            sr.add(pt);
+          }
           AffineTransform otr = g.getTransform();
 
-          AffineTransform tr = DLUtil.computeTransform(sr, r, true);
+          AffineTransform tr = DLUtil.computeTransform(sr, r, keepAspect);
 
           g.setTransform(tr);
 
-          if(isUpperCase(s)) {
+          if (isUpperCase(s)) {
             String u = s.toLowerCase();
-            String uuc = getFont().get(u);
+            String uuc = getFont().getUc(u);
             Shape ushp = DLUtil.Char(g, f, uuc);
             g.setColor(Color.white);
             g.fill(ushp);
           }
-          
+
           g.setColor(Color.black);
           g.fill(shp);
 
@@ -409,7 +458,7 @@ public class DLChess extends DLImage {
     Paint paint = null;
     Shape shp = getRect(i, j, 0, 0);
 
-    switch (s.getType()) {
+    switch (s.getColor()) {
       case WHITE_SQUARE:
         paint = white;
         break;
@@ -421,7 +470,7 @@ public class DLChess extends DLImage {
     g.fill(shp);
   }
 
-  // Notation Forsyth-Edwards
+  // Notation Forsyth-Edwards (incomplete)
   // from 8th row to 1st:
   // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/
   void parse(String str) {
@@ -447,9 +496,7 @@ public class DLChess extends DLImage {
           }
           continue;
         } else {
-          String sc = new String(new char[] {
-              c
-          });
+          String sc = String.valueOf(c); // Character.toString(c) ; //new String(new char[] {c});
           Piece p = new Piece(sc);
           b[y][x].piece = p;
           x++;
